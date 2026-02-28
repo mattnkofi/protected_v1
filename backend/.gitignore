@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.localgit 
 
-.env
+
 .env.backup
 .env.production
 
