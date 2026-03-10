@@ -29,6 +29,7 @@ db.Badge = require('./badge')(sequelize, Sequelize.DataTypes);
 db.UserInventory = require('./UserInventory')(sequelize, Sequelize.DataTypes);
 db.Notification = require('./Notification')(sequelize, Sequelize.DataTypes);
 db.Announcement = require('./Announcement')(sequelize, Sequelize.DataTypes);
+db.MLAnalysisResult = require('./MLAnalysisResult')(sequelize, Sequelize.DataTypes);
 
 /**
  * 2. Manual Associations Fix
@@ -56,6 +57,11 @@ db.User.hasMany(db.Notification, { foreignKey: 'user_id', as: 'notifications' })
 // Relasyon para sa Announcements (inverse associations only - belongsTo is in model)
 db.User.hasMany(db.Announcement, { foreignKey: 'created_by', as: 'announcements' });
 db.Classroom.hasMany(db.Announcement, { foreignKey: 'classroom_id', as: 'classroomAnnouncements' });
+
+// Relasyon para sa ML Analysis Results
+db.User.hasMany(db.MLAnalysisResult, { foreignKey: 'user_id', as: 'mlAnalysisResults' });
+db.Quiz.hasMany(db.MLAnalysisResult, { foreignKey: 'quiz_id', as: 'mlAnalysisResults' });
+db.QuizAttempt.hasOne(db.MLAnalysisResult, { foreignKey: 'quiz_attempt_id', as: 'mlAnalysis' });
 
 // 3. Execute automatic associations (kung may .associate function ang models)
 Object.keys(db).forEach(modelName => {

@@ -143,6 +143,12 @@ const authenticatedRoutes = [
                 name: 'facilitator.rewards',
                 component: () => import('@/views/facilitator/RewardsManager.vue'),
                 meta: { title: 'Rewards Manager' }
+            },
+            {
+                path: 'analytics',
+                name: 'facilitator.analytics',
+                component: () => import('@/views/facilitator/MLAnalytics.vue'),
+                meta: { title: 'AI Analytics' }
             }
         ]
     },

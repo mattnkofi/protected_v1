@@ -2,6 +2,7 @@
 const { Module, UserGamification, User, QuizAttempt } = require('../model');
 const QuizService = require('../services/QuizService');
 const gamificationService = require('../services/GamificationService'); // In-import natin ang bagong service
+const mlAnalysisService = require('../services/MLAnalysisService');
 
 class QuizController {
     /**
@@ -104,7 +105,7 @@ class QuizController {
         try {
             const quizId = req.params.id;
             const userId = req.user.id;
-            const { pointsEarned, correctCount } = req.body;
+            const { pointsEarned, correctCount, answers } = req.body;
             
             // 1. I-save ang attempt sa database (QuizAttempt)
             const result = await QuizService.submitAttempt(userId, quizId, req.body);
@@ -115,6 +116,21 @@ class QuizController {
             
             // 3. I-update ang Gamification Status (EXP at Title)
             const updatedGamification = await gamificationService.addExperience(userId, expGained);
+
+            // 4. ML Analysis: Analyze student answers for VAWC indicators (async, non-blocking)
+            // Extract answer texts from the submission for ML analysis
+            const answerTexts = this._extractAnswerTexts(answers, req.body);
+            if (answerTexts.length > 0) {
+                const attemptId = result?.attempt?.id || null;
+                // Fire and forget — don't await so it doesn't slow down the response
+                mlAnalysisService.analyzeAndStore(userId, quizId, answerTexts, attemptId)
+                    .then(mlResult => {
+                        if (mlResult && mlResult.flags_detected) {
+                            console.log(`[ML] Flags detected for user ${userId} on quiz ${quizId} — Risk: ${mlResult.overall_risk_level}`);
+                        }
+                    })
+                    .catch(err => console.error('[ML] Background analysis error:', err.message));
+            }
             
             return res.status(200).json({ 
                 success: true, 
@@ -130,6 +146,35 @@ class QuizController {
             console.error('QuizController.submitResults error:', error);
             return res.status(500).json({ success: false, message: error.message });
         }
+    }
+
+    /**
+     * Extract answer texts from quiz submission data.
+     * Supports multiple formats that the frontend might send.
+     */
+    _extractAnswerTexts(answers, body) {
+        // If answers array is explicitly provided
+        if (Array.isArray(answers)) {
+            return answers
+                .map(a => {
+                    if (typeof a === 'string') return a;
+                    if (a && typeof a === 'object') {
+                        // Support { answer: "text" }, { text: "text" }, { selectedAnswer: "text" }
+                        return a.answer || a.text || a.selectedAnswer || a.value || '';
+                    }
+                    return '';
+                })
+                .filter(a => a && a.trim().length > 0);
+        }
+
+        // Fallback: try to extract from other body fields
+        if (body.userAnswers && Array.isArray(body.userAnswers)) {
+            return body.userAnswers
+                .map(a => typeof a === 'string' ? a : (a?.answer || a?.text || ''))
+                .filter(a => a && a.trim().length > 0);
+        }
+
+        return [];
     }
 
     /**

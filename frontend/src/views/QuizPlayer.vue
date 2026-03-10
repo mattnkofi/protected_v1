@@ -484,6 +484,7 @@ const showBossDamage = ref(false);
 const lastBossDamage = ref(0);
 const feedbackBorderClass = ref('');
 const transitionName = ref('slide-right');
+const userAnswers = ref([]); // Track user's selected answer texts for ML analysis
 let timer = null;
 let popupId = 0;
 let themeObserver = null;
@@ -586,6 +587,14 @@ const handleAnswerSelection = (event, index) => {
   if (timer) clearInterval(timer);
   selectedAnswer.value = index;
 
+  // Track the user's selected answer text for ML analysis
+  const selectedOptionText = index >= 0 ? currentQuestion.value.options[index] : 'No answer (timed out)';
+  userAnswers.value.push({
+    question: currentQuestion.value.question,
+    selectedAnswer: selectedOptionText,
+    questionIndex: currentQuestionIndex.value
+  });
+
   const isCorrect = index === currentQuestion.value.correctAnswer;
   
   if (isCorrect) {
@@ -657,7 +666,8 @@ const finishQuiz = async () => {
     try {
       await api.post(`/api/v1/quizzes/${quiz.value.id}/submit`, {
         pointsEarned: score.value, correctCount: correctAnswers.value,
-        totalQuestions: quiz.value.questions_data.length, timeTaken: totalTimeTaken.value
+        totalQuestions: quiz.value.questions_data.length, timeTaken: totalTimeTaken.value,
+        answers: userAnswers.value
       });
       await authStore.fetchUser();
     } catch (err) { console.error("Submit failed", err); }

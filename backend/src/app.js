@@ -15,6 +15,7 @@ const classroomRoutes = require('./router/ClassroomRoutes');
 const notificationRoutes = require('./router/NotificationRoutes');
 const adminRoutes = require('./router/AdminRoutes');
 const chatbotRoutes = require('./router/ChatbotRoutes');
+const mlAnalysisRoutes = require('./router/MLAnalysisRoutes');
 
 const app = express();
 
@@ -52,6 +53,7 @@ app.use('/api/v1/classrooms', classroomRoutes);
 app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/chatbot', chatbotRoutes);
+app.use('/api/v1/ml-analysis', mlAnalysisRoutes);
 
 // 404 Handler
 app.use((req, res) => {
