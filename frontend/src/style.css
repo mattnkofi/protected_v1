@@ -1,0 +1,698 @@
+/* src/style.css */
+
+/* ================================== */
+/* 1. FONT FACE DECLARATIONS */
+/* ================================== */
+/* Consolidating and ensuring correct weight mapping */
+/* Note: Using Google Fonts as primary source for reliability */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
+/* font-thin	100	Poppins-Thin.ttf
+font-extralight	200	Poppins-ExtraLight.ttf
+font-light	300	Poppins-Light.ttf
+font-normal	400	Poppins-Regular.ttf
+font-medium	500	Poppins-Medium.ttf
+font-semibold	600	Poppins-SemiBold.ttf
+font-bold	700	Poppins-Bold.ttf
+font-extrabold	800	Poppins-ExtraBold.ttf
+font-black	900	Poppins-Black.ttf */
+
+@font-face {
+  font-family: "Courgette";
+  src: url("./assets/fonts/Courgette-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 115%;
+}
+
+@font-face {
+  font-family: "Dosis";
+  src: url("./assets/fonts/Dosis-VariableFont_wght.ttf") format("truetype");
+  font-weight: 200, 300, 400, 500, 600, 700, 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MadimiOne";
+  src: url("./assets/fonts/MadimiOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 115%;
+}
+
+@font-face {
+  font-family: "MPLUSRounded1c";
+  src: url("./assets/fonts/MPLUSRounded1c-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MPLUSRounded1c";
+  src: url("./assets/fonts/MPLUSRounded1c-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MPLUSRounded1c";
+  src: url("./assets/fonts/MPLUSRounded1c-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/fonts/Poppins-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/fonts/Poppins-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/fonts/Poppins-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: bold;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Poppins";
+  src: url("./assets/fonts/Poppins-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ================================== */
+/* 2. TAILWIND CSS v4 SETUP (@theme) */
+/* ================================== */
+
+@import "tailwindcss";
+
+@theme {
+  /* --- CUSTOM FONT FAMILIES --- */
+  --font-poppins: "Poppins", sans-serif;
+  --font-mplusrounded: "MPLUSRounded1c", sans-serif;
+  --font-courgette: "Courgette", sans-serif;
+  --font-dosis: "Dosis", sans-serif;
+  --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-madimione: "MadimiOne", sans-serif;
+
+  /* --- BRAND COLORS --- */
+
+  --color-neon-pink-50: #fdf2f8;
+  --color-neon-pink-100: #fce7f3;
+  --color-neon-pink-200: #fbcfe8;
+  --color-neon-pink-300: #f9a8d4;
+  --color-neon-pink-400: #f472b6;
+  --color-neon-pink-500: #ec4899; /* collab main */
+  --color-neon-pink-600: #db2777;
+  --color-neon-pink-700: #be185d;
+  --color-neon-pink-800: #9d174d;
+  --color-neon-pink-900: #831843;
+  --color-neon-pink-950: #500724;
+
+  --color-calm-lavender-50: #faf5ff;
+  --color-calm-lavender-100: #f3e8ff;
+  --color-calm-lavender-200: #e9d5ff;
+  --color-calm-lavender-300: #d8b4fe;
+  --color-calm-lavender-400: #c084fc;
+  --color-calm-lavender-500: #a855f7; /* Soft Secondary Buttons */
+  --color-calm-lavender-600: #9333ea;
+  --color-calm-lavender-700: #7e22ce;
+  --color-calm-lavender-800: #6b21a8;
+  --color-calm-lavender-900: #581c87;
+  --color-calm-lavender-950: #3b0764;
+
+  /* --- Other Accent Colors (Not oftenly used) --- */
+
+  --color-vawc-orange-50: #fff7ed;
+  --color-vawc-orange-100: #ffedd5;
+  --color-vawc-orange-200: #fed7aa;
+  --color-vawc-orange-300: #fdba74;
+  --color-vawc-orange-400: #fb923c;
+  --color-vawc-orange-500: #f97316;
+  --color-vawc-orange-600: #ea580c;
+  --color-vawc-orange-700: #c2410c;
+  --color-vawc-orange-800: #9a3412;
+  --color-vawc-orange-900: #7c2d12;
+  --color-vawc-orange-950: #431407;
+
+  --color-safety-teal-50: #f0fdfa;
+  --color-safety-teal-100: #ccfbf1;
+  --color-safety-teal-200: #99f6e4;
+  --color-safety-teal-300: #5eead4;
+  --color-safety-teal-400: #2dd4bf;
+  --color-safety-teal-500: #14b8a6;
+  --color-safety-teal-600: #0d9488;
+  --color-safety-teal-700: #0f766e;
+  --color-safety-teal-800: #115e59;
+  --color-safety-teal-900: #134e4a;
+  --color-safety-teal-950: #042f2e;
+
+  /* --- Background Colors (Abyss & Platinum) --- */
+  /* Abyss: Darker scale (for dark theme backgrounds, light theme text) */
+  --color-abyss-50: #383639;
+  --color-abyss-100: #333034;
+  --color-abyss-200: #2d2b2e;
+  --color-abyss-300: #272629;
+  --color-abyss-400: #222023;
+  --color-abyss-500: #1c1b1d;
+  --color-abyss-600: #171618;
+  --color-abyss-700: #111012;
+  --color-abyss-800: #0c0b0c;
+  --color-abyss-900: #060606;
+  --color-abyss-950: #010101; /* Blackest tone */
+
+  /* Platinum: Lighter scale (for light theme backgrounds, dark theme text) */
+  --color-platinum-50: #fdfdfd; /* Whitest tone */
+  --color-platinum-100: #ecebec;
+  --color-platinum-200: #dadadb;
+  --color-platinum-300: #c9c8ca;
+  --color-platinum-400: #b7b6b8;
+  --color-platinum-500: #a6a5a7;
+  --color-platinum-600: #959396;
+  --color-platinum-700: #838184;
+  --color-platinum-800: #727073;
+  --color-platinum-900: #615e62;
+  --color-platinum-950: #4f4d50;
+
+  /* DO NOT USE THESE */
+  --color-purple-500: #8b5cf6;
+  --color-purple-600: #7c3aed;
+
+  --color-slate-50: #f8fafc;
+  --color-slate-100: #f1f5f9;
+  --color-slate-200: #e2e8f0;
+  --color-slate-300: #cbd5e1;
+  --color-slate-400: #94a3b8;
+  --color-slate-500: #64748b;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1e293b;
+  --color-slate-900: #0f172a;
+  --color-slate-950: #020617;
+
+  --color-gray-50: var(--color-slate-50);
+  --color-gray-100: var(--color-slate-100);
+  --color-gray-200: var(--color-slate-200);
+  --color-gray-300: var(--color-slate-300);
+  --color-gray-400: var(--color-slate-400);
+  --color-gray-500: var(--color-slate-500);
+  --color-gray-600: var(--color-slate-600);
+  --color-gray-700: var(--color-slate-700);
+  --color-gray-800: var(--color-slate-800);
+  --color-gray-900: var(--color-slate-900);
+  --color-gray-950: var(--color-slate-950);
+
+  /* NEUTRALS / ABYSS THEME */
+  --color-abyss-900: #020203;
+  --color-abyss-950: #010101;
+  --color-obsidian: #0d0d12;
+}
+
+/* --- External Plugins --- */
+@import "flowbite-vue/index.css";
+
+/* ================================== */
+/* 3. BASE STYLES & TRANSITIONS */
+/* ================================== */
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Transition specific properties to avoid lag on layout shifts */
+  div,
+  button,
+  aside,
+  header,
+  section {
+    @apply transition-colors duration-300;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    /* Using abyss-950 for that deep registry look in dark mode */
+    @apply font-poppins bg-slate-50 dark:bg-abyss-950 text-slate-900 dark:text-white antialiased min-h-screen;
+  }
+
+  /* Aggressive typography for the Registry look */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply tracking-tighter;
+  }
+}
+
+/* ================================== */
+/* 4. CUSTOM UTILITIES & COMPONENTS */
+/* ================================== */
+
+/* --- Custom Scrollbar (Registry Standard) --- */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300/50 dark:bg-white/5;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-purple-600/50;
+}
+
+/* --- Custom Scrollbar for inner containers --- */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-300/50 dark:bg-white/10;
+}
+
+/* --- FullCalendar Dark Mode Adjustments --- */
+.dark .fc {
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: rgba(255, 255, 255, 0.05);
+  --fc-button-border-color: rgba(255, 255, 255, 0.1);
+  --fc-button-hover-bg-color: rgba(255, 255, 255, 0.1);
+  --fc-button-active-bg-color: #7c3aed;
+  --fc-border-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .fc-col-header-cell-cushion,
+.dark .fc-daygrid-day-number,
+.dark .fc-toolbar-title {
+  color: #ffffff !important;
+}
+
+/* Modal and Utility Classes */
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
+}
+
+.selection\:bg-purple-500\/30 ::selection {
+  background-color: rgba(139, 92, 246, 0.3);
+}
+
+/* Utility: Hide Scrollbar but keep functionality */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Utility: Fade In Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@layer utilities {
+  .sidebar-nav-name {
+    @apply font-poppins text-sm font-normal;
+  }
+
+  .field-label {
+    @apply font-poppins text-xs font-light tracking-wide;
+    @apply text-abyss-800 dark:text-platinum-300;
+  }
+
+  .field-subtext {
+    @apply font-mplusrounded text-xs/4 font-normal text-platinum-600 dark:text-platinum-400;
+  }
+
+  .field-subtext-error {
+    @apply font-mplusrounded text-xs/2 text-red-500;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 bg-transparent;
+    @apply border rounded-md border-calm-lavender-500/50 dark:border-calm-lavender-900/50;
+    @apply font-mplusrounded text-base font-normal;
+    @apply text-abyss-900 dark:text-platinum-50 placeholder-platinum-400 dark:placeholder-abyss-400;
+    @apply focus:outline-none focus:ring-2 focus:ring-calm-lavender-500/50 focus:border-calm-lavender-500;
+    @apply transition-all duration-200;
+  }
+
+  .input-field-error {
+    @apply border-red-500 focus:ring-red-500/50 focus:border-red-500;
+  }
+
+  .body-subtext {
+    @apply font-mplusrounded text-sm font-normal text-platinum-600 dark:text-platinum-400;
+  }
+
+  .divider-label {
+    @apply text-platinum-500 dark:text-platinum-400;
+    @apply font-mplusrounded text-xs font-normal;
+    @apply uppercase tracking-wider px-3;
+  }
+
+  .display-title {
+    @apply font-courgette text-3xl font-normal;
+  }
+
+  .form-title {
+    @apply font-madimione text-4xl font-normal tracking-normal;
+    @apply text-abyss-700 dark:text-platinum-200;
+  }
+
+  .form-subtitle {
+    @apply font-mplusrounded text-base font-normal;
+    @apply bg-gradient-to-r from-calm-lavender-800 to-neon-pink-600;
+    @apply text-transparent bg-clip-text;
+  }
+
+  .link-lavender {
+    @apply text-calm-lavender-600 dark:text-calm-lavender-400 hover:text-calm-lavender-700 dark:hover:text-calm-lavender-300 hover:underline underline-offset-2 transition-colors;
+  }
+
+  .link-pink {
+    @apply text-neon-pink-600 dark:text-neon-pink-400 hover:text-neon-pink-700 dark:hover:text-neon-pink-300 hover:underline underline-offset-2 transition-colors transition-all;
+  }
+
+  .container-bg {
+    @apply bg-platinum-100 dark:bg-abyss-700;
+  }
+
+  .container-bg-dark {
+    @apply bg-platinum-50 dark:bg-abyss-800;
+  }
+
+  .button-gray-pink-hover {
+    @apply w-full py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-3;
+    @apply bg-platinum-100 dark:bg-abyss-600 hover:bg-neon-pink-200 hover:dark:bg-neon-pink-800/20;
+    /* @apply border border-calm-lavender-400 dark:border-calm-lavender-700; */
+    @apply text-abyss-800 dark:text-platinum-200 font-medium;
+    @apply disabled:opacity-60 disabled:cursor-not-allowed;
+  }
+
+  .return-button-text {
+    @apply font-mplusrounded font-medium text-sm;
+  }
+
+  .main-button-text {
+    @apply font-poppins font-semibold text-lg;
+  }
+
+  .auth-container {
+    @apply w-full max-w-4xl flex flex-col md:flex-row overflow-hidden sm:rounded-2xl;
+  }
+
+  /* Sidebar User Design */
+  .sidebar-item-name {
+    @apply font-poppins text-sm font-medium tracking-wide;
+  }
+
+  .sidebar-active-item-name {
+    @apply text-calm-lavender-600 dark:text-calm-lavender-500;
+  }
+
+  .sidebar-inactive-item-name {
+    @apply font-normal text-platinum-800;
+  }
+
+  .sidebar-inactive-item-name-hover {
+    @apply group-hover:text-neon-pink-600 group-hover:dark:text-neon-pink-500;
+  }
+
+  /* --- --------------------------------------- --- */
+  /* --- --------------------------------------- --- */
+  /* --- User Dashboard Additional --- */
+  /* --- --------------------------------------- --- */
+  /* --- --------------------------------------- --- */
+
+  /* --- Page Layout --- */
+  .page-wrapper {
+    @apply space-y-6 text-slate-900 dark:text-white;
+  }
+
+  .page-header {
+    @apply flex flex-col sm:flex-row sm:items-end justify-between gap-5 pb-5 border-b border-slate-200 dark:border-abyss-600;
+  }
+
+  /* --- Typography --- */
+  .page-title {
+    @apply font-madimione text-3xl text-slate-800 dark:text-platinum-100 leading-tight;
+  }
+
+  .page-subtitle {
+    @apply font-mplusrounded text-sm text-platinum-600 dark:text-platinum-500;
+  }
+
+  .section-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-widest text-calm-lavender-600 dark:text-calm-lavender-400;
+  }
+
+  /* Use across any gradient heading span */
+  .brand-gradient-text {
+    @apply bg-gradient-to-r from-calm-lavender-600 to-neon-pink-500 bg-clip-text text-transparent;
+  }
+
+  /* Softer secondary gradient (pink to lavender) */
+  .brand-gradient-text-alt {
+    @apply bg-gradient-to-r from-neon-pink-500 to-calm-lavender-500 bg-clip-text text-transparent;
+  }
+
+  /* --- Cards --- */
+  .card {
+    @apply bg-white dark:bg-abyss-600 border border-slate-200 dark:border-abyss-500 rounded-2xl p-5;
+  }
+
+  .card-hover {
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/60 hover:-translate-y-0.5 transition-all duration-200;
+  }
+
+  /* Icon wrapper inside cards */
+  .card-icon-wrap {
+    @apply p-2.5 rounded-xl bg-calm-lavender-50 dark:bg-calm-lavender-900/20 border border-calm-lavender-100 dark:border-calm-lavender-800/30 shrink-0;
+  }
+
+  /* --- Stat Pill (header display) --- */
+  .stat-pill {
+    @apply flex items-center gap-3 bg-white dark:bg-abyss-600 border border-slate-200 dark:border-abyss-500 rounded-xl px-4 py-2.5;
+  }
+
+  .stat-pill-label {
+    @apply text-[10px] font-medium text-platinum-500 uppercase tracking-wide;
+  }
+
+  .stat-pill-value {
+    @apply text-lg font-bold leading-none mt-0.5;
+  }
+
+  /* --- Buttons --- */
+  .btn-primary {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl;
+    @apply bg-calm-lavender-600 hover:bg-calm-lavender-700 dark:bg-calm-lavender-700 dark:hover:bg-calm-lavender-600;
+    @apply text-white font-medium text-sm;
+    @apply border border-calm-lavender-700 dark:border-calm-lavender-600;
+    @apply transition-all duration-200 shrink-0;
+  }
+
+  .btn-secondary {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl;
+    @apply bg-slate-100 dark:bg-abyss-600 hover:bg-slate-200 dark:hover:bg-abyss-500;
+    @apply text-slate-600 dark:text-platinum-300 font-medium text-sm;
+    @apply border border-slate-200 dark:border-abyss-500;
+    @apply transition-all duration-200 shrink-0;
+  }
+
+  .btn-danger {
+    @apply flex items-center gap-2 px-4 py-2.5 rounded-xl;
+    @apply bg-red-500 hover:bg-red-600 text-white font-medium text-sm;
+    @apply transition-all duration-200;
+  }
+
+  /* --- Back nav button --- */
+  .back-btn {
+    @apply flex items-center gap-2 text-xs font-medium text-platinum-500;
+    @apply hover:text-calm-lavender-600 dark:hover:text-calm-lavender-400 transition-colors;
+  }
+
+  .nav-active {
+    @apply bg-platinum-50 dark:bg-abyss-900;
+}
+
+  /* --- Avatar --- */
+  .avatar-sm {
+    @apply w-8 h-8 rounded-lg bg-slate-100 dark:bg-abyss-500 border border-slate-200 dark:border-abyss-400;
+    @apply flex items-center justify-center text-xs font-semibold text-slate-600 dark:text-platinum-300 uppercase shrink-0;
+  }
+
+  .avatar-md {
+    @apply w-10 h-10 rounded-xl bg-slate-100 dark:bg-abyss-500 border border-slate-200 dark:border-abyss-400;
+    @apply flex items-center justify-center text-sm font-semibold text-slate-600 dark:text-platinum-300 uppercase shrink-0;
+  }
+
+  /* --- Tab Navigation --- */
+  .tab-nav {
+    @apply flex items-center gap-1 bg-slate-100 dark:bg-abyss-600 p-1 rounded-xl w-fit;
+  }
+
+  .tab-btn {
+    @apply px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150;
+  }
+
+  .tab-btn-active {
+    @apply bg-white dark:bg-abyss-500 text-calm-lavender-600 dark:text-calm-lavender-400 border border-slate-200 dark:border-abyss-400;
+  }
+
+  .tab-btn-inactive {
+    @apply text-platinum-500 hover:text-slate-700 dark:hover:text-platinum-300;
+  }
+
+  /* --- Badges --- */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-medium;
+  }
+
+  .badge-lavender {
+    @apply bg-calm-lavender-50 dark:bg-calm-lavender-900/30 text-calm-lavender-700 dark:text-calm-lavender-400 border border-calm-lavender-200 dark:border-calm-lavender-800/40;
+  }
+
+  .badge-pink {
+    @apply bg-neon-pink-50 dark:bg-neon-pink-900/20 text-neon-pink-700 dark:text-neon-pink-400 border border-neon-pink-200 dark:border-neon-pink-800/40;
+  }
+
+  .badge-teal {
+    @apply bg-safety-teal-50 dark:bg-safety-teal-900/20 text-safety-teal-700 dark:text-safety-teal-400 border border-safety-teal-200 dark:border-safety-teal-800/40;
+  }
+
+  .badge-orange {
+    @apply bg-vawc-orange-50 dark:bg-vawc-orange-900/20 text-vawc-orange-700 dark:text-vawc-orange-400 border border-vawc-orange-200 dark:border-vawc-orange-800/40;
+  }
+
+  .badge-red {
+    @apply bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800/40;
+  }
+
+  .badge-muted {
+    @apply bg-slate-100 dark:bg-abyss-600 text-platinum-600 dark:text-platinum-400 border border-slate-200 dark:border-abyss-500;
+  }
+
+  /* --- Info Row (key-value pair inside cards) --- */
+  .info-row {
+    @apply flex items-center justify-between px-3.5 py-2.5 bg-slate-50 dark:bg-abyss-700 rounded-xl border border-slate-100 dark:border-abyss-500;
+  }
+
+  .info-label {
+    @apply text-xs font-medium text-platinum-500 dark:text-platinum-600;
+  }
+
+  /* --- Modal --- */
+  .modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40;
+  }
+
+  .modal-panel {
+    @apply relative w-full max-w-lg bg-white dark:bg-abyss-600 border border-slate-200 dark:border-abyss-400 rounded-2xl p-6;
+  }
+
+  .modal-title {
+    @apply font-semibold text-base text-slate-800 dark:text-platinum-100 mb-4;
+  }
+
+  /* --- Loading / Spinner --- */
+  .spinner {
+    @apply w-7 h-7 border-2 border-slate-200 dark:border-abyss-500 border-t-calm-lavender-500 rounded-full animate-spin;
+  }
+
+  .loading-text {
+    @apply font-mplusrounded text-sm text-platinum-500;
+  }
+
+  /* --- Empty States --- */
+  .empty-state {
+    @apply text-center py-20 rounded-2xl border-2 border-dashed border-slate-200 dark:border-abyss-600;
+  }
+
+  .empty-state-icon {
+    @apply inline-flex p-4 bg-slate-50 dark:bg-abyss-700 rounded-2xl border border-slate-100 dark:border-abyss-500 mb-4;
+  }
+
+  .empty-state-title {
+    @apply font-semibold text-base text-slate-500 dark:text-platinum-500;
+  }
+
+  .empty-state-desc {
+    @apply font-mplusrounded text-sm text-platinum-500 dark:text-platinum-600 mt-1.5 max-w-xs mx-auto;
+  }
+
+  /* --- Progress Bar --- */
+  .progress-track {
+    @apply h-2.5 bg-slate-100 dark:bg-abyss-700 rounded-full overflow-hidden border border-slate-200 dark:border-abyss-500;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-calm-lavender-500 to-neon-pink-500 rounded-full transition-all duration-700;
+  }
+
+  /* --- Item Cards (Shop / Inventory) --- */
+  .item-card {
+    @apply relative bg-white dark:bg-abyss-600 border border-slate-200 dark:border-abyss-500 rounded-2xl overflow-hidden flex flex-col;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/50 hover:-translate-y-0.5 transition-all duration-200;
+  }
+
+  .item-image-wrap {
+    @apply h-28 lg:h-32 bg-slate-50 dark:bg-abyss-700 relative overflow-hidden shrink-0;
+    @apply group-hover:bg-calm-lavender-50 dark:group-hover:bg-calm-lavender-900/10 transition-colors;
+  }
+
+  /* Fade-slide page entry animation */
+  .animate-in {
+    animation: fadeSlideUp 0.4s ease-out forwards;
+  }
+}
