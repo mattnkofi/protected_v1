@@ -13,8 +13,13 @@ export const roleGuard = async (to, from, next) => {
     // Check if route requires authentication
     if (to.meta.requiresAuth) {
         // Attempt session restore if not authenticated
+        // if (!authStore.isAuthenticated) {
+        //     await authStore.restoreSession()
+        // }
+
         if (!authStore.isAuthenticated) {
-            await authStore.restoreSession()
+            toast.warning('Authentication Required: Please log in to access this page')
+            return next({ name: 'login', query: { redirect: to.fullPath } })
         }
 
         // Still not authenticated

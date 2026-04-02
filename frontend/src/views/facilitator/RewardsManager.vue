@@ -1,233 +1,286 @@
 <template>
-    <div class="min-h-screen bg-transparent custom-font-poppins text-slate-900 dark:text-white selection:bg-purple-500/30 overflow-x-hidden transition-colors duration-500">
-        
-        <div class="p-6 lg:p-12 space-y-10 animate-in relative z-10 max-w-[1600px] mx-auto">
-            
-            <!-- Header Section -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-slate-200 dark:border-purple-500/10 pb-10">
-                <div class="space-y-3">
-                    <div class="flex items-center gap-3 text-purple-600 dark:text-purple-400">
-                        <div class="p-2 bg-purple-500/10 rounded-lg shadow-inner">
-                            <Gift class="w-5 h-5" />
-                        </div>
-                        <span class="text-[10px] font-[900] uppercase tracking-[0.4em] italic">Facilitator Panel</span>
-                    </div>
-                    <h1 class="text-5xl lg:text-6xl font-[900] uppercase tracking-tighter italic leading-none">
-                        Rewards <span class="text-purple-600 italic">Manager</span>
-                    </h1>
-                    <p class="text-xs font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest italic">Create and manage claimable rewards for students.</p>
-                </div>
+    <div class="page-wrapper animate-in">
 
-                <button @click="openCreateModal" 
-                    class="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white rounded-2xl transition-all font-[900] text-[10px] uppercase tracking-[0.2em] shadow-[0_10px_20px_-5px_rgba(124,58,237,0.4),inset_0_2px_4px_rgba(255,255,255,0.3)] hover:scale-[1.03] active:scale-[0.97] italic">
-                    <Plus class="w-4 h-4 group-hover:rotate-90 transition-transform" /> 
-                    Add New Reward
-                </button>
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="space-y-1.5">
+                <p class="section-eyebrow">Facilitator Panel</p>
+                <h1 class="page-title">
+                    Rewards <span class="brand-gradient-text">Manager</span>
+                </h1>
+                <p class="page-subtitle">Create and manage claimable rewards for students.</p>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white/70 dark:bg-[#0d0d12]/60 backdrop-blur-xl border border-slate-200 dark:border-purple-500/10 rounded-[2rem] p-6 shadow-xl">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-purple-500/10 rounded-xl">
-                            <Package class="w-6 h-6 text-purple-600" />
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic">Total Rewards</p>
-                            <p class="text-3xl font-[900] text-slate-900 dark:text-white italic">{{ rewards.length }}</p>
-                        </div>
+            <button @click="openCreateModal" class="btn-primary">
+                <Plus class="w-4 h-4" />
+                <span>Add New Reward</span>
+            </button>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+            <div class="stat-pill flex-col items-start gap-1.5 p-5 rounded-2xl">
+                <div class="flex items-center justify-between w-full mb-2">
+                    <div class="card-icon-wrap">
+                        <Package class="w-4 h-4 text-calm-lavender-600 dark:text-calm-lavender-400" />
                     </div>
                 </div>
-                <div class="bg-white/70 dark:bg-[#0d0d12]/60 backdrop-blur-xl border border-slate-200 dark:border-purple-500/10 rounded-[2rem] p-6 shadow-xl">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-violet-500/10 rounded-xl">
-                            <CheckCircle class="w-6 h-6 text-violet-600" />
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic">Active Rewards</p>
-                            <p class="text-3xl font-[900] text-slate-900 dark:text-white italic">{{ activeCount }}</p>
-                        </div>
+                <p class="stat-pill-label">Total Rewards</p>
+                <p class="stat-pill-value text-2xl text-slate-800 dark:text-platinum-100">{{ rewards.length }}</p>
+            </div>
+
+            <div class="stat-pill flex-col items-start gap-1.5 p-5 rounded-2xl">
+                <div class="flex items-center justify-between w-full mb-2">
+                    <div class="card-icon-wrap">
+                        <CheckCircle class="w-4 h-4 text-calm-lavender-600 dark:text-calm-lavender-400" />
                     </div>
                 </div>
-                <div class="bg-white/70 dark:bg-[#0d0d12]/60 backdrop-blur-xl border border-slate-200 dark:border-purple-500/10 rounded-[2rem] p-6 shadow-xl">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-fuchsia-500/10 rounded-xl">
-                            <Users class="w-6 h-6 text-fuchsia-600" />
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic">Total Claims</p>
-                            <p class="text-3xl font-[900] text-slate-900 dark:text-white italic">{{ totalClaims }}</p>
-                        </div>
+                <p class="stat-pill-label">Active Rewards</p>
+                <p class="stat-pill-value text-2xl text-slate-800 dark:text-platinum-100">{{ activeCount }}</p>
+            </div>
+
+            <div class="stat-pill flex-col items-start gap-1.5 p-5 rounded-2xl">
+                <div class="flex items-center justify-between w-full mb-2">
+                    <div class="card-icon-wrap">
+                        <Users class="w-4 h-4 text-calm-lavender-600 dark:text-calm-lavender-400" />
                     </div>
+                </div>
+                <p class="stat-pill-label">Total Claims</p>
+                <p class="stat-pill-value text-2xl text-slate-800 dark:text-platinum-100">{{ totalClaims }}</p>
+            </div>
+
+        </div>
+
+        <!-- Rewards Grid -->
+        <div v-if="!isLoading && rewards.length > 0" class="space-y-5">
+
+            <!-- Sort Toolbar -->
+            <div class="flex items-center gap-3 flex-wrap">
+                <div class="flex items-center gap-1.5 shrink-0">
+                    <ArrowUpDown class="w-4 h-4 text-platinum-500" />
+                    <span class="field-subtext font-medium">Sort by</span>
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <button v-for="(opt, index) in SORT_OPTIONS" :key="index"
+                        @click="setSort(index)"
+                        :class="['px-3 py-1.5 rounded-lg text-xs font-medium border-2 transition-all',
+                            activeSortIndex === index
+                                ? 'bg-calm-lavender-600 dark:bg-calm-lavender-700 border-calm-lavender-700 dark:border-calm-lavender-600 text-white'
+                                : 'bg-white dark:bg-abyss-700 border-platinum-200 dark:border-abyss-500 text-slate-600 dark:text-platinum-300 hover:border-calm-lavender-300 dark:hover:border-calm-lavender-700 hover:text-calm-lavender-600 dark:hover:text-calm-lavender-400']">
+                        {{ opt.label }}
+                    </button>
                 </div>
             </div>
 
-            <!-- Rewards Grid (Ultra-Dense Layout) -->
-            <div v-if="!isLoading && rewards.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4">
-                <div v-for="reward in rewards" :key="reward.id" 
-                    class="group relative bg-white dark:bg-[#0d0d12] border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col">
-                    
-                    <!-- Status Badge Overlay -->
-                    <div class="absolute top-2 right-2 z-20">
-                         <span :class="['px-2 py-0.5 rounded-md text-[8px] font-[900] text-white uppercase tracking-wider italic backdrop-blur-md border border-white/10 shadow-sm',
-                            reward.is_active ? 'bg-purple-600/90' : 'bg-slate-500/90']">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                <div v-for="reward in paginatedRewards" :key="reward.id"
+                    class="item-card group flex flex-col">
+
+                    <!-- Status Badge -->
+                    <div class="absolute top-2.5 right-2.5 z-20">
+                        <span :class="['badge text-xs', reward.is_active ? 'badge-lavender' : 'badge-muted']">
                             {{ reward.is_active ? 'Active' : 'Inactive' }}
                         </span>
                     </div>
 
-                    <!-- Image Area (Compact) -->
-                    <div class="h-28 bg-slate-50 dark:bg-white/[0.02] relative overflow-hidden group-hover:bg-purple-50 dark:group-hover:bg-purple-900/10 transition-colors shrink-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-                        <img v-if="reward.image_url" :src="reward.image_url" class="object-cover w-full h-full opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700 ease-out" @error="handleImageError" />
+                    <!-- Image -->
+                    <div class="item-image-wrap">
+                        <img v-if="reward.image_url"
+                            :src="reward.image_url"
+                            class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
+                            @error="handleImageError" />
                         <div v-else class="w-full h-full flex items-center justify-center">
-                            <Gift class="w-8 h-8 text-slate-300 dark:text-gray-700 group-hover:text-purple-400 transition-colors" />
+                            <Gift class="w-8 h-8 text-platinum-300 dark:text-abyss-500" />
                         </div>
                     </div>
 
                     <!-- Content -->
-                    <div class="p-3 flex flex-col flex-1 gap-2">
-                        <div class="min-h-[2.5rem]">
-                            <h3 class="text-xs font-[900] text-slate-900 dark:text-white uppercase italic tracking-tighter leading-none mb-1 line-clamp-2 group-hover:text-purple-600 transition-colors">
-                                {{ reward.title || 'Unnamed' }}
+                    <div class="p-3.5 flex flex-col flex-1 gap-3">
+                        <div class="space-y-1">
+                            <h3 class="font-bold text-sm text-slate-800 dark:text-platinum-100 line-clamp-2 leading-snug group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+                                {{ reward.title || 'Unnamed Reward' }}
                             </h3>
-                            <div class="flex items-center justify-between text-[9px] font-[900] text-slate-400 uppercase tracking-wider italic">
-                                <span>{{ reward.xp_required }} XP</span>
-                                <span>{{ reward.stock_quantity > 900 ? '∞' : reward.stock_quantity }} Left</span>
+                            <div class="flex items-center justify-between">
+                                <span class="field-subtext font-medium text-calm-lavender-600 dark:text-calm-lavender-400">
+                                    {{ reward.xp_required }} XP
+                                </span>
+                                <span class="field-subtext">
+                                    {{ reward.stock_quantity > 900 ? '∞' : reward.stock_quantity }} left
+                                </span>
                             </div>
                         </div>
 
-                        <!-- Dense Actions -->
-                        <div class="mt-auto pt-2 border-t border-slate-100 dark:border-white/5 grid grid-cols-3 gap-1">
-                            <button @click="editReward(reward)" class="flex items-center justify-center py-1.5 bg-slate-100 dark:bg-white/5 hover:bg-purple-500/10 text-slate-500 hover:text-purple-600 rounded-lg transition-colors" title="Edit">
-                                <span class="text-[8px] font-[900] uppercase">Edit</span>
+                        <!-- Actions -->
+                        <div class="mt-auto pt-2.5 border-t border-platinum-200 dark:border-abyss-500 grid grid-cols-3 gap-1.5">
+                            <button @click="editReward(reward)"
+                                class="flex items-center justify-center py-1.5 rounded-lg text-xs font-medium bg-slate-100 dark:bg-abyss-600 hover:bg-calm-lavender-50 dark:hover:bg-calm-lavender-900/20 text-slate-500 dark:text-platinum-400 hover:text-calm-lavender-600 dark:hover:text-calm-lavender-400 border border-slate-200 dark:border-abyss-500 transition-all"
+                                title="Edit">
+                                Edit
                             </button>
-                            <button @click="toggleActive(reward)" 
-                                :class="['flex items-center justify-center py-1.5 rounded-lg transition-colors',
-                                reward.is_active ? 'bg-purple-50 dark:bg-purple-500/10 text-purple-600 hover:bg-purple-100' : 'bg-slate-100 dark:bg-white/5 text-slate-400 hover:text-slate-600']" 
+                            <button @click="toggleActive(reward)"
+                                :class="['flex items-center justify-center py-1.5 rounded-lg text-xs font-medium border transition-all',
+                                    reward.is_active
+                                        ? 'bg-calm-lavender-50 dark:bg-calm-lavender-900/20 text-calm-lavender-600 dark:text-calm-lavender-400 border-calm-lavender-200 dark:border-calm-lavender-800/40'
+                                        : 'bg-slate-100 dark:bg-abyss-600 text-slate-400 dark:text-platinum-500 border-slate-200 dark:border-abyss-500 hover:text-slate-600']"
                                 :title="reward.is_active ? 'Deactivate' : 'Activate'">
-                                <CheckCircle v-if="reward.is_active" class="w-3 h-3" />
-                                <span v-else class="text-[8px] font-[900] uppercase">On</span>
+                                <CheckCircle v-if="reward.is_active" class="w-3.5 h-3.5" />
+                                <span v-else>On</span>
                             </button>
-                            <button @click="deleteReward(reward)" class="flex items-center justify-center py-1.5 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 rounded-lg transition-colors" title="Delete">
-                                <Trash2 class="w-3 h-3" />
+                            <!-- Delete — opens ConfirmModal instead of browser confirm() -->
+                            <button @click="promptDelete(reward)"
+                                class="flex items-center justify-center py-1.5 rounded-lg text-xs font-medium bg-red-50 dark:bg-red-900/20 hover:bg-red-500 hover:text-white text-red-500 border border-red-200 dark:border-red-800/40 transition-all"
+                                title="Delete">
+                                <Trash2 class="w-3.5 h-3.5" />
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Loading State -->
-            <div v-if="isLoading" class="py-32 text-center">
-                <div class="inline-flex p-6 bg-slate-100 dark:bg-white/5 rounded-[2.5rem] mb-6 animate-pulse">
-                    <Loader2 class="w-12 h-12 text-purple-500 animate-spin" />
-                </div>
-                <h3 class="text-2xl font-[900] uppercase tracking-tighter italic text-slate-400">Loading Rewards...</h3>
-            </div>
+            <!-- Pagination Bar -->
+            <AppPagination
+                v-model="currentPage"
+                :total="sortedRewards.length"
+                :page-size="PAGE_SIZE"
+                item-label="rewards"
+            />
 
-            <!-- Empty State -->
-            <div v-if="!isLoading && rewards.length === 0" class="py-32 text-center">
-                <div class="inline-flex p-6 bg-slate-100 dark:bg-white/5 rounded-[2.5rem] mb-6 shadow-inner">
-                    <Gift class="w-12 h-12 text-slate-300 dark:text-gray-700" />
-                </div>
-                <h3 class="text-2xl font-[900] uppercase tracking-tighter italic text-slate-400">No Rewards Yet</h3>
-                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mt-2 italic mb-8">
-                    Create your first reward for students to claim.
-                </p>
-                <button @click="openCreateModal" 
-                    class="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white rounded-2xl text-[10px] font-[900] uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-xl italic">
-                    <Plus class="w-4 h-4" />
-                    Create First Reward
-                </button>
-            </div>
         </div>
 
-        <!-- Create/Edit Modal -->
+        <!-- Loading State -->
+        <div v-if="isLoading" class="empty-state">
+            <div class="empty-state-icon">
+                <Loader2 class="w-8 h-8 text-calm-lavender-400 animate-spin" />
+            </div>
+            <p class="empty-state-title">Loading rewards...</p>
+            <p class="empty-state-desc">Fetching your reward catalogue, hang tight.</p>
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="!isLoading && rewards.length === 0" class="empty-state">
+            <div class="empty-state-icon">
+                <Gift class="w-8 h-8 text-platinum-400" />
+            </div>
+            <p class="empty-state-title">No rewards yet</p>
+            <p class="empty-state-desc">Create your first reward so students can start claiming them.</p>
+            <button @click="openCreateModal" class="btn-primary mx-auto mt-5">
+                <Plus class="w-4 h-4" />
+                <span>Create First Reward</span>
+            </button>
+        </div>
+
+        <!-- ── Create / Edit Modal ─────────────────────────── -->
         <Teleport to="body">
             <Transition name="fade">
-                <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div class="absolute inset-0 bg-black/60 backdrop-blur-md" @click="closeModal"></div>
-                    <div class="relative bg-white dark:bg-[#12101c] border border-slate-200 dark:border-white/10 rounded-[3rem] p-10 max-w-lg w-full shadow-2xl custom-font-poppins max-h-[90vh] overflow-y-auto">
-                        
-                        <h3 class="text-2xl font-black text-black dark:text-white uppercase tracking-tighter mb-8">
-                            {{ editingReward ? 'Edit Reward' : 'Create Reward' }}
+                <div v-if="showModal" class="modal-overlay">
+                    <div class="absolute inset-0 bg-slate-900/50" @click="closeModal"></div>
+
+                    <div class="modal-panel relative max-h-[90vh] overflow-y-auto w-full max-w-lg">
+
+                        <h3 class="modal-title text-lg font-bold">
+                            {{ editingReward ? 'Edit Reward' : 'Create New Reward' }}
                         </h3>
 
-                        <form @submit.prevent="saveReward" class="space-y-6">
-                            <!-- Name -->
+                        <form @submit.prevent="saveReward" class="space-y-5">
+
+                            <!-- Reward Name -->
                             <div>
-                                <label class="block text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic mb-2">Reward Name *</label>
+                                <label class="field-label block mb-1.5">Reward Name *</label>
                                 <input v-model="form.name" type="text" required
-                                    class="w-full px-5 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white font-bold focus:border-purple-500 focus:outline-none transition-all"
+                                    class="input-field"
                                     placeholder="e.g., Free Snack Voucher" />
                             </div>
 
                             <!-- Description -->
                             <div>
-                                <label class="block text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic mb-2">Description</label>
+                                <label class="field-label block mb-1.5">Description</label>
                                 <textarea v-model="form.description" rows="3"
-                                    class="w-full px-5 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white font-bold focus:border-purple-500 focus:outline-none transition-all resize-none"
+                                    class="input-field resize-none"
                                     placeholder="Describe the reward..."></textarea>
                             </div>
 
-                            <!-- XP Cost -->
-                            <div>
-                                <label class="block text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic mb-2">XP Cost *</label>
-                                <input v-model.number="form.cost_xp" type="number" min="0" required
-                                    class="w-full px-5 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white font-bold focus:border-purple-500 focus:outline-none transition-all"
-                                    placeholder="100" />
-                            </div>
-
-                            <!-- Total Slots -->
-                            <div>
-                                <label class="block text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic mb-2">Total Slots (0 = Unlimited)</label>
-                                <input v-model.number="form.total_slots" type="number" min="0"
-                                    class="w-full px-5 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white font-bold focus:border-purple-500 focus:outline-none transition-all"
-                                    placeholder="10" />
+                            <!-- XP Cost & Total Slots (2-col) -->
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="field-label block mb-1.5">XP Cost *</label>
+                                    <input v-model.number="form.cost_xp" type="number" min="0" required
+                                        class="input-field"
+                                        placeholder="100" />
+                                </div>
+                                <div>
+                                    <label class="field-label block mb-1.5">Total Slots</label>
+                                    <input v-model.number="form.total_slots" type="number" min="0"
+                                        class="input-field"
+                                        placeholder="0 = Unlimited" />
+                                </div>
                             </div>
 
                             <!-- Image URL -->
                             <div>
-                                <label class="block text-[10px] font-[900] text-slate-400 uppercase tracking-widest italic mb-2">Image URL (Optional)</label>
+                                <label class="field-label block mb-1.5">Image URL <span class="font-normal opacity-60">(optional)</span></label>
                                 <input v-model="form.iconPath" type="text"
-                                    class="w-full px-5 py-4 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-slate-900 dark:text-white font-bold focus:border-purple-500 focus:outline-none transition-all"
+                                    class="input-field"
                                     placeholder="/uploads/rewards/image.png" />
                             </div>
 
                             <!-- Active Toggle -->
-                            <div class="flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 rounded-2xl">
-                                <span class="text-sm font-[900] text-slate-600 dark:text-gray-400 uppercase italic">Active for Students</span>
+                            <div class="info-row">
+                                <div>
+                                    <p class="text-sm font-medium text-slate-700 dark:text-platinum-200">Visible to Students</p>
+                                    <p class="field-subtext mt-0.5">Students can see and claim this reward.</p>
+                                </div>
                                 <button type="button" @click="form.is_active = !form.is_active"
-                                    :class="['relative w-14 h-8 rounded-full transition-all',
-                                        form.is_active ? 'bg-purple-500' : 'bg-slate-300 dark:bg-white/20']">
-                                    <span :class="['absolute top-1 w-6 h-6 bg-white rounded-full shadow transition-all',
-                                        form.is_active ? 'left-7' : 'left-1']"></span>
+                                    :class="['relative w-12 h-6 rounded-full transition-all shrink-0',
+                                        form.is_active ? 'bg-calm-lavender-500' : 'bg-platinum-300 dark:bg-abyss-400']">
+                                    <span :class="['absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all',
+                                        form.is_active ? 'left-6' : 'left-0.5']"></span>
                                 </button>
                             </div>
 
-                            <!-- Actions -->
-                            <div class="flex gap-4 pt-4">
-                                <button type="button" @click="closeModal"
-                                    class="flex-1 py-4 bg-slate-100 dark:bg-white/5 rounded-2xl text-slate-600 dark:text-gray-400 text-[10px] font-[900] uppercase tracking-widest hover:bg-slate-200 transition-all italic">
+                            <!-- Form Actions -->
+                            <div class="flex gap-3 pt-2">
+                                <button type="button" @click="closeModal" class="btn-secondary flex-1 justify-center">
                                     Cancel
                                 </button>
-                                <button type="submit" :disabled="isSaving"
-                                    class="flex-1 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white rounded-2xl text-[10px] font-[900] uppercase tracking-widest shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all italic disabled:opacity-50">
-                                    {{ isSaving ? 'Saving...' : (editingReward ? 'Update' : 'Create') }}
+                                <button type="submit" :disabled="isSaving" class="btn-primary flex-1 justify-center disabled:opacity-50">
+                                    {{ isSaving ? 'Saving...' : (editingReward ? 'Update Reward' : 'Create Reward') }}
                                 </button>
                             </div>
+
                         </form>
                     </div>
                 </div>
             </Transition>
         </Teleport>
+
+        <!-- ── Delete Confirmation Modal ──────────────────────
+             Global ConfirmModal from @/components/ui
+             Handles its own Teleport internally
+        ─────────────────────────────────────────────────────── -->
+        <ConfirmModal
+            :is-open="showDeleteModal"
+            variant="danger"
+            title="Delete Reward?"
+            :message="`You are about to permanently remove &quot;${rewardToDelete?.title || rewardToDelete?.name || 'this reward'}&quot;.`"
+            warning-text="This will also remove the reward from all student inventories and cannot be undone."
+            confirm-label="Delete Reward"
+            cancel-label="Cancel"
+            :loading="isDeleting"
+            @confirm="confirmDelete"
+            @cancel="cancelDelete"
+        />
+
     </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { Gift, Plus, Package, CheckCircle, Users, Trash2, Loader2 } from 'lucide-vue-next';
+import { ref, computed, onMounted, watch } from 'vue';
+import { Gift, Plus, Package, CheckCircle, Users, Trash2, Loader2, ArrowUpDown } from 'lucide-vue-next';
 import { useToast } from '@/utils/useToast';
 import axios from '@/utils/api';
+import AppPagination from '@/components/ui/AppPagination.vue';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const toast = useToast();
 const rewards = ref([]);
@@ -245,8 +298,54 @@ const form = ref({
     is_active: true
 });
 
+// ── Delete confirm state ─────────────────────────────────────
+const showDeleteModal = ref(false);
+const rewardToDelete = ref(null);
+const isDeleting = ref(false);
+
 const activeCount = computed(() => rewards.value.filter(r => r.is_active).length);
 const totalClaims = computed(() => rewards.value.reduce((sum, r) => sum + (r.claimed_count || 0), 0));
+
+// ── Sorting ─────────────────────────────────────────────────
+const SORT_OPTIONS = [
+    { key: 'default',    dir: 'asc',  label: 'Default' },
+    { key: 'xp',        dir: 'desc', label: 'XP: High → Low' },
+    { key: 'xp',        dir: 'asc',  label: 'XP: Low → High' },
+    { key: 'stock',     dir: 'desc', label: 'Stock: High → Low' },
+    { key: 'stock',     dir: 'asc',  label: 'Stock: Low → High' },
+    { key: 'active',    dir: 'desc', label: 'Active first' },
+    { key: 'active',    dir: 'asc',  label: 'Inactive first' },
+];
+const activeSortIndex = ref(0);
+
+const setSort = (index) => {
+    activeSortIndex.value = index;
+    currentPage.value = 1;
+};
+
+const sortedRewards = computed(() => {
+    const opt = SORT_OPTIONS[activeSortIndex.value];
+    if (opt.key === 'default') return [...rewards.value];
+    return [...rewards.value].sort((a, b) => {
+        let aVal, bVal;
+        if (opt.key === 'xp')     { aVal = a.xp_required    ?? 0; bVal = b.xp_required    ?? 0; }
+        if (opt.key === 'stock')  { aVal = a.stock_quantity  ?? 0; bVal = b.stock_quantity  ?? 0; }
+        if (opt.key === 'active') { aVal = a.is_active ? 1 : 0;    bVal = b.is_active ? 1 : 0;   }
+        return opt.dir === 'desc' ? bVal - aVal : aVal - bVal;
+    });
+});
+
+// ── Pagination ──────────────────────────────────────────────
+const PAGE_SIZE = 5;
+const currentPage = ref(1);
+
+const paginatedRewards = computed(() => {
+    const start = (currentPage.value - 1) * PAGE_SIZE;
+    return sortedRewards.value.slice(start, start + PAGE_SIZE);
+});
+
+// Reset to page 1 whenever rewards list changes
+watch(() => rewards.value.length, () => { currentPage.value = 1; });
 
 const handleImageError = (event) => {
     event.target.style.display = 'none';
@@ -255,12 +354,10 @@ const handleImageError = (event) => {
 const loadRewards = async () => {
     isLoading.value = true;
     try {
-        // Get ALL rewards (including inactive) for facilitator management
         const { data } = await axios.get('/api/rewards/all');
         rewards.value = data.rewards || [];
     } catch (err) {
         console.error('Failed to load rewards:', err);
-        // Fallback to available rewards if all endpoint fails
         try {
             const { data } = await axios.get('/api/rewards/available');
             rewards.value = data || [];
@@ -334,15 +431,33 @@ const toggleActive = async (reward) => {
     }
 };
 
-const deleteReward = async (reward) => {
-    if (!confirm(`Delete "${reward.title || reward.name}"? This will also remove it from all student inventories.`)) return;
-    
+// ── Delete flow ──────────────────────────────────────────────
+// Step 1: user clicks trash icon → open modal
+const promptDelete = (reward) => {
+    rewardToDelete.value = reward;
+    showDeleteModal.value = true;
+};
+
+// Step 2: user clicks Cancel in modal
+const cancelDelete = () => {
+    showDeleteModal.value = false;
+    rewardToDelete.value = null;
+};
+
+// Step 3: user clicks Delete Reward in modal
+const confirmDelete = async () => {
+    if (!rewardToDelete.value) return;
+    isDeleting.value = true;
     try {
-        await axios.delete(`/api/rewards/${reward.id}`);
+        await axios.delete(`/api/rewards/${rewardToDelete.value.id}`);
         toast.success('Reward deleted');
         loadRewards();
     } catch (err) {
         toast.error('Failed to delete reward');
+    } finally {
+        isDeleting.value = false;
+        showDeleteModal.value = false;
+        rewardToDelete.value = null;
     }
 };
 
@@ -350,25 +465,14 @@ onMounted(loadRewards);
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap');
+@reference "@/style.css";
 
-.custom-font-poppins {
-    font-family: 'Poppins', sans-serif !important;
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.25s ease;
 }
-
-.animate-in {
-    animation: slideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(30px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.fade-enter-active, .fade-leave-active {
-    transition: opacity 0.3s ease;
-}
-.fade-enter-from, .fade-leave-to {
+.fade-enter-from,
+.fade-leave-to {
     opacity: 0;
 }
 </style>

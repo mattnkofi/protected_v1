@@ -2,22 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const QuizController = require('../controller/QuizController');
-const { authenticate } = require('../middleware/AuthMiddleware');
-
-/**
- * Middleware para sa Role-based Access Control
- */
-const requireRole = (roles) => {
-    return (req, res, next) => {
-        const allowedRoles = Array.isArray(roles) ? roles : [roles];
-        if (req.user && allowedRoles.includes(req.user.role)) {
-            return next();
-        }
-        return res.status(403).json({ 
-            message: 'Access denied: You do not have the required permissions.' 
-        });
-    };
-};
+const { authenticate, requireRole } = require('../middleware/AuthMiddleware');
 
 // ===== Authenticated Routes Middleware =====
 router.use(authenticate);

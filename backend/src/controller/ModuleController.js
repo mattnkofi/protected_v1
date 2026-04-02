@@ -216,7 +216,8 @@ async getModuleById(req, res, next) {
             const module = await Module.findByPk(id);
             if (!module) return res.status(404).json({ success: false, message: 'Module not found' });
 
-            if (module.created_by !== req.user.id && req.user.role !== 'admin') {
+            const isOwner = Number(module.created_by) === Number(req.user.id);
+            if (!isOwner && req.user.role !== 'admin') {
                 return res.status(403).json({ success: false, message: 'You do not have permission to edit this module' });
             }
 
@@ -233,7 +234,8 @@ async getModuleById(req, res, next) {
             const module = await Module.findByPk(id);
             if (!module) return res.status(404).json({ success: false, message: 'Module not found' });
 
-            if (module.created_by !== req.user.id && req.user.role !== 'admin') {
+            const isOwner = Number(module.created_by) === Number(req.user.id);
+            if (!isOwner && req.user.role !== 'admin') {
                 return res.status(403).json({ success: false, message: 'Permission denied' });
             }
 

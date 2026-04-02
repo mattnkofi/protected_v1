@@ -1,602 +1,609 @@
 <template>
-    <div class="space-y-8 custom-font-poppins animate-in fade-in duration-700 text-black dark:text-white transition-colors">
-        <!-- Header -->
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 dark:border-white/10 pb-8">
-            <div>
-                <div class="flex items-center gap-2 mb-3">
-                    <div class="h-1 w-8 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-full shadow-[0_2px_10px_rgba(139,92,246,0.4)]"></div>
-                    <span class="text-[9px] font-black tracking-[0.3em] text-purple-600 dark:text-purple-400 uppercase italic">Student Management</span>
-                </div>
-                <h1 class="text-3xl md:text-4xl font-[900] text-black dark:text-white uppercase tracking-tighter leading-tight italic">
-                    Students <span class="bg-gradient-to-r from-purple-600 via-fuchsia-500 to-purple-500 bg-clip-text text-transparent">Directory</span>
+    <span class="contents">
+    <div class="page-wrapper animate-in font-poppins">
+
+        <!-- ═══════════════════════════════════════════════════
+             HEADER
+        ════════════════════════════════════════════════════ -->
+        <header class="page-header">
+            <div class="space-y-1.5">
+                <p class="section-eyebrow">Student Management</p>
+                <h1 class="page-title tracking-wide">
+                    Students <span class="brand-gradient-text">Directory</span>
                 </h1>
+                <p class="page-subtitle">Monitor and manage student accounts and progress.</p>
             </div>
 
-            <div class="flex items-center gap-3">
-                <!-- Bulk Actions -->
+            <div class="flex items-center gap-3 flex-wrap shrink-0">
+                <!-- Bulk action bar (shown when students are selected) -->
                 <div v-if="selectedStudents.length > 0" class="flex items-center gap-2">
-                    <span class="text-[10px] font-bold text-slate-500">{{ selectedStudents.length }} selected</span>
-                    <button 
-                        @click="showBulkActionModal = true" 
-                        class="flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 rounded-xl text-[10px] font-bold text-white uppercase"
+                    <span class="font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">
+                        {{ selectedStudents.length }} selected
+                    </span>
+                    <button
+                        @click="showBulkActionModal = true"
+                        class="btn-primary btn-3d !bg-vawc-orange-500 !border-vawc-orange-600 !border-b-vawc-orange-700 hover:!bg-vawc-orange-600"
                     >
-                        <ZapIcon class="h-3 w-3" />
+                        <ZapIcon class="h-4 w-4" />
                         Bulk Actions
                     </button>
-                    <button 
-                        @click="selectedStudents = []" 
-                        class="p-2 bg-slate-100 dark:bg-white/5 rounded-xl hover:bg-slate-200 dark:hover:bg-white/10"
+                    <button
+                        @click="selectedStudents = []"
+                        class="p-2 rounded-xl bg-platinum-200 dark:bg-abyss-600 border-2 border-platinum-300 dark:border-abyss-500 text-platinum-600 hover:text-red-500 transition-colors"
                     >
-                        <XIcon class="h-4 w-4 text-slate-500" />
+                        <XIcon class="h-4 w-4" />
                     </button>
                 </div>
-                <button 
-                    @click="exportStudents" 
-                    :disabled="isExporting"
-                    class="flex items-center gap-2 px-5 py-3 bg-purple-600 hover:bg-purple-700 border border-purple-500 rounded-2xl shadow-lg hover:shadow-purple-500/20 transition-all group disabled:opacity-50"
-                >
-                    <DownloadIcon class="h-4 w-4 text-white" :class="{ 'animate-pulse': isExporting }" />
-                    <span class="text-[10px] font-[900] tracking-widest text-white uppercase italic">{{ isExporting ? 'Generating...' : 'Export PDF' }}</span>
-                </button>
-                <button 
-                    @click="refreshStudents" 
-                    class="flex items-center gap-2 px-5 py-3 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl hover:border-purple-500/50 transition-all group"
-                >
-                    <RefreshCwIcon class="h-4 w-4 text-slate-500 group-hover:rotate-180 transition-transform duration-500" />
-                    <span class="text-[10px] font-[900] tracking-widest text-slate-600 dark:text-gray-300 uppercase italic">Refresh</span>
+
+                <GenerateReport
+                    endpoint="/api/v1/admin/students/export"
+                    filename="ProtectEd_Students_{date}"
+                    title="Download Students Report"
+                    description="Exports all student records as a PDF"
+                    trigger-label="Export PDF"
+                    :includes="[
+                        'Student List',
+                        'Account Status',
+                        'Gamification Level',
+                        'Experience Points',
+                        'Current Title',
+                        'Quiz Attempts',
+                        'Badges Earned',
+                        'Join Date',
+                    ]"
+                    note="Report reflects all students currently in the system regardless of current filters or search."
+                />
+
+                <button @click="refreshStudents" class="btn-secondary btn-3d--secondary">
+                    <RefreshCwIcon class="h-4 w-4" />
+                    <span>Refresh</span>
                 </button>
             </div>
         </header>
 
-        <!-- Stats Overview -->
+        <!-- ═══════════════════════════════════════════════════
+             STATS ROW
+             L1 layer: platinum-100 / abyss-700
+        ════════════════════════════════════════════════════ -->
         <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-            <div class="bg-white dark:bg-[#0d0d15]/60 border border-slate-200 dark:border-white/10 rounded-2xl p-5">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 rounded-xl bg-purple-500/10">
-                        <UsersIcon class="h-5 w-5 text-purple-600" />
-                    </div>
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Total</span>
+
+            <div class="stat-tile">
+                <div class="ds-icon-badge ds-icon-badge--lavender mb-3">
+                    <UsersIcon class="h-4 w-4" />
                 </div>
-                <p class="text-2xl font-[900] text-black dark:text-white">{{ studentStats.total }}</p>
+                <p class="stat-tile__label">Total</p>
+                <p class="stat-tile__value">{{ studentStats.total }}</p>
             </div>
-            <div class="bg-white dark:bg-[#0d0d15]/60 border border-slate-200 dark:border-white/10 rounded-2xl p-5">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 rounded-xl bg-green-500/10">
-                        <CheckCircleIcon class="h-5 w-5 text-green-600" />
-                    </div>
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Active</span>
+
+            <div class="stat-tile">
+                <div class="ds-icon-badge ds-icon-badge--teal mb-3">
+                    <CheckCircleIcon class="h-4 w-4" />
                 </div>
-                <p class="text-2xl font-[900] text-black dark:text-white">{{ studentStats.active }}</p>
+                <p class="stat-tile__label">Active</p>
+                <p class="stat-tile__value">{{ studentStats.active }}</p>
             </div>
-            <div class="bg-white dark:bg-[#0d0d15]/60 border border-slate-200 dark:border-white/10 rounded-2xl p-5">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 rounded-xl bg-amber-500/10">
-                        <PauseCircleIcon class="h-5 w-5 text-amber-600" />
-                    </div>
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Suspended</span>
+
+            <div class="stat-tile">
+                <div class="ds-icon-badge ds-icon-badge--orange mb-3">
+                    <PauseCircleIcon class="h-4 w-4" />
                 </div>
-                <p class="text-2xl font-[900] text-black dark:text-white">{{ studentStats.suspended }}</p>
+                <p class="stat-tile__label">Suspended</p>
+                <p class="stat-tile__value">{{ studentStats.suspended }}</p>
             </div>
-            <div class="bg-white dark:bg-[#0d0d15]/60 border border-slate-200 dark:border-white/10 rounded-2xl p-5">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 rounded-xl bg-red-500/10">
-                        <BanIcon class="h-5 w-5 text-red-600" />
-                    </div>
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Banned</span>
+
+            <div class="stat-tile">
+                <div class="ds-icon-badge ds-icon-badge--red mb-3">
+                    <BanIcon class="h-4 w-4" />
                 </div>
-                <p class="text-2xl font-[900] text-black dark:text-white">{{ studentStats.banned }}</p>
+                <p class="stat-tile__label">Banned</p>
+                <p class="stat-tile__value">{{ studentStats.banned }}</p>
             </div>
-            <div class="bg-white dark:bg-[#0d0d15]/60 border border-slate-200 dark:border-white/10 rounded-2xl p-5">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="p-2 rounded-xl bg-fuchsia-500/10">
-                        <TrendingUpIcon class="h-5 w-5 text-fuchsia-600" />
-                    </div>
-                    <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Avg XP</span>
+
+            <div class="stat-tile">
+                <div class="ds-icon-badge ds-icon-badge--pink mb-3">
+                    <TrendingUpIcon class="h-4 w-4" />
                 </div>
-                <p class="text-2xl font-[900] text-black dark:text-white">{{ studentStats.avgXp.toLocaleString() }}</p>
+                <p class="stat-tile__label">Avg XP</p>
+                <p class="stat-tile__value">{{ studentStats.avgXp.toLocaleString() }}</p>
             </div>
+
         </div>
 
-        <!-- Students Table Card -->
-        <div class="bg-white/90 dark:bg-[#0d0d15]/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 shadow-lg">
-            <!-- Search and Filters -->
+        <!-- ═══════════════════════════════════════════════════
+             TABLE PANEL
+             L1 layer: platinum-100 / abyss-700
+        ════════════════════════════════════════════════════ -->
+        <div class="table-panel">
+
+            <!-- Panel header: title + search + filter -->
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
                 <div class="flex items-center gap-3">
-                    <div class="h-6 w-1 bg-purple-600 rounded-full"></div>
-                    <h3 class="text-lg font-[900] text-black dark:text-white uppercase tracking-tighter italic">All Students</h3>
-                    <span class="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-[8px] font-[900] uppercase tracking-widest rounded-full italic">
-                        {{ pagination.total }} Total
-                    </span>
+                    <h3 class="font-bold text-base text-abyss-800 dark:text-platinum-100">All Students</h3>
+                    <span class="badge badge-lavender">{{ pagination.total }} Total</span>
                 </div>
+
                 <div class="flex items-center gap-3 w-full md:w-auto">
+                    <!-- Search -->
                     <div class="relative flex-1 md:flex-initial">
-                        <input 
-                            v-model="searchQuery" 
+                        <input
+                            v-model="searchQuery"
                             @input="searchStudentsDebounced"
-                            type="text" 
-                            placeholder="Search by name or email..." 
-                            class="pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-black dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500/50 w-full md:w-72"
+                            type="text"
+                            placeholder="Search by name or email…"
+                            class="input-field !pl-10 !py-2.5 w-full md:w-72
+                                   placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
                         />
-                        <SearchIcon class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                        <SearchIcon class="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4
+                                           text-platinum-500 pointer-events-none" />
                     </div>
-                    <select 
-                        v-model="filterStatus" 
-                        @change="fetchStudents(1)"
-                        class="px-4 py-2.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-sm text-black dark:text-white focus:outline-none focus:border-purple-500/50"
-                    >
-                        <option value="all">All Status</option>
-                        <option value="active">Active</option>
-                        <option value="suspended">Suspended</option>
-                        <option value="banned">Banned</option>
-                        <option value="deactivated">Deactivated</option>
-                    </select>
-                </div>
-            </div>
-            
-            <!-- Loading State -->
-            <div v-if="isLoading" class="flex items-center justify-center py-16">
-                <div class="relative h-10 w-10 text-purple-600">
-                    <div class="absolute inset-0 rounded-full border-2 border-current opacity-10"></div>
-                    <div class="absolute inset-0 rounded-full border-2 border-t-transparent animate-spin"></div>
+
+                    <!-- Status filter -->
+                    <div class="ds-select-wrap shrink-0">
+                        <select v-model="filterStatus" @change="resetAndFetch" class="ds-select !py-2.5">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="suspended">Suspended</option>
+                            <option value="banned">Banned</option>
+                            <option value="deactivated">Deactivated</option>
+                        </select>
+                        <ChevronDownIcon class="ds-select-icon" />
+                    </div>
                 </div>
             </div>
 
-            <!-- Empty State -->
-            <div v-else-if="students.length === 0" class="text-center py-16">
-                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-slate-100 dark:bg-white/5 flex items-center justify-center">
-                    <UsersIcon class="h-10 w-10 text-slate-300 dark:text-slate-600" />
-                </div>
-                <h4 class="text-lg font-bold text-black dark:text-white mb-2">No Students Found</h4>
-                <p class="text-slate-400 text-sm italic">{{ searchQuery ? 'Try adjusting your search terms' : 'No students have registered yet' }}</p>
+            <!-- Loading -->
+            <div v-if="isLoading" class="flex flex-col items-center justify-center py-20 gap-4">
+                <div class="spinner"></div>
+                <p class="loading-text">Loading students…</p>
             </div>
-            
+
+            <!-- Empty -->
+            <div v-else-if="students.length === 0" class="empty-state">
+                <div class="empty-state-icon">
+                    <UsersIcon class="w-8 h-8 text-platinum-400" />
+                </div>
+                <p class="empty-state-title">No Students Found</p>
+                <p class="empty-state-desc">
+                    {{ searchQuery ? 'Try adjusting your search terms.' : 'No students have registered yet.' }}
+                </p>
+            </div>
+
             <!-- Table -->
             <div v-else class="overflow-x-auto" :class="{ 'overflow-visible': activeActionMenu !== null }">
-                <table class="w-full">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-slate-200 dark:border-white/10">
-                            <th class="py-3 px-2 w-10">
-                                <input 
-                                    type="checkbox" 
+                        <tr class="border-b-2 border-platinum-200 dark:border-abyss-600">
+                            <!-- Select all -->
+                            <th class="th-cell w-10">
+                                <input
+                                    type="checkbox"
                                     :checked="selectedStudents.length === students.length && students.length > 0"
                                     @change="toggleSelectAll"
-                                    class="rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+                                    class="rounded border-platinum-400 dark:border-abyss-400
+                                           text-calm-lavender-600 focus:ring-calm-lavender-400"
                                 />
                             </th>
-                            <th class="text-left py-3 px-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Student</th>
-                            <th class="text-left py-3 px-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Title</th>
-                            <th class="text-center py-3 px-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Level</th>
-                            <th class="text-right py-3 px-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">XP</th>
-                            <th class="text-center py-3 px-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Account Status</th>
-                            <th class="text-center py-3 px-4 text-[9px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
+                            <th class="th-cell">Student</th>
+                            <th class="th-cell">Title</th>
+                            <th class="th-cell text-center">Level</th>
+                            <th class="th-cell text-right">XP</th>
+                            <th class="th-cell text-center">Status</th>
+                            <th class="th-cell text-center">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr 
-                            v-for="student in students" 
-                            :key="student.id" 
-                            class="border-b border-slate-100 dark:border-white/5 hover:bg-purple-500/5 transition-colors"
-                            :class="{ 'bg-purple-500/10': selectedStudents.includes(student.id) }"
+                    <tbody class="divide-y divide-platinum-200 dark:divide-abyss-600">
+                        <tr
+                            v-for="student in students"
+                            :key="student.id"
+                            class="group transition-colors duration-150"
+                            :class="selectedStudents.includes(student.id)
+                                ? 'bg-calm-lavender-50 dark:bg-calm-lavender-900/10'
+                                : 'hover:bg-platinum-200 dark:hover:bg-abyss-600'"
                         >
-                            <td class="py-4 px-2">
-                                <input 
-                                    type="checkbox" 
+                            <!-- Checkbox -->
+                            <td class="td-cell">
+                                <input
+                                    type="checkbox"
                                     :checked="selectedStudents.includes(student.id)"
                                     @change="toggleSelectStudent(student.id)"
-                                    class="rounded border-slate-300 text-purple-600 focus:ring-purple-500"
+                                    class="rounded border-platinum-400 dark:border-abyss-400
+                                           text-calm-lavender-600 focus:ring-calm-lavender-400"
                                 />
                             </td>
-                            <td class="py-4 px-4">
+
+                            <!-- Student -->
+                            <td class="td-cell">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center text-white text-xs font-bold uppercase shadow-lg">
+                                    <div class="w-9 h-9 rounded-xl bg-calm-lavender-100 dark:bg-calm-lavender-900/30
+                                                border-2 border-calm-lavender-200 dark:border-calm-lavender-800/40
+                                                flex items-center justify-center shrink-0
+                                                text-calm-lavender-700 dark:text-calm-lavender-300
+                                                text-xs font-semibold uppercase">
                                         {{ getInitials(student.name) }}
                                     </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-black dark:text-white">{{ student.name }}</p>
-                                        <p class="text-[10px] text-slate-400">{{ student.email }}</p>
+                                    <div class="min-w-0">
+                                        <p class="font-semibold text-sm text-abyss-800 dark:text-platinum-100 truncate
+                                                   group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+                                            {{ student.name }}
+                                        </p>
+                                        <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500 truncate">
+                                            {{ student.email }}
+                                        </p>
                                     </div>
                                 </div>
                             </td>
-                            <td class="py-4 px-4">
-                                <span class="px-3 py-1.5 bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[10px] font-bold rounded-full">
-                                    {{ student.title }}
-                                </span>
+
+                            <!-- Title -->
+                            <td class="td-cell">
+                                <span class="badge badge-lavender text-xs">{{ student.title }}</span>
                             </td>
-                            <td class="py-4 px-4 text-center">
-                                <span class="inline-flex items-center justify-center w-8 h-8 bg-slate-100 dark:bg-white/10 rounded-full text-sm font-bold text-black dark:text-white">
+
+                            <!-- Level -->
+                            <td class="td-cell text-center">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-xl
+                                             bg-platinum-200 dark:bg-abyss-600
+                                             border-2 border-platinum-300 dark:border-abyss-500
+                                             text-sm font-semibold text-abyss-800 dark:text-platinum-200">
                                     {{ student.level }}
                                 </span>
                             </td>
-                            <td class="py-4 px-4 text-right">
-                                <span class="text-sm font-bold text-yellow-600 dark:text-yellow-400">{{ student.xp.toLocaleString() }} XP</span>
+
+                            <!-- XP -->
+                            <td class="td-cell text-right">
+                                <span class="font-semibold text-sm text-vawc-orange-600 dark:text-vawc-orange-400">
+                                    {{ student.xp.toLocaleString() }} XP
+                                </span>
                             </td>
-                            <td class="py-4 px-4 text-center">
-                                <span :class="getAccountStatusClass(student.account_status)">
+
+                            <!-- Status -->
+                            <td class="td-cell text-center">
+                                <span :class="['badge capitalize', getAccountStatusBadgeClass(student.account_status)]">
                                     {{ formatAccountStatus(student.account_status) }}
                                 </span>
                             </td>
-                            <td class="py-4 px-4 text-center">
-                                <div class="relative inline-block">
-                                    <button 
-                                        @click.stop="toggleActionMenu(student.id, $event)"
-                                        data-action-button
-                                        class="group flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-purple-500/10 to-fuchsia-500/10 hover:from-purple-500/20 hover:to-fuchsia-500/20 border border-purple-500/20 hover:border-purple-500/40 transition-all duration-200"
-                                    >
-                                        <span class="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wide">Actions</span>
-                                        <MoreVerticalIcon class="h-3.5 w-3.5 text-purple-500 group-hover:rotate-90 transition-transform duration-200" />
-                                    </button>
-                                </div>
+
+                            <!-- Actions menu trigger -->
+                            <td class="td-cell text-center">
+                                <button
+                                    @click.stop="toggleActionMenu(student.id, $event)"
+                                    data-action-button
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg
+                                           bg-platinum-200 dark:bg-abyss-600
+                                           border-2 border-platinum-300 dark:border-abyss-500
+                                           text-sm font-medium text-abyss-800 dark:text-platinum-200
+                                           hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/50
+                                           hover:text-calm-lavender-600 dark:hover:text-calm-lavender-400
+                                           transition-all duration-150"
+                                >
+                                    <span class="text-xs">Actions</span>
+                                    <MoreVerticalIcon class="h-3.5 w-3.5" />
+                                </button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            
+
             <!-- Pagination -->
-            <div v-if="pagination.totalPages > 1" class="flex flex-col md:flex-row items-center justify-between gap-4 mt-6 pt-6 border-t border-slate-200 dark:border-white/10">
-                <p class="text-xs text-slate-400">
-                    Showing {{ (pagination.page - 1) * pagination.limit + 1 }} - {{ Math.min(pagination.page * pagination.limit, pagination.total) }} of {{ pagination.total }} students
-                </p>
-                <div class="flex items-center gap-2">
-                    <button 
-                        @click="fetchStudents(1)" 
-                        :disabled="pagination.page <= 1"
-                        class="p-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl hover:border-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    >
-                        <ChevronsLeftIcon class="h-4 w-4 text-slate-500" />
-                    </button>
-                    <button 
-                        @click="fetchStudents(pagination.page - 1)" 
-                        :disabled="pagination.page <= 1"
-                        class="px-4 py-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-300 hover:border-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    >
-                        Previous
-                    </button>
-                    <span class="px-4 py-2 text-xs font-bold text-black dark:text-white">
-                        {{ pagination.page }} / {{ pagination.totalPages }}
-                    </span>
-                    <button 
-                        @click="fetchStudents(pagination.page + 1)" 
-                        :disabled="pagination.page >= pagination.totalPages"
-                        class="px-4 py-2 bg-purple-600 border border-purple-500 rounded-xl text-xs font-bold text-white hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    >
-                        Next
-                    </button>
-                    <button 
-                        @click="fetchStudents(pagination.totalPages)" 
-                        :disabled="pagination.page >= pagination.totalPages"
-                        class="p-2 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl hover:border-purple-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
-                    >
-                        <ChevronsRightIcon class="h-4 w-4 text-slate-500" />
-                    </button>
-                </div>
+            <div class="mt-6">
+                <AppPagination
+                    v-model="currentPage"
+                    :total="pagination.total"
+                    :page-size="PAGE_SIZE"
+                    item-label="students"
+                />
             </div>
+
         </div>
 
-        <!-- Status Change Confirmation Modal -->
-        <Transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-200 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div v-if="showStatusModal" class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50" @click.self="closeModals">
-                <Transition
-                    enter-active-class="transition duration-300 ease-out"
-                    enter-from-class="opacity-0 scale-95 translate-y-4"
-                    enter-to-class="opacity-100 scale-100 translate-y-0"
-                    leave-active-class="transition duration-200 ease-in"
-                    leave-from-class="opacity-100 scale-100 translate-y-0"
-                    leave-to-class="opacity-0 scale-95 translate-y-4"
-                    appear
+        <!-- ═══════════════════════════════════════════════════
+             STATUS CHANGE MODAL
+        ════════════════════════════════════════════════════ -->
+        <Teleport to="body">
+            <Transition name="modal-fade">
+                <div
+                    v-if="showStatusModal"
+                    class="modal-scrim"
+                    @click.self="closeModals"
                 >
-                    <div class="bg-white dark:bg-[#12121a] border border-slate-200 dark:border-white/10 rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl shadow-purple-500/10">
-                        <!-- Icon Header -->
+                    <div class="modal-shell">
+                        <!-- Icon + title -->
                         <div class="flex flex-col items-center text-center mb-6">
-                            <div :class="getStatusModalIconClass()" class="mb-4">
-                                <component :is="getStatusModalIcon()" class="h-8 w-8" :class="getStatusModalIconColor()" />
+                            <div :class="['ds-icon-badge mb-4', getStatusIconBadgeClass()]">
+                                <component :is="getStatusModalIcon()" class="h-7 w-7" />
                             </div>
-                            <h3 class="text-xl font-black text-black dark:text-white uppercase tracking-tight">{{ getStatusModalTitle() }}</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2 max-w-xs">
+                            <h3 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100">
+                                {{ getStatusModalTitle() }}
+                            </h3>
+                            <p class="font-poppins text-base text-platinum-700 dark:text-platinum-400 mt-2 max-w-xs">
                                 {{ getStatusModalMessage() }}
                             </p>
                         </div>
 
-                        <!-- Warning Box for destructive actions -->
-                        <div v-if="targetStatus === 'banned'" class="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
-                            <AlertTriangleIcon class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                            <p class="text-xs text-red-600 dark:text-red-400">This action is permanent and will prevent the user from accessing their account.</p>
+                        <!-- Ban warning notice -->
+                        <div v-if="targetStatus === 'banned'" class="warning-notice mb-5">
+                            <AlertTriangleIcon class="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                            <p class="text-sm text-red-600 dark:text-red-400">
+                                This action is permanent and will prevent the user from accessing their account.
+                            </p>
                         </div>
 
-                        <div class="mb-6">
-                            <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Reason (Optional)</label>
-                            <textarea 
+                        <!-- Reason textarea -->
+                        <div class="space-y-1.5 mb-6">
+                            <label class="field-label">Reason (Optional)</label>
+                            <textarea
                                 v-model="statusReason"
                                 rows="3"
-                                placeholder="Enter reason for this action..."
-                                class="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-sm text-black dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 transition-colors"
+                                placeholder="Enter reason for this action…"
+                                class="input-field resize-none
+                                       placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
                             ></textarea>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button 
-                                @click="closeModals"
-                                class="flex-1 px-5 py-3.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button 
+
+                        <div class="flex gap-3">
+                            <button @click="closeModals" class="btn-secondary flex-1 justify-center">Cancel</button>
+                            <button
                                 @click="confirmStatusChange"
                                 :disabled="isUpdating"
-                                :class="getStatusModalButtonClass()"
-                                class="flex-1"
+                                :class="['flex-1 justify-center', getStatusActionBtnClass()]"
                             >
-                                <LoaderIcon v-if="isUpdating" class="h-4 w-4 animate-spin" />
-                                <span>{{ isUpdating ? 'Processing...' : 'Confirm' }}</span>
+                                <div v-if="isUpdating" class="spinner !w-4 !h-4 !border-2 !border-white/30 !border-t-white"></div>
+                                <span>{{ isUpdating ? 'Processing…' : 'Confirm' }}</span>
                             </button>
                         </div>
                     </div>
-                </Transition>
-            </div>
-        </Transition>
+                </div>
+            </Transition>
+        </Teleport>
 
-        <!-- Suspend Modal with Date Picker -->
-        <Transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-200 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div v-if="showSuspendModal" class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50" @click.self="closeModals">
-                <Transition
-                    enter-active-class="transition duration-300 ease-out"
-                    enter-from-class="opacity-0 scale-95 translate-y-4"
-                    enter-to-class="opacity-100 scale-100 translate-y-0"
-                    leave-active-class="transition duration-200 ease-in"
-                    leave-from-class="opacity-100 scale-100 translate-y-0"
-                    leave-to-class="opacity-0 scale-95 translate-y-4"
-                    appear
+        <!-- ═══════════════════════════════════════════════════
+             SUSPEND MODAL
+        ════════════════════════════════════════════════════ -->
+        <Teleport to="body">
+            <Transition name="modal-fade">
+                <div
+                    v-if="showSuspendModal"
+                    class="modal-scrim"
+                    @click.self="closeModals"
                 >
-                    <div class="bg-white dark:bg-[#12121a] border border-slate-200 dark:border-white/10 rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl shadow-amber-500/10">
-                        <!-- Icon Header -->
+                    <div class="modal-shell">
                         <div class="flex flex-col items-center text-center mb-6">
-                            <div class="p-4 rounded-2xl bg-amber-500/10 mb-4">
-                                <PauseCircleIcon class="h-8 w-8 text-amber-600" />
+                            <div class="ds-icon-badge ds-icon-badge--orange mb-4">
+                                <PauseCircleIcon class="h-7 w-7" />
                             </div>
-                            <h3 class="text-xl font-black text-black dark:text-white uppercase tracking-tight">Suspend Account</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                                Temporarily suspend <span class="font-bold text-amber-600">{{ selectedStudent?.name }}</span>'s account.
+                            <h3 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100">
+                                Suspend Account
+                            </h3>
+                            <p class="font-poppins text-base text-platinum-700 dark:text-platinum-400 mt-2">
+                                Temporarily suspend
+                                <span class="font-semibold text-vawc-orange-600 dark:text-vawc-orange-400">
+                                    {{ selectedStudent?.name }}
+                                </span>'s account.
                             </p>
                         </div>
 
                         <div class="space-y-4 mb-6">
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Suspension End Date *</label>
-                                <input 
-                                    type="date" 
+                            <div class="space-y-1.5">
+                                <label class="field-label">Suspension End Date <span class="text-red-400">*</span></label>
+                                <input
+                                    type="date"
                                     v-model="suspendUntilDate"
                                     :min="minSuspendDate"
-                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-sm text-black dark:text-white focus:outline-none focus:border-amber-500 transition-colors"
+                                    class="input-field"
                                 />
                             </div>
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Reason</label>
-                                <textarea 
+                            <div class="space-y-1.5">
+                                <label class="field-label">Reason</label>
+                                <textarea
                                     v-model="statusReason"
                                     rows="3"
-                                    placeholder="Enter reason for suspension..."
-                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-sm text-black dark:text-white placeholder-slate-400 focus:outline-none focus:border-amber-500 transition-colors"
+                                    placeholder="Enter reason for suspension…"
+                                    class="input-field resize-none
+                                           placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
                                 ></textarea>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button 
-                                @click="closeModals"
-                                class="flex-1 px-5 py-3.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button 
+
+                        <div class="flex gap-3">
+                            <button @click="closeModals" class="btn-secondary flex-1 justify-center">Cancel</button>
+                            <button
                                 @click="confirmSuspend"
                                 :disabled="isUpdating || !suspendUntilDate"
-                                class="flex-1 px-5 py-3.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 rounded-2xl text-sm font-bold text-white disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-amber-500/25 transition-all"
+                                class="btn-primary flex-1 justify-center
+                                       !bg-vawc-orange-500 !border-vawc-orange-600 !border-b-4 !border-b-vawc-orange-700
+                                       hover:!bg-vawc-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <LoaderIcon v-if="isUpdating" class="h-4 w-4 animate-spin" />
-                                <span>{{ isUpdating ? 'Processing...' : 'Suspend Account' }}</span>
+                                <div v-if="isUpdating" class="spinner !w-4 !h-4 !border-2 !border-white/30 !border-t-white"></div>
+                                <span>{{ isUpdating ? 'Processing…' : 'Suspend Account' }}</span>
                             </button>
                         </div>
                     </div>
-                </Transition>
-            </div>
-        </Transition>
+                </div>
+            </Transition>
+        </Teleport>
 
-        <!-- Bulk Action Modal -->
-        <Transition
-            enter-active-class="transition duration-300 ease-out"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition duration-200 ease-in"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div v-if="showBulkActionModal" class="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50" @click.self="closeModals">
-                <Transition
-                    enter-active-class="transition duration-300 ease-out"
-                    enter-from-class="opacity-0 scale-95 translate-y-4"
-                    enter-to-class="opacity-100 scale-100 translate-y-0"
-                    leave-active-class="transition duration-200 ease-in"
-                    leave-from-class="opacity-100 scale-100 translate-y-0"
-                    leave-to-class="opacity-0 scale-95 translate-y-4"
-                    appear
+        <!-- ═══════════════════════════════════════════════════
+             BULK ACTION MODAL
+        ════════════════════════════════════════════════════ -->
+        <Teleport to="body">
+            <Transition name="modal-fade">
+                <div
+                    v-if="showBulkActionModal"
+                    class="modal-scrim"
+                    @click.self="closeModals"
                 >
-                    <div class="bg-white dark:bg-[#12121a] border border-slate-200 dark:border-white/10 rounded-3xl p-8 w-full max-w-md mx-4 shadow-2xl shadow-purple-500/10">
-                        <!-- Icon Header -->
+                    <div class="modal-shell">
                         <div class="flex flex-col items-center text-center mb-6">
-                            <div class="p-4 rounded-2xl bg-gradient-to-br from-purple-500/10 to-fuchsia-500/10 mb-4">
-                                <ZapIcon class="h-8 w-8 text-purple-600" />
+                            <div class="ds-icon-badge ds-icon-badge--lavender mb-4">
+                                <ZapIcon class="h-7 w-7" />
                             </div>
-                            <h3 class="text-xl font-black text-black dark:text-white uppercase tracking-tight">Bulk Actions</h3>
-                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-2">
-                                Apply action to <span class="font-bold text-purple-600">{{ selectedStudents.length }}</span> selected students.
+                            <h3 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100">
+                                Bulk Actions
+                            </h3>
+                            <p class="font-poppins text-base text-platinum-700 dark:text-platinum-400 mt-2">
+                                Apply action to
+                                <span class="font-semibold text-calm-lavender-600 dark:text-calm-lavender-400">
+                                    {{ selectedStudents.length }}
+                                </span> selected students.
                             </p>
                         </div>
 
                         <div class="space-y-4 mb-6">
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Action</label>
-                                <select 
-                                    v-model="bulkAction"
-                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-sm text-black dark:text-white focus:outline-none focus:border-purple-500 transition-colors"
-                                >
-                                    <option value="">Select action...</option>
-                                    <option value="active">Reactivate Accounts</option>
-                                    <option value="deactivated">Deactivate Accounts</option>
-                                    <option value="suspended">Suspend Accounts</option>
-                                    <option value="banned">Ban Accounts</option>
-                                </select>
+                            <div class="space-y-1.5">
+                                <label class="field-label">Action</label>
+                                <div class="ds-select-wrap">
+                                    <select v-model="bulkAction" class="ds-select">
+                                        <option value="">Select action…</option>
+                                        <option value="active">Reactivate Accounts</option>
+                                        <option value="deactivated">Deactivate Accounts</option>
+                                        <option value="suspended">Suspend Accounts</option>
+                                        <option value="banned">Ban Accounts</option>
+                                    </select>
+                                    <ChevronDownIcon class="ds-select-icon" />
+                                </div>
                             </div>
-                            <div v-if="bulkAction === 'suspended'">
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Suspension End Date *</label>
-                                <input 
-                                    type="date" 
+                            <div v-if="bulkAction === 'suspended'" class="space-y-1.5">
+                                <label class="field-label">Suspension End Date <span class="text-red-400">*</span></label>
+                                <input
+                                    type="date"
                                     v-model="suspendUntilDate"
                                     :min="minSuspendDate"
-                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-sm text-black dark:text-white focus:outline-none focus:border-purple-500 transition-colors"
+                                    class="input-field"
                                 />
                             </div>
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Reason (Optional)</label>
-                                <textarea 
+                            <div class="space-y-1.5">
+                                <label class="field-label">Reason (Optional)</label>
+                                <textarea
                                     v-model="statusReason"
                                     rows="2"
-                                    placeholder="Enter reason..."
-                                    class="w-full px-4 py-3 bg-slate-50 dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 rounded-2xl text-sm text-black dark:text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 transition-colors"
+                                    placeholder="Enter reason…"
+                                    class="input-field resize-none
+                                           placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
                                 ></textarea>
                             </div>
                         </div>
 
-                        <!-- Warning for destructive bulk actions -->
-                        <div v-if="bulkAction === 'banned'" class="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-2xl flex items-start gap-3">
-                            <AlertTriangleIcon class="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-                            <p class="text-xs text-red-600 dark:text-red-400">You are about to ban {{ selectedStudents.length }} accounts. This action is permanent.</p>
+                        <!-- Ban warning -->
+                        <div v-if="bulkAction === 'banned'" class="warning-notice mb-5">
+                            <AlertTriangleIcon class="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                            <p class="text-sm text-red-600 dark:text-red-400">
+                                You are about to ban {{ selectedStudents.length }} accounts. This action is permanent.
+                            </p>
                         </div>
 
-                        <div class="flex items-center gap-3">
-                            <button 
-                                @click="closeModals"
-                                class="flex-1 px-5 py-3.5 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl text-sm font-bold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
-                            >
-                                Cancel
-                            </button>
-                            <button 
+                        <div class="flex gap-3">
+                            <button @click="closeModals" class="btn-secondary flex-1 justify-center">Cancel</button>
+                            <button
                                 @click="confirmBulkAction"
                                 :disabled="isUpdating || !bulkAction || (bulkAction === 'suspended' && !suspendUntilDate)"
-                                class="flex-1 px-5 py-3.5 bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 rounded-2xl text-sm font-bold text-white disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/25 transition-all"
+                                class="btn-primary btn-3d flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <LoaderIcon v-if="isUpdating" class="h-4 w-4 animate-spin" />
-                                <span>{{ isUpdating ? 'Processing...' : 'Apply Action' }}</span>
+                                <div v-if="isUpdating" class="spinner !w-4 !h-4 !border-2 !border-white/30 !border-t-white"></div>
+                                <span>{{ isUpdating ? 'Processing…' : 'Apply Action' }}</span>
                             </button>
                         </div>
                     </div>
-                </Transition>
-            </div>
-        </Transition>
+                </div>
+            </Transition>
+        </Teleport>
+
     </div>
 
-    <!-- Teleported Action Menu Dropdown -->
+    <!-- ═══════════════════════════════════════════════════
+         TELEPORTED ACTION MENU DROPDOWN
+    ════════════════════════════════════════════════════ -->
     <Teleport to="body">
-        <Transition
-            enter-active-class="transition duration-200 ease-out"
-            enter-from-class="opacity-0 scale-95"
-            enter-to-class="opacity-100 scale-100"
-            leave-active-class="transition duration-150 ease-in"
-            leave-from-class="opacity-100 scale-100"
-            leave-to-class="opacity-0 scale-95"
-        >
-            <div 
+        <Transition name="dropdown-fade">
+            <div
                 v-if="activeActionMenu && activeMenuStudent"
                 data-action-dropdown
-                class="fixed w-56 bg-white dark:bg-[#1a1a2e] border border-slate-200 dark:border-white/10 rounded-2xl shadow-2xl shadow-purple-500/10 overflow-hidden"
+                class="action-dropdown"
                 :style="dropdownPosition"
                 style="z-index: 99999;"
             >
-                <div class="p-2 border-b border-slate-100 dark:border-white/5">
-                    <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest px-2">Account Actions</p>
+                <!-- Dropdown header -->
+                <div class="px-4 py-2.5 border-b-2 border-platinum-200 dark:border-abyss-600">
+                    <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500 font-medium">
+                        Account Actions
+                    </p>
                 </div>
+
                 <div class="p-2 space-y-1">
-                    <button 
+                    <!-- Reactivate -->
+                    <button
                         v-if="activeMenuStudent.account_status !== 'active'"
                         @click="openStatusModal(activeMenuStudent, 'active')"
-                        class="w-full px-3 py-2.5 text-left text-sm rounded-xl bg-green-500/5 hover:bg-green-500/15 border border-transparent hover:border-green-500/20 flex items-center gap-3 transition-all group"
+                        class="dropdown-item dropdown-item--teal"
                     >
-                        <div class="p-1.5 rounded-lg bg-green-500/10 group-hover:bg-green-500/20">
-                            <ShieldCheckIcon class="h-4 w-4 text-green-600" />
+                        <div class="ds-icon-badge ds-icon-badge--teal !p-1.5">
+                            <ShieldCheckIcon class="h-3.5 w-3.5" />
                         </div>
                         <div>
-                            <p class="font-bold text-green-700 dark:text-green-400">Reactivate</p>
-                            <p class="text-[10px] text-green-600/70 dark:text-green-500/70">Restore account access</p>
+                            <p class="font-semibold text-sm text-safety-teal-700 dark:text-safety-teal-400">Reactivate</p>
+                            <p class="font-mplusrounded text-xs text-safety-teal-600/70 dark:text-safety-teal-500/70">Restore account access</p>
                         </div>
                     </button>
-                    <button 
+
+                    <!-- Deactivate -->
+                    <button
                         v-if="activeMenuStudent.account_status === 'active'"
                         @click="openStatusModal(activeMenuStudent, 'deactivated')"
-                        class="w-full px-3 py-2.5 text-left text-sm rounded-xl bg-slate-500/5 hover:bg-slate-500/15 border border-transparent hover:border-slate-500/20 flex items-center gap-3 transition-all group"
+                        class="dropdown-item dropdown-item--muted"
                     >
-                        <div class="p-1.5 rounded-lg bg-slate-500/10 group-hover:bg-slate-500/20">
-                            <PowerOffIcon class="h-4 w-4 text-slate-600 dark:text-slate-400" />
+                        <div class="ds-icon-badge !p-1.5 bg-platinum-200 dark:bg-abyss-600 border-platinum-300 dark:border-abyss-500 text-platinum-600 dark:text-platinum-400">
+                            <PowerOffIcon class="h-3.5 w-3.5" />
                         </div>
                         <div>
-                            <p class="font-bold text-slate-700 dark:text-slate-300">Deactivate</p>
-                            <p class="text-[10px] text-slate-500/70">Disable account temporarily</p>
+                            <p class="font-semibold text-sm text-abyss-700 dark:text-platinum-300">Deactivate</p>
+                            <p class="font-mplusrounded text-xs text-platinum-500">Disable account temporarily</p>
                         </div>
                     </button>
-                    <button 
+
+                    <!-- Suspend -->
+                    <button
                         v-if="activeMenuStudent.account_status !== 'suspended'"
                         @click="openSuspendModal(activeMenuStudent)"
-                        class="w-full px-3 py-2.5 text-left text-sm rounded-xl bg-amber-500/5 hover:bg-amber-500/15 border border-transparent hover:border-amber-500/20 flex items-center gap-3 transition-all group"
+                        class="dropdown-item dropdown-item--orange"
                     >
-                        <div class="p-1.5 rounded-lg bg-amber-500/10 group-hover:bg-amber-500/20">
-                            <PauseCircleIcon class="h-4 w-4 text-amber-600" />
+                        <div class="ds-icon-badge ds-icon-badge--orange !p-1.5">
+                            <PauseCircleIcon class="h-3.5 w-3.5" />
                         </div>
                         <div>
-                            <p class="font-bold text-amber-700 dark:text-amber-400">Suspend</p>
-                            <p class="text-[10px] text-amber-600/70 dark:text-amber-500/70">Temporary restriction</p>
+                            <p class="font-semibold text-sm text-vawc-orange-700 dark:text-vawc-orange-400">Suspend</p>
+                            <p class="font-mplusrounded text-xs text-vawc-orange-600/70 dark:text-vawc-orange-500/70">Temporary restriction</p>
                         </div>
                     </button>
-                    <button 
+
+                    <!-- Ban -->
+                    <button
                         v-if="activeMenuStudent.account_status !== 'banned'"
                         @click="openStatusModal(activeMenuStudent, 'banned')"
-                        class="w-full px-3 py-2.5 text-left text-sm rounded-xl bg-red-500/5 hover:bg-red-500/15 border border-transparent hover:border-red-500/20 flex items-center gap-3 transition-all group"
+                        class="dropdown-item dropdown-item--red"
                     >
-                        <div class="p-1.5 rounded-lg bg-red-500/10 group-hover:bg-red-500/20">
-                            <ShieldOffIcon class="h-4 w-4 text-red-600" />
+                        <div class="ds-icon-badge ds-icon-badge--red !p-1.5">
+                            <ShieldOffIcon class="h-3.5 w-3.5" />
                         </div>
                         <div>
-                            <p class="font-bold text-red-700 dark:text-red-400">Ban Account</p>
-                            <p class="text-[10px] text-red-600/70 dark:text-red-500/70">Permanent restriction</p>
+                            <p class="font-semibold text-sm text-red-700 dark:text-red-400">Ban Account</p>
+                            <p class="font-mplusrounded text-xs text-red-600/70 dark:text-red-500/70">Permanent restriction</p>
                         </div>
                     </button>
                 </div>
             </div>
         </Transition>
     </Teleport>
+    </span>
 </template>
 
 <script setup>
-import { ref, onMounted, computed, onUnmounted } from 'vue';
+import { ref, onMounted, computed, onUnmounted, watch } from 'vue';
 import {
     UsersIcon,
     SearchIcon,
-    DownloadIcon,
     RefreshCwIcon,
     CheckCircleIcon,
     ClockIcon,
     TrendingUpIcon,
-    ChevronsLeftIcon,
-    ChevronsRightIcon,
     MoreVerticalIcon,
     BanIcon,
     PauseCircleIcon,
@@ -606,23 +613,27 @@ import {
     LoaderIcon,
     AlertTriangleIcon,
     ShieldOffIcon,
-    ShieldCheckIcon
+    ShieldCheckIcon,
+    ChevronDown as ChevronDownIcon
 } from 'lucide-vue-next';
 import api from '@/utils/api';
 import { useToastStore } from '@/stores/toast';
+import GenerateReport from '@/components/ui/GenerateReport.vue';
+import AppPagination from '@/components/ui/AppPagination.vue';
 
 const toast = useToastStore();
 
 const isLoading = ref(false);
-const isExporting = ref(false);
 const isUpdating = ref(false);
 const students = ref([]);
 const searchQuery = ref('');
 const filterStatus = ref('all');
+const PAGE_SIZE = 3;
+const currentPage = ref(1);
 const pagination = ref({
     total: 0,
     page: 1,
-    limit: 15,
+    limit: PAGE_SIZE,
     totalPages: 0
 });
 
@@ -662,34 +673,27 @@ const studentStats = computed(() => {
     const totalXp = students.value.reduce((sum, s) => sum + (s.xp || 0), 0);
     return {
         total: pagination.value.total,
-        active: active,
-        suspended: suspended,
-        banned: banned,
+        active,
+        suspended,
+        banned,
         avgXp: students.value.length > 0 ? Math.round(totalXp / students.value.length) : 0
     };
 });
 
-const fetchStudents = async (page = 1) => {
+const fetchStudents = async (page = currentPage.value) => {
     isLoading.value = true;
     try {
         const params = new URLSearchParams({
             page: page.toString(),
-            limit: pagination.value.limit.toString()
+            limit: PAGE_SIZE.toString()
         });
-        
-        if (searchQuery.value.trim()) {
-            params.append('search', searchQuery.value.trim());
-        }
-        
-        if (filterStatus.value !== 'all') {
-            params.append('status', filterStatus.value);
-        }
-        
+        if (searchQuery.value.trim()) params.append('search', searchQuery.value.trim());
+        if (filterStatus.value !== 'all') params.append('status', filterStatus.value);
         const response = await api.get(`/api/v1/admin/students?${params}`);
-        
         if (response.data?.students) {
             students.value = response.data.students;
             pagination.value = response.data.pagination;
+            currentPage.value = response.data.pagination.page;
         }
     } catch (error) {
         console.error('Failed to fetch students:', error);
@@ -699,65 +703,18 @@ const fetchStudents = async (page = 1) => {
     }
 };
 
+// Re-fetch when AppPagination changes the page
+watch(currentPage, (page) => fetchStudents(page));
+
+// Reset to page 1 on search/filter, then fetch
+const resetAndFetch = () => { currentPage.value = 1; fetchStudents(1); };
+
 const searchStudentsDebounced = () => {
-    if (searchDebounceTimer) {
-        clearTimeout(searchDebounceTimer);
-    }
-    searchDebounceTimer = setTimeout(() => {
-        fetchStudents(1);
-    }, 300);
+    if (searchDebounceTimer) clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => resetAndFetch(), 300);
 };
 
-const refreshStudents = () => {
-    fetchStudents(pagination.value.page);
-};
-
-const exportStudents = async () => {
-    isExporting.value = true;
-    try {
-        const response = await api.get('/api/v1/admin/students/export', {
-            responseType: 'blob',
-            headers: {
-                'Accept': 'application/pdf'
-            }
-        });
-        
-        // Check if response is an error
-        const contentType = response.headers['content-type'];
-        if (contentType && contentType.includes('application/json')) {
-            const text = await response.data.text();
-            const errorData = JSON.parse(text);
-            throw new Error(errorData.message || 'Failed to generate report');
-        }
-        
-        const blob = new Blob([response.data], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        const today = new Date().toISOString().split('T')[0];
-        link.setAttribute('download', `ProtectEd_Students_${today}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-        toast.addToast('Students exported successfully!', 'success', 3000);
-    } catch (error) {
-        console.error('Failed to export students:', error);
-        if (error.response?.data instanceof Blob) {
-            try {
-                const text = await error.response.data.text();
-                const errorData = JSON.parse(text);
-                toast.addToast(errorData.message || 'Failed to export. Please try again.', 'error', 5000);
-            } catch {
-                toast.addToast('Failed to export. Please try again.', 'error', 5000);
-            }
-        } else {
-            toast.addToast(error.message || 'Failed to export. Please try again.', 'error', 5000);
-        }
-    } finally {
-        isExporting.value = false;
-    }
-};
+const refreshStudents = () => fetchStudents(currentPage.value);
 
 const getInitials = (name) => {
     if (!name) return '?';
@@ -766,8 +723,7 @@ const getInitials = (name) => {
 
 const formatDate = (dateStr) => {
     if (!dateStr) return '-';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 };
 
 // Selection methods
@@ -794,73 +750,42 @@ const toggleActionMenu = (studentId, event) => {
         activeActionMenu.value = null;
         return;
     }
-    
-    // Calculate position based on button location
     const button = event?.currentTarget || event?.target;
     if (button) {
         const rect = button.getBoundingClientRect();
-        const dropdownWidth = 224; // 14rem = 224px
-        const dropdownHeight = 280; // Approximate height
+        const dropdownWidth = 224;
+        const dropdownHeight = 280;
         const viewportHeight = window.innerHeight;
         const viewportWidth = window.innerWidth;
-        
-        // Check if dropdown would go off screen to the right
         let left = rect.left;
-        if (left + dropdownWidth > viewportWidth) {
-            left = rect.right - dropdownWidth;
-        }
-        
-        // Check if dropdown would go off screen at the bottom - show above if needed
+        if (left + dropdownWidth > viewportWidth) left = rect.right - dropdownWidth;
         let top = rect.bottom + 8;
-        if (top + dropdownHeight > viewportHeight) {
-            top = rect.top - dropdownHeight - 8;
-        }
-        
-        dropdownPosition.value = {
-            top: `${top}px`,
-            left: `${left}px`
-        };
+        if (top + dropdownHeight > viewportHeight) top = rect.top - dropdownHeight - 8;
+        dropdownPosition.value = { top: `${top}px`, left: `${left}px` };
     }
-    
     activeActionMenu.value = studentId;
 };
 
-const closeActionMenu = () => {
-    activeActionMenu.value = null;
-};
+const closeActionMenu = () => { activeActionMenu.value = null; };
 
-// Handle click outside for action menu
 const handleClickOutside = (event) => {
-    // Check if click is on dropdown or action button
     const isDropdown = event.target.closest('[data-action-dropdown]');
     const isActionButton = event.target.closest('[data-action-button]');
-    
-    if (!isDropdown && !isActionButton) {
-        activeActionMenu.value = null;
-    }
+    if (!isDropdown && !isActionButton) activeActionMenu.value = null;
 };
 
-// Close dropdown on scroll
 const handleScroll = () => {
-    if (activeActionMenu.value !== null) {
-        activeActionMenu.value = null;
-    }
+    if (activeActionMenu.value !== null) activeActionMenu.value = null;
 };
 
-// Account status helpers
-const getAccountStatusClass = (status) => {
-    const base = 'px-2.5 py-1 text-[9px] font-bold uppercase rounded-full';
+// Account status helpers — return design system badge classes
+const getAccountStatusBadgeClass = (status) => {
     switch (status) {
-        case 'active':
-            return `${base} bg-green-500/10 text-green-600 dark:text-green-400`;
-        case 'suspended':
-            return `${base} bg-amber-500/10 text-amber-600 dark:text-amber-400`;
-        case 'banned':
-            return `${base} bg-red-500/10 text-red-600 dark:text-red-400`;
-        case 'deactivated':
-            return `${base} bg-slate-500/10 text-slate-600 dark:text-slate-400`;
-        default:
-            return `${base} bg-slate-500/10 text-slate-600 dark:text-slate-400`;
+        case 'active':      return 'badge-teal';
+        case 'suspended':   return 'badge-orange';
+        case 'banned':      return 'badge-red';
+        case 'deactivated': return 'badge-muted';
+        default:            return 'badge-muted';
     }
 };
 
@@ -899,90 +824,67 @@ const closeModals = () => {
 
 const getStatusModalIcon = () => {
     switch (targetStatus.value) {
-        case 'active': return CheckCircleIcon;
-        case 'banned': return BanIcon;
+        case 'active':      return CheckCircleIcon;
+        case 'banned':      return BanIcon;
         case 'deactivated': return PowerOffIcon;
-        default: return CheckCircleIcon;
+        default:            return CheckCircleIcon;
     }
 };
 
-const getStatusModalIconClass = () => {
-    const base = 'p-4 rounded-2xl';
+// Returns design system icon badge class for the status modal
+const getStatusIconBadgeClass = () => {
     switch (targetStatus.value) {
-        case 'active': return `${base} bg-green-500/10`;
-        case 'banned': return `${base} bg-red-500/10`;
-        case 'deactivated': return `${base} bg-slate-500/10`;
-        default: return `${base} bg-purple-500/10`;
+        case 'active':      return 'ds-icon-badge--teal';
+        case 'banned':      return 'ds-icon-badge--red';
+        case 'deactivated': return 'bg-platinum-200 dark:bg-abyss-600 border-platinum-300 dark:border-abyss-500 text-platinum-600 dark:text-platinum-400';
+        default:            return 'ds-icon-badge--lavender';
+    }
+};
+
+// Returns Tailwind classes for the confirm button in the status modal
+const getStatusActionBtnClass = () => {
+    const base = 'btn-primary flex-1 flex items-center gap-2 justify-center disabled:opacity-50';
+    switch (targetStatus.value) {
+        case 'active':      return `${base} border-b-4 border-safety-teal-700 !bg-safety-teal-600 hover:!bg-safety-teal-700`;
+        case 'banned':      return `${base} border-b-4 border-red-700 !bg-red-500 hover:!bg-red-600`;
+        case 'deactivated': return `${base} border-b-4 border-platinum-500 !bg-platinum-400 dark:!bg-abyss-500 !text-abyss-800 dark:!text-platinum-200`;
+        default:            return `${base} btn-3d`;
     }
 };
 
 const getStatusModalTitle = () => {
     switch (targetStatus.value) {
-        case 'active': return 'Reactivate Account';
-        case 'banned': return 'Ban Account';
+        case 'active':      return 'Reactivate Account';
+        case 'banned':      return 'Ban Account';
         case 'deactivated': return 'Deactivate Account';
-        default: return 'Update Account Status';
+        default:            return 'Update Account Status';
     }
 };
 
 const getStatusModalMessage = () => {
     const name = selectedStudent.value?.name || 'this user';
     switch (targetStatus.value) {
-        case 'active': return `Are you sure you want to reactivate ${name}'s account? They will regain full access to the platform.`;
-        case 'banned': return `Are you sure you want to permanently ban ${name}'s account? This action will prevent them from accessing the platform.`;
+        case 'active':      return `Are you sure you want to reactivate ${name}'s account? They will regain full access to the platform.`;
+        case 'banned':      return `Are you sure you want to permanently ban ${name}'s account? This action will prevent them from accessing the platform.`;
         case 'deactivated': return `Are you sure you want to deactivate ${name}'s account? They will lose access until reactivated.`;
-        default: return `Update ${name}'s account status?`;
-    }
-};
-
-const getStatusModalButtonClass = () => {
-    const base = 'px-5 py-3.5 rounded-2xl text-sm font-bold text-white disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg transition-all';
-    switch (targetStatus.value) {
-        case 'active': return `${base} bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-green-500/25`;
-        case 'banned': return `${base} bg-gradient-to-r from-red-500 to-rose-500 hover:from-red-600 hover:to-rose-600 shadow-red-500/25`;
-        case 'deactivated': return `${base} bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 shadow-slate-500/25`;
-        default: return `${base} bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:from-purple-700 hover:to-fuchsia-700 shadow-purple-500/25`;
-    }
-};
-
-const getStatusModalIconColor = () => {
-    switch (targetStatus.value) {
-        case 'active': return 'text-green-600';
-        case 'banned': return 'text-red-600';
-        case 'deactivated': return 'text-slate-600';
-        default: return 'text-purple-600';
+        default:            return `Update ${name}'s account status?`;
     }
 };
 
 // API calls for status changes
 const confirmStatusChange = async () => {
     if (!selectedStudent.value || !targetStatus.value) return;
-    
     isUpdating.value = true;
     try {
         await api.put(`/api/v1/admin/users/${selectedStudent.value.id}/status`, {
             status: targetStatus.value,
             reason: statusReason.value || undefined
         });
-        
-        // Update local state
         const index = students.value.findIndex(s => s.id === selectedStudent.value.id);
-        if (index > -1) {
-            students.value[index].account_status = targetStatus.value;
-        }
-        
-        // Save status for toast message before closing modals
-        const statusLabels = {
-            active: 'reactivated',
-            banned: 'banned',
-            deactivated: 'deactivated',
-            suspended: 'suspended'
-        };
+        if (index > -1) students.value[index].account_status = targetStatus.value;
+        const statusLabels = { active: 'reactivated', banned: 'banned', deactivated: 'deactivated', suspended: 'suspended' };
         const statusMessage = statusLabels[targetStatus.value] || targetStatus.value;
-        
         closeModals();
-        
-        // Show toast notification
         toast.addToast(`Account ${statusMessage} successfully!`, 'success', 4000);
     } catch (error) {
         console.error('Failed to update user status:', error);
@@ -994,7 +896,6 @@ const confirmStatusChange = async () => {
 
 const confirmSuspend = async () => {
     if (!selectedStudent.value || !suspendUntilDate.value) return;
-    
     isUpdating.value = true;
     try {
         await api.put(`/api/v1/admin/users/${selectedStudent.value.id}/status`, {
@@ -1002,16 +903,9 @@ const confirmSuspend = async () => {
             reason: statusReason.value || undefined,
             suspended_until: suspendUntilDate.value
         });
-        
-        // Update local state
         const index = students.value.findIndex(s => s.id === selectedStudent.value.id);
-        if (index > -1) {
-            students.value[index].account_status = 'suspended';
-        }
-        
-        // Save date for toast before closing modals
+        if (index > -1) students.value[index].account_status = 'suspended';
         const suspendDate = new Date(suspendUntilDate.value).toLocaleDateString();
-        
         closeModals();
         toast.addToast(`Account suspended until ${suspendDate}!`, 'warning', 4000);
     } catch (error) {
@@ -1025,7 +919,6 @@ const confirmSuspend = async () => {
 const confirmBulkAction = async () => {
     if (!bulkAction.value || selectedStudents.value.length === 0) return;
     if (bulkAction.value === 'suspended' && !suspendUntilDate.value) return;
-    
     const count = selectedStudents.value.length;
     isUpdating.value = true;
     try {
@@ -1035,26 +928,13 @@ const confirmBulkAction = async () => {
             reason: statusReason.value || undefined,
             suspended_until: bulkAction.value === 'suspended' ? suspendUntilDate.value : undefined
         });
-        
-        // Update local state
         students.value.forEach(student => {
-            if (selectedStudents.value.includes(student.id)) {
-                student.account_status = bulkAction.value;
-            }
+            if (selectedStudents.value.includes(student.id)) student.account_status = bulkAction.value;
         });
-        
-        // Save values for toast before closing modals
-        const actionLabels = {
-            active: 'reactivated',
-            banned: 'banned',
-            deactivated: 'deactivated',
-            suspended: 'suspended'
-        };
+        const actionLabels = { active: 'reactivated', banned: 'banned', deactivated: 'deactivated', suspended: 'suspended' };
         const actionMessage = actionLabels[bulkAction.value] || bulkAction.value;
-        
         selectedStudents.value = [];
         closeModals();
-        
         toast.addToast(`${count} account(s) ${actionMessage} successfully!`, 'success', 4000);
     } catch (error) {
         console.error('Failed to update users:', error);
@@ -1077,9 +957,230 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap');
+@reference "@/style.css";
 
-.custom-font-poppins {
-    font-family: 'Poppins', sans-serif !important;
+/* ═══════════════════════════════════════════════════════════
+   PAGE WRAPPER
+═══════════════════════════════════════════════════════════ */
+.page-wrapper {
+    @apply space-y-6 text-abyss-800 dark:text-platinum-100;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   STAT TILE  —  L1: platinum-100 / abyss-700
+═══════════════════════════════════════════════════════════ */
+.stat-tile {
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-5;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/60;
+    @apply transition-colors duration-200;
+}
+
+.stat-tile__label {
+    @apply text-xs font-medium uppercase tracking-wide;
+    @apply text-platinum-600 dark:text-platinum-500;
+}
+
+.stat-tile__value {
+    @apply text-2xl font-bold leading-none mt-1;
+    @apply text-abyss-800 dark:text-platinum-100;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ICON BADGE
+═══════════════════════════════════════════════════════════ */
+.ds-icon-badge {
+    @apply p-2.5 rounded-xl border-2 flex items-center justify-center shrink-0;
+}
+
+.ds-icon-badge--lavender {
+    @apply bg-calm-lavender-50 dark:bg-calm-lavender-900/20;
+    @apply border-calm-lavender-200 dark:border-calm-lavender-800/40;
+    @apply text-calm-lavender-600 dark:text-calm-lavender-400;
+}
+
+.ds-icon-badge--pink {
+    @apply bg-neon-pink-50 dark:bg-neon-pink-900/20;
+    @apply border-neon-pink-200 dark:border-neon-pink-800/40;
+    @apply text-neon-pink-600 dark:text-neon-pink-400;
+}
+
+.ds-icon-badge--teal {
+    @apply bg-safety-teal-50 dark:bg-safety-teal-900/20;
+    @apply border-safety-teal-200 dark:border-safety-teal-800/40;
+    @apply text-safety-teal-600 dark:text-safety-teal-400;
+}
+
+.ds-icon-badge--orange {
+    @apply bg-vawc-orange-50 dark:bg-vawc-orange-900/20;
+    @apply border-vawc-orange-200 dark:border-vawc-orange-800/30;
+    @apply text-vawc-orange-600 dark:text-vawc-orange-400;
+}
+
+.ds-icon-badge--red {
+    @apply bg-red-50 dark:bg-red-900/20;
+    @apply border-red-200 dark:border-red-800/40;
+    @apply text-red-500 dark:text-red-400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TABLE PANEL  —  L1: platinum-100 / abyss-700
+═══════════════════════════════════════════════════════════ */
+.table-panel {
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-5;
+}
+
+.th-cell {
+    @apply px-4 py-3 text-xs font-semibold uppercase tracking-wide;
+    @apply text-platinum-600 dark:text-platinum-500;
+}
+
+.td-cell {
+    @apply px-4 py-3.5 whitespace-nowrap;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SELECT  —  L2 inset: platinum-200 / abyss-600
+═══════════════════════════════════════════════════════════ */
+.ds-select-wrap {
+    @apply relative;
+}
+
+.ds-select {
+    @apply w-full appearance-none cursor-pointer transition-all duration-150;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply hover:border-calm-lavender-300 dark:hover:border-calm-lavender-700;
+    @apply text-abyss-800 dark:text-platinum-200;
+    @apply font-medium text-sm;
+    @apply rounded-xl px-4 py-3 pr-10;
+    @apply focus:outline-none focus:ring-2 focus:ring-calm-lavender-400/40 focus:border-calm-lavender-400;
+}
+
+.ds-select-icon {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none;
+    @apply w-4 h-4 text-platinum-500 dark:text-platinum-400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PAGINATION BUTTONS
+═══════════════════════════════════════════════════════════ */
+.pag-btn {
+    @apply inline-flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium transition-all;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply text-abyss-800 dark:text-platinum-200;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/50;
+    @apply disabled:opacity-40 disabled:cursor-not-allowed;
+}
+
+.pag-btn--active {
+    @apply bg-calm-lavender-600 dark:bg-calm-lavender-700 text-white;
+    @apply border-calm-lavender-700 dark:border-calm-lavender-600;
+    @apply border-b-4 border-b-calm-lavender-800;
+    @apply hover:bg-calm-lavender-700 dark:hover:bg-calm-lavender-600;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL SCRIM + SHELL  —  consistent with all other modals
+═══════════════════════════════════════════════════════════ */
+.modal-scrim {
+    @apply fixed inset-0 z-50 bg-abyss-950/60 backdrop-blur-sm overflow-y-auto;
+    @apply flex items-start justify-center pt-24 px-6 pb-6;
+}
+
+.modal-shell {
+    @apply relative w-full max-w-md;
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-7;
+}
+
+/* ── Warning notice inside modals ────────────────────────── */
+.warning-notice {
+    @apply flex items-start gap-3 px-4 py-3 rounded-xl;
+    @apply bg-red-50 dark:bg-red-900/10;
+    @apply border-2 border-red-200 dark:border-red-800/30;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTION DROPDOWN  —  L1 elevated above table
+═══════════════════════════════════════════════════════════ */
+.action-dropdown {
+    @apply fixed w-56;
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl overflow-hidden;
+}
+
+.dropdown-item {
+    @apply w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-150 text-left;
+    @apply border-2 border-transparent;
+}
+
+.dropdown-item--teal {
+    @apply hover:bg-safety-teal-50 dark:hover:bg-safety-teal-900/20;
+    @apply hover:border-safety-teal-200 dark:hover:border-safety-teal-800/40;
+}
+
+.dropdown-item--muted {
+    @apply hover:bg-platinum-200 dark:hover:bg-abyss-600;
+    @apply hover:border-platinum-300 dark:hover:border-abyss-500;
+}
+
+.dropdown-item--orange {
+    @apply hover:bg-vawc-orange-50 dark:hover:bg-vawc-orange-900/20;
+    @apply hover:border-vawc-orange-200 dark:hover:border-vawc-orange-800/30;
+}
+
+.dropdown-item--red {
+    @apply hover:bg-red-50 dark:hover:bg-red-900/20;
+    @apply hover:border-red-200 dark:hover:border-red-800/40;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLAT-3D BUTTON MODIFIERS
+═══════════════════════════════════════════════════════════ */
+.btn-3d {
+    @apply border-b-4 border-black/10 active:border-b active:translate-y-px;
+}
+
+.btn-3d--secondary {
+    @apply border-b-4 border-platinum-400 dark:border-abyss-400
+           active:border-b active:translate-y-px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TRANSITIONS
+═══════════════════════════════════════════════════════════ */
+.modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.2s ease; }
+.modal-fade-enter-from, .modal-fade-leave-to       { opacity: 0; }
+
+.dropdown-fade-enter-active { transition: all 0.15s ease-out; }
+.dropdown-fade-leave-active { transition: all 0.1s ease-in; }
+.dropdown-fade-enter-from, .dropdown-fade-leave-to { opacity: 0; transform: scale(0.97) translateY(-4px); }
+
+/* ═══════════════════════════════════════════════════════════
+   ENTRY ANIMATION
+═══════════════════════════════════════════════════════════ */
+.animate-in {
+    animation: fadeSlideUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Select option colors ────────────────────────────────── */
+select option {
+    @apply bg-platinum-50 text-abyss-800;
+}
+
+.dark select option {
+    @apply bg-abyss-600 text-platinum-100;
 }
 </style>

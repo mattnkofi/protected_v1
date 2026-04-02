@@ -9,7 +9,7 @@ const setRefreshCookie = (res, token) => {
         httpOnly: true, // Invisible to frontend JS
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'None', // Allows cross-site/third-party integration
-        path: '/api/refresh', // Security: only send to the refresh route
+        path: '/api/v1/auth', // Send only to auth endpoints
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 };
@@ -160,6 +160,7 @@ exports.login = async (req, res, next) => {
         res.json({
             message: 'Login successful',
             token: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
             user: user.toJSON()
         });
     } catch (error) {
@@ -173,7 +174,7 @@ exports.login = async (req, res, next) => {
 
 exports.refresh = async (req, res, next) => {
     try {
-        const refreshToken = req.cookies.refresh_token; // Read from cookie
+        const refreshToken = req.body.refresh_token || req.cookies.refresh_token; // Prefer tab-scoped body token
 
         if (!refreshToken) return res.status(401).json({ message: 'Session expired' });
 
@@ -186,6 +187,7 @@ exports.refresh = async (req, res, next) => {
         res.json({
             message: 'Token refreshed successfully',
             token: result.accessToken,
+            refreshToken: result.refreshToken,
             refresh_token: result.refreshToken,
             expires_in: result.expiresIn,
             user: result.user.toJSON()

@@ -1,212 +1,213 @@
 <template>
-  <div :class="['quiz-arena min-h-screen font-[Poppins,sans-serif] overflow-hidden relative transition-colors duration-500 selection:bg-purple-500/30',
-    isDark ? 'bg-[#0a0014]' : 'bg-gradient-to-br from-purple-50 via-white to-violet-50']">
-    
-    <!-- ==================== 3D BACKGROUND ==================== -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden" style="perspective: 1000px;">
-      <!-- 3D Grid Floor -->
-      <div :class="['absolute bottom-0 left-1/2 w-[200vw] h-[60vh]',
-        isDark ? 'opacity-30' : 'opacity-20']"
-        style="transform: translateX(-50%) rotateX(70deg); transform-origin: bottom; background: linear-gradient(90deg, rgba(147, 51, 234, 0.3) 1px, transparent 1px) 0 0 / 60px 60px, linear-gradient(rgba(147, 51, 234, 0.3) 1px, transparent 1px) 0 0 / 60px 60px;">
-      </div>
-      
-      <!-- Floating 3D Cubes -->
-      <div v-for="i in 8" :key="'cube-'+i" 
-        class="absolute cube-3d"
-        :style="getCubeStyle(i)">
-        <div :class="['cube-face cube-front', isDark ? 'bg-purple-600/40' : 'bg-purple-400/30']"></div>
-        <div :class="['cube-face cube-back', isDark ? 'bg-purple-700/40' : 'bg-purple-500/30']"></div>
-        <div :class="['cube-face cube-left', isDark ? 'bg-purple-800/40' : 'bg-purple-600/30']"></div>
-        <div :class="['cube-face cube-right', isDark ? 'bg-purple-500/40' : 'bg-purple-300/30']"></div>
-        <div :class="['cube-face cube-top', isDark ? 'bg-purple-400/50' : 'bg-purple-200/40']"></div>
-        <div :class="['cube-face cube-bottom', isDark ? 'bg-purple-900/40' : 'bg-purple-700/30']"></div>
-      </div>
-      
-      <!-- Glowing Orbs -->
-      <div class="absolute top-1/4 left-1/4 w-64 h-64 md:w-96 md:h-96 rounded-full bg-purple-600/20 blur-[100px] animate-pulse-slow"></div>
-      <div class="absolute bottom-1/4 right-1/4 w-48 h-48 md:w-72 md:h-72 rounded-full bg-violet-500/20 blur-[80px] animate-pulse-slow" style="animation-delay: 1s;"></div>
-      <div class="absolute top-1/2 left-1/2 w-80 h-80 md:w-[500px] md:h-[500px] rounded-full bg-violet-500/10 blur-[120px] animate-breathe" style="transform: translate(-50%, -50%);"></div>
-      
-      <!-- Moving particles -->
-      <div v-for="i in 20" :key="'particle-'+i" 
-        :class="['absolute rounded-full animate-float-up', isDark ? 'bg-purple-400/60' : 'bg-purple-500/40']"
+  <div :class="['quiz-arena min-h-screen font-poppins overflow-hidden relative transition-colors duration-500',
+    isDark ? 'bg-abyss-900 text-white' : 'bg-slate-50 text-slate-900',
+    isBossBattle ? 'boss-battle-mode' : '',
+    isStreakMode ? 'streak-mode' : '']">
+
+    <!-- Subtle ambient bg (no blur, no glow) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <template v-if="isBossBattle">
+        <div class="absolute inset-0 boss-battle-bg"></div>
+        <div class="absolute inset-0 boss-battle-grid"></div>
+        <div class="absolute -top-24 -left-20 w-[30rem] h-[30rem] rounded-full bg-red-600/20 blur-[120px]"></div>
+        <div class="absolute -bottom-24 right-0 w-[28rem] h-[28rem] rounded-full bg-orange-500/15 blur-[120px]"></div>
+      </template>
+      <template v-else-if="isStreakMode">
+        <div class="absolute inset-0 streak-bg"></div>
+        <div class="absolute inset-0 streak-speedlines"></div>
+        <div class="absolute -top-24 left-1/2 -translate-x-1/2 w-[32rem] h-[32rem] rounded-full bg-amber-300/15 blur-[120px]"></div>
+        <div class="absolute -bottom-24 -left-16 w-[24rem] h-[24rem] rounded-full bg-vawc-orange-500/15 blur-[110px]"></div>
+      </template>
+      <template v-else>
+        <div :class="['absolute top-0 right-0 w-80 h-80 rounded-full opacity-10',
+          isDark ? 'bg-calm-lavender-700' : 'bg-calm-lavender-200']" style="filter: blur(80px);"></div>
+        <div :class="['absolute bottom-0 left-0 w-72 h-72 rounded-full opacity-10',
+          isDark ? 'bg-neon-pink-800' : 'bg-neon-pink-100']" style="filter: blur(80px);"></div>
+      </template>
+
+      <!-- Floating particles (brand color, subtle) -->
+      <div v-for="i in 12" :key="'p-' + i"
+        :class="['absolute rounded-full',
+          isBossBattle
+            ? (isDark ? 'bg-red-300/40' : 'bg-red-500/30')
+            : isStreakMode
+              ? (isDark ? 'bg-amber-300/45' : 'bg-vawc-orange-400/30')
+            : (isDark ? 'bg-calm-lavender-500/50' : 'bg-calm-lavender-400/40')]"
         :style="getParticleStyle(i)"></div>
     </div>
 
-    <!-- ==================== THEME TOGGLE (ALWAYS VISIBLE) ==================== -->
-    <button @click="toggleTheme" 
-      :class="['fixed top-4 right-4 z-[100] p-3 md:p-4 rounded-2xl border-2 backdrop-blur-xl transition-all duration-300 shadow-xl hover:scale-110 active:scale-95 group',
-        isDark ? 'bg-purple-900/50 border-purple-500/50 hover:bg-purple-800/60' : 'bg-white/80 border-purple-200 hover:bg-purple-50']">
-      <div class="relative w-6 h-6 md:w-7 md:h-7">
-        <SunIcon v-if="isDark" class="w-full h-full text-amber-400 group-hover:rotate-45 transition-transform" />
-        <MoonIcon v-else class="w-full h-full text-purple-600 group-hover:-rotate-12 transition-transform" />
-      </div>
-      <div :class="['absolute -bottom-8 left-1/2 text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap',
-        isDark ? 'text-purple-300' : 'text-purple-600']" style="transform: translateX(-50%);">
-        {{ isDark ? 'Light Mode' : 'Dark Mode' }}
-      </div>
+    <!-- Theme Toggle -->
+    <button @click="toggleTheme"
+      :class="['fixed top-4 right-4 z-[100] p-2.5 rounded-xl border transition-all group',
+        isDark ? 'bg-abyss-700 border-abyss-500 hover:border-calm-lavender-600' : 'bg-white border-slate-200 hover:border-calm-lavender-400']">
+      <SunIcon v-if="isDark" class="w-5 h-5 text-amber-400" />
+      <MoonIcon v-else class="w-5 h-5 text-calm-lavender-600" />
     </button>
 
-    <!-- ==================== SCREEN EFFECTS ==================== -->
+    <!-- Screen Flash -->
     <Transition name="flash">
       <div v-if="screenFlash" :class="['fixed inset-0 z-50 pointer-events-none',
-        screenFlash === 'correct' ? 'bg-violet-400/30' : 'bg-rose-500/40']"></div>
+        screenFlash === 'correct' ? 'bg-safety-teal-400/20' : 'bg-red-500/25']"></div>
     </Transition>
-    
+
     <!-- Score Popups -->
     <TransitionGroup name="score-pop">
-      <div v-for="popup in scorePopups" :key="popup.id"
-        class="fixed z-50 pointer-events-none select-none"
+      <div v-for="popup in scorePopups" :key="popup.id" class="fixed z-50 pointer-events-none select-none"
         :style="{ left: popup.x + 'px', top: popup.y + 'px' }">
-        <div :class="['text-4xl md:text-5xl font-black drop-shadow-2xl', popup.type === 'correct' ? 'text-violet-400' : 'text-rose-400']">
+        <div :class="['text-3xl font-bold', popup.type === 'correct' ? 'text-calm-lavender-400' : 'text-red-400']">
           {{ popup.text }}
         </div>
-        <div v-if="popup.combo" class="text-xl md:text-2xl font-black text-amber-400 animate-bounce">
-          {{ popup.combo }}x COMBO!
+        <div v-if="popup.combo" class="text-lg font-bold text-amber-400">
+          {{ popup.combo }}x Combo!
         </div>
       </div>
     </TransitionGroup>
 
-    <!-- ==================== LOADING STATE ==================== -->
-    <div v-if="loading" class="relative z-10 min-h-screen flex flex-col items-center justify-center gap-6 md:gap-8 px-4">
-      <div class="relative" style="perspective: 800px;">
-        <!-- 3D Spinning Loader -->
-        <div class="w-28 h-28 md:w-40 md:h-40 relative animate-spin-slow" style="transform-style: preserve-3d;">
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 shadow-2xl"
-            style="transform: translateZ(30px); box-shadow: 0 0 40px rgba(147, 51, 234, 0.5);"></div>
-          <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-600 to-violet-700"
-            style="transform: translateZ(-30px);"></div>
-          <div class="absolute inset-0 flex items-center justify-center" style="transform: translateZ(40px);">
-            <ZapIcon class="w-12 h-12 md:w-16 md:h-16 text-white" />
-          </div>
-        </div>
+    <!-- ===== LOADING ===== -->
+    <div v-if="loading" class="relative z-10 min-h-screen flex flex-col items-center justify-center gap-5">
+      <div :class="['w-16 h-16 rounded-2xl border-2 flex items-center justify-center',
+        isDark ? 'bg-abyss-700 border-calm-lavender-700' : 'bg-white border-calm-lavender-200']">
+        <ZapIcon class="w-8 h-8 text-calm-lavender-500 animate-pulse" />
       </div>
       <div class="text-center">
-        <h2 :class="['text-2xl md:text-4xl font-black uppercase italic tracking-tight animate-pulse',
-          isDark ? 'text-white' : 'text-purple-900']">
-          Loading <span class="text-purple-500">Arena</span>
+        <h2 :class="['font-madimione text-2xl', isDark ? 'text-platinum-100' : 'text-slate-800']">
+          Loading <span class="brand-gradient-text">Quiz</span>
         </h2>
-        <div class="flex items-center justify-center gap-2 mt-4">
-          <div class="w-3 h-3 rounded-full bg-purple-500 animate-bounce" style="animation-delay: 0s"></div>
-          <div class="w-3 h-3 rounded-full bg-purple-500 animate-bounce" style="animation-delay: 0.1s"></div>
-          <div class="w-3 h-3 rounded-full bg-purple-500 animate-bounce" style="animation-delay: 0.2s"></div>
+        <div class="flex items-center justify-center gap-1.5 mt-3">
+          <div v-for="n in 3" :key="n" :class="['w-2 h-2 rounded-full bg-calm-lavender-500 animate-bounce']"
+            :style="`animation-delay: ${(n - 1) * 0.12}s`"></div>
         </div>
       </div>
     </div>
 
-    <!-- ==================== MAIN QUIZ INTERFACE ==================== -->
-    <div v-else-if="quiz && currentQuestion && !isFinished" 
+    <!-- ===== MAIN QUIZ ===== -->
+    <div v-else-if="quiz && currentQuestion && !isFinished"
       :class="['relative z-10 min-h-screen flex flex-col', { 'animate-shake': isShaking }]">
-      
+
       <!-- Review Mode Banner -->
-      <div v-if="isReviewMode" :class="['relative overflow-hidden border-b',
-        isDark ? 'bg-amber-500/10 border-amber-500/30' : 'bg-amber-50 border-amber-200']">
-        <div class="absolute inset-0 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent animate-shimmer"></div>
-        <div class="relative max-w-7xl mx-auto px-4 py-2 md:py-3 flex items-center justify-center gap-2 md:gap-3">
-          <BookOpenIcon class="w-4 h-4 md:w-5 md:h-5 text-amber-500" />
-          <p class="text-xs md:text-sm font-black uppercase tracking-widest text-amber-600 dark:text-amber-400">
-            Practice Mode — No XP
-          </p>
+      <div v-if="isReviewMode" :class="['border-b py-2.5 text-center',
+        isDark ? 'bg-amber-900/20 border-amber-700/30' : 'bg-amber-50 border-amber-200']">
+        <div class="flex items-center justify-center gap-2">
+          <BookOpenIcon class="w-4 h-4 text-amber-500" />
+          <p class="text-xs font-semibold text-amber-600 dark:text-amber-400">Practice Mode — No XP earned</p>
         </div>
       </div>
 
-      <!-- ========== 3D GAME HEADER ========== -->
-      <header :class="['sticky top-0 z-40 backdrop-blur-2xl border-b',
-        isDark ? 'bg-[#0a0014]/90 border-purple-500/20' : 'bg-white/90 border-purple-200']">
-        <div class="max-w-6xl mx-auto px-3 md:px-6 py-3 md:py-4">
-          <div class="flex items-center justify-between gap-3">
-            <!-- Exit Button (3D Style) -->
-            <button @click="triggerBack" 
-              :class="['group relative p-2.5 md:p-3 rounded-xl border-2 transition-all duration-300 hover:-translate-y-1 active:translate-y-0',
-                isDark ? 'bg-purple-900/50 border-purple-500/50 hover:bg-red-900/50 hover:border-red-500/50' : 
-                'bg-purple-50 border-purple-200 hover:bg-red-50 hover:border-red-300']"
-              style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
-              <XIcon :class="['w-5 h-5 md:w-6 md:h-6 transition-colors', isDark ? 'text-purple-300 group-hover:text-red-400' : 'text-purple-600 group-hover:text-red-500']" />
-            </button>
+      <!-- ===== HEADER ===== -->
+      <header :class="['sticky top-0 z-40 border-b',
+        isDark ? 'bg-abyss-900/95 border-abyss-700' : 'bg-white/95 border-slate-200']">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-3">
 
-            <!-- Mode Indicator (3D Card) -->
-            <div :class="['relative px-4 md:px-6 py-2 md:py-3 rounded-xl border-2 transition-all',
-              isDark ? 'bg-purple-900/50 border-purple-500/50' : 'bg-purple-50 border-purple-200']"
-              style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
-              <div class="flex items-center gap-2 md:gap-3">
-                <component :is="modeIcon" :class="['w-5 h-5 md:w-6 md:h-6', modeIconColor]" />
-                <span :class="['text-sm md:text-base font-black uppercase tracking-wider', isDark ? 'text-purple-300' : 'text-purple-700']">
-                  {{ modeLabel }}
-                </span>
+          <!-- Exit -->
+          <button @click="triggerBack"
+            :class="['p-2 rounded-xl border transition-all group',
+              isDark ? 'bg-abyss-700 border-abyss-500 hover:border-red-700 hover:bg-red-900/30' : 'bg-slate-50 border-slate-200 hover:border-red-200 hover:bg-red-50']">
+            <XIcon
+              :class="['w-5 h-5 transition-colors', isDark ? 'text-platinum-400 group-hover:text-red-400' : 'text-slate-500 group-hover:text-red-500']" />
+          </button>
+
+          <!-- Mode Label -->
+          <div :class="['px-4 py-2 rounded-xl border flex items-center gap-2',
+            isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-slate-50 border-slate-200']">
+            <component :is="modeIcon" :class="['w-4 h-4', modeIconColor]" />
+            <span :class="['text-sm font-medium', isDark ? 'text-platinum-200' : 'text-slate-700']">{{ modeLabel
+              }}</span>
+          </div>
+
+          <!-- Stats Row -->
+          <div class="flex items-center gap-2">
+            <!-- Timer -->
+            <div v-if="quiz.quiz_type === 'time_attack'"
+              :class="['flex items-center gap-2 px-3 py-2 rounded-xl border',
+                timeLeft <= 10 ? 'bg-red-500/10 border-red-400' : (isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-slate-50 border-slate-200')]">
+              <div class="relative w-7 h-7">
+                <svg class="w-full h-full" style="transform: rotate(-90deg);">
+                  <circle cx="50%" cy="50%" r="40%" stroke-width="3" fill="none"
+                    :class="isDark ? 'stroke-abyss-500' : 'stroke-slate-200'" />
+                  <circle cx="50%" cy="50%" r="40%" stroke-width="3" fill="none"
+                    :class="timeLeft <= 10 ? 'stroke-red-500' : 'stroke-calm-lavender-500'" stroke-linecap="round"
+                    :stroke-dasharray="100" :stroke-dashoffset="100 - (100 * (timeLeft / (quiz.time_limit || 30)))"
+                    class="transition-all duration-1000" />
+                </svg>
+                <ClockIcon :class="['absolute top-1/2 left-1/2 w-3.5 h-3.5 -translate-x-1/2 -translate-y-1/2',
+                  timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-calm-lavender-500']" />
               </div>
+              <span
+                :class="['text-lg font-bold tabular-nums', timeLeft <= 10 ? 'text-red-500' : (isDark ? 'text-white' : 'text-slate-800')]">
+                {{ timeLeft }}s
+              </span>
             </div>
 
-            <!-- Timer / Streak / Boss HP -->
-            <div class="flex items-center gap-2 md:gap-4">
-              <!-- Timer (Time Attack) -->
-              <div v-if="quiz.quiz_type === 'time_attack'" 
-                :class="['relative flex items-center gap-2 px-3 md:px-5 py-2 md:py-3 rounded-xl border-2 transition-all',
-                  timeLeft <= 10 ? 'bg-red-500/20 border-red-500' : (isDark ? 'bg-purple-900/50 border-purple-500/50' : 'bg-purple-50 border-purple-200')]"
-                style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
-                <div class="relative w-8 h-8 md:w-10 md:h-10">
-                  <svg class="w-full h-full" style="transform: rotate(-90deg);">
-                    <circle cx="50%" cy="50%" r="40%" stroke-width="3" fill="none" 
-                      :class="isDark ? 'stroke-purple-900' : 'stroke-purple-100'" />
-                    <circle cx="50%" cy="50%" r="40%" stroke-width="3" fill="none" 
-                      :class="timeLeft <= 10 ? 'stroke-red-500' : 'stroke-purple-500'"
-                      stroke-linecap="round"
-                      :stroke-dasharray="100"
-                      :stroke-dashoffset="100 - (100 * (timeLeft / (quiz.time_limit || 30)))"
-                      class="transition-all duration-1000" />
-                  </svg>
-                  <ClockIcon :class="['absolute top-1/2 left-1/2 w-4 h-4 md:w-5 md:h-5',
-                    timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-purple-500']" style="transform: translate(-50%, -50%);" />
-                </div>
-                <span :class="['text-xl md:text-2xl font-black tabular-nums', timeLeft <= 10 ? 'text-red-500' : (isDark ? 'text-white' : 'text-purple-900')]">
-                  {{ timeLeft }}s
-                </span>
-              </div>
+            <!-- Streak -->
+            <div v-if="quiz.quiz_type === 'streak'"
+              :class="['flex items-center gap-2 px-3 py-2 rounded-xl border',
+                streakCount >= 3 ? 'bg-vawc-orange-50 dark:bg-vawc-orange-900/20 border-vawc-orange-300 dark:border-vawc-orange-700' : (isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-slate-50 border-slate-200')]">
+              <FlameIcon
+                :class="['w-5 h-5', streakCount >= 3 ? 'text-vawc-orange-500 animate-bounce' : 'text-calm-lavender-500']" />
+              <span
+                :class="['text-lg font-bold', streakCount >= 3 ? 'text-vawc-orange-500' : (isDark ? 'text-white' : 'text-slate-800')]">
+                x{{ streakCount }}
+              </span>
+            </div>
 
-              <!-- Streak Counter -->
-              <div v-if="quiz.quiz_type === 'streak'" 
-                :class="['relative flex items-center gap-2 px-3 md:px-5 py-2 md:py-3 rounded-xl border-2 transition-all',
-                  streakCount >= 3 ? 'bg-orange-500/20 border-orange-500' : (isDark ? 'bg-purple-900/50 border-purple-500/50' : 'bg-purple-50 border-purple-200')]"
-                style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
-                <FlameIcon :class="['w-6 h-6 md:w-8 md:h-8', streakCount >= 3 ? 'text-orange-400 animate-bounce' : 'text-purple-500']" />
-                <span :class="['text-xl md:text-2xl font-black', streakCount >= 3 ? 'text-orange-400' : (isDark ? 'text-white' : 'text-purple-900')]">
-                  x{{ streakCount }}
-                </span>
-              </div>
-
-              <!-- Score -->
-              <div :class="['relative flex items-center gap-2 px-3 md:px-5 py-2 md:py-3 rounded-xl border-2',
-                isDark ? 'bg-purple-900/50 border-purple-500/50' : 'bg-purple-50 border-purple-200']"
-                style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
-                <SparklesIcon class="w-5 h-5 md:w-6 md:h-6 text-purple-500" />
-                <span :class="['text-lg md:text-xl font-black', isDark ? 'text-white' : 'text-purple-900']">{{ score }}</span>
-              </div>
+            <!-- Score -->
+            <div :class="['flex items-center gap-2 px-3 py-2 rounded-xl border',
+              isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-slate-50 border-slate-200']">
+              <SparklesIcon class="w-4 h-4 text-calm-lavender-500" />
+              <span :class="['text-lg font-bold', isDark ? 'text-white' : 'text-slate-800']">{{ score }}</span>
             </div>
           </div>
         </div>
       </header>
 
-      <!-- ========== BOSS BATTLE HP BAR ========== -->
-      <div v-if="quiz.quiz_type === 'boss_battle'" class="px-4 py-4 md:py-6">
-        <div class="max-w-2xl mx-auto">
-          <div :class="['relative p-3 md:p-4 rounded-2xl border-2 overflow-hidden',
-            isDark ? 'bg-purple-900/30 border-red-500/50' : 'bg-red-50 border-red-200']"
-            style="box-shadow: 0 6px 0 rgba(239, 68, 68, 0.3);">
-            <div class="flex items-center justify-between mb-2">
-              <div class="flex items-center gap-2">
-                <SkullIcon class="w-5 h-5 md:w-6 md:h-6 text-red-500" />
-                <span :class="['text-sm md:text-base font-black uppercase', isDark ? 'text-red-400' : 'text-red-600']">Boss</span>
-              </div>
-              <span :class="['text-lg md:text-xl font-black', isDark ? 'text-red-400' : 'text-red-600']">{{ Math.round(bossHP) }}%</span>
+      <!-- Boss Arena -->
+      <div v-if="quiz.quiz_type === 'boss_battle'" class="px-4 py-4">
+        <div class="max-w-3xl mx-auto">
+          <div :class="['relative rounded-2xl border p-4 overflow-hidden',
+            isDark ? 'bg-red-950/30 border-red-900/60' : 'bg-red-50 border-red-200']">
+
+            <div class="absolute inset-y-0 right-0 w-44 opacity-15 pointer-events-none"
+              :class="isDark ? 'bg-gradient-to-l from-red-500/40 to-transparent' : 'bg-gradient-to-l from-red-200 to-transparent'">
             </div>
-            <div class="relative h-4 md:h-6 rounded-full overflow-hidden bg-red-950">
-              <div class="absolute inset-0 bg-gradient-to-r from-red-600 via-red-500 to-orange-500 transition-all duration-500"
-                :style="{ width: bossHP + '%' }">
-                <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
+
+            <div class="relative flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div class="boss-avatar-wrap">
+                <div :class="['boss-avatar', bossHit ? 'boss-hit' : '', bossDefeated ? 'boss-defeated' : '']">
+                  <SkullIcon class="w-8 h-8 text-white" />
+                </div>
+              </div>
+
+              <div class="flex-1 w-full">
+                <div class="flex items-center justify-between gap-3 mb-1.5">
+                  <div>
+                    <p :class="['text-[11px] uppercase tracking-[0.24em] font-semibold', isDark ? 'text-red-400/70' : 'text-red-500/70']">Boss Encounter</p>
+                    <h3 :class="['text-lg font-semibold', isDark ? 'text-red-300' : 'text-red-700']">{{ bossName }}</h3>
+                  </div>
+                  <span :class="['text-sm font-semibold px-2.5 py-1 rounded-lg border',
+                    bossDefeated
+                      ? 'text-safety-teal-500 border-safety-teal-400 bg-safety-teal-500/10'
+                      : (isDark ? 'text-red-300 border-red-800 bg-red-900/25' : 'text-red-600 border-red-200 bg-white/70')]">
+                    {{ bossStatusText }}
+                  </span>
+                </div>
+
+                <div :class="['relative h-4 rounded-full overflow-hidden border', isDark ? 'bg-abyss-800 border-red-900/60' : 'bg-red-100 border-red-200']">
+                  <div class="absolute inset-0 boss-hp-grid"></div>
+                  <div class="h-full bg-gradient-to-r from-red-600 via-red-500 to-vawc-orange-500 rounded-full transition-all duration-500"
+                    :style="{ width: bossHP + '%' }"></div>
+                </div>
+
+                <div class="mt-1.5 flex items-center justify-between">
+                  <p :class="['text-xs font-medium', isDark ? 'text-platinum-400' : 'text-slate-500']">
+                    Land correct answers to break the boss guard.
+                  </p>
+                  <span :class="['text-sm font-bold', isDark ? 'text-red-300' : 'text-red-600']">{{ Math.round(bossHP) }}%</span>
+                </div>
               </div>
             </div>
-            <!-- Boss Damage Indicator -->
+
             <Transition name="damage-pop">
-              <div v-if="showBossDamage" class="absolute -top-6 right-4 text-2xl md:text-3xl font-black text-amber-400 animate-bounce">
+              <div v-if="showBossDamage" class="absolute -top-5 right-4 text-xl font-bold text-amber-400">
                 -{{ lastBossDamage }}%
               </div>
             </Transition>
@@ -214,105 +215,135 @@
         </div>
       </div>
 
-      <!-- ========== MAIN GAME AREA ========== -->
-      <main class="flex-1 flex flex-col items-center justify-center px-3 md:px-6 py-4 md:py-8">
-        
-        <!-- Progress Bar (3D Style) -->
-        <div class="w-full max-w-4xl mb-6 md:mb-10">
-          <div class="flex items-center justify-between mb-2 md:mb-3">
-            <span :class="['text-sm md:text-base font-bold', isDark ? 'text-purple-300' : 'text-purple-700']">
-              Question {{ currentQuestionIndex + 1 }} of {{ quiz.questions_data.length }}
-            </span>
-            <Transition name="combo-pop">
-              <div v-if="comboCount >= 2" 
-                :class="['px-3 py-1 rounded-full border-2', isDark ? 'bg-amber-500/20 border-amber-500/50' : 'bg-amber-50 border-amber-300']">
-                <span class="text-sm md:text-base font-black text-amber-500">{{ comboCount }}x!</span>
+      <!-- Streak Arena -->
+      <div v-if="quiz.quiz_type === 'streak'" class="px-4 py-4">
+        <div class="max-w-3xl mx-auto">
+          <div :class="['rounded-2xl border p-4 relative overflow-hidden',
+            isDark ? 'bg-amber-950/25 border-amber-900/50' : 'bg-amber-50 border-amber-200']">
+            <div class="absolute inset-y-0 right-0 w-44 opacity-20 pointer-events-none"
+              :class="isDark ? 'bg-gradient-to-l from-amber-500/40 to-transparent' : 'bg-gradient-to-l from-amber-200 to-transparent'">
+            </div>
+
+            <div class="relative flex flex-col sm:flex-row items-start sm:items-center gap-4">
+              <div :class="['w-16 h-16 rounded-2xl border flex items-center justify-center streak-token',
+                isDark ? 'border-amber-500/40' : 'border-amber-300']">
+                <FlameIcon class="w-8 h-8 text-vawc-orange-500" />
               </div>
-            </Transition>
-          </div>
-          <div :class="['relative h-3 md:h-4 rounded-full overflow-hidden', isDark ? 'bg-purple-950' : 'bg-purple-100']"
-            style="box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">
-            <div class="h-full bg-gradient-to-r from-purple-600 via-violet-500 to-purple-600 rounded-full transition-all duration-700"
-              :style="{ width: ((currentQuestionIndex + 1) / quiz.questions_data.length) * 100 + '%' }">
-              <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent"></div>
+
+              <div class="flex-1 w-full">
+                <div class="flex items-center justify-between gap-3 mb-1.5">
+                  <div>
+                    <p :class="['text-[11px] uppercase tracking-[0.24em] font-semibold', isDark ? 'text-amber-300/70' : 'text-amber-600/70']">Streak Mode</p>
+                    <h3 :class="['text-lg font-semibold', isDark ? 'text-amber-200' : 'text-amber-700']">Momentum Chain</h3>
+                  </div>
+                  <span :class="['text-sm font-semibold px-2.5 py-1 rounded-lg border',
+                    streakCount >= 7
+                      ? 'text-vawc-orange-500 border-vawc-orange-400 bg-vawc-orange-500/10'
+                      : (isDark ? 'text-amber-200 border-amber-700 bg-amber-900/25' : 'text-amber-700 border-amber-200 bg-white/70')]">
+                    {{ streakTierText }}
+                  </span>
+                </div>
+
+                <div :class="['h-3.5 rounded-full overflow-hidden border', isDark ? 'bg-abyss-800 border-amber-900/60' : 'bg-amber-100 border-amber-200']">
+                  <div class="h-full bg-gradient-to-r from-amber-400 via-vawc-orange-500 to-red-500 rounded-full transition-all duration-500"
+                    :style="{ width: streakAuraWidth }"></div>
+                </div>
+
+                <div class="mt-1.5 flex items-center justify-between">
+                  <p :class="['text-xs font-medium', isDark ? 'text-platinum-400' : 'text-slate-500']">
+                    Keep chaining right answers to amplify points.
+                  </p>
+                  <span :class="['text-sm font-bold', isDark ? 'text-amber-300' : 'text-amber-700']">x{{ streakCount }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Question Card (3D Effect) -->
+      <!-- ===== MAIN GAME AREA ===== -->
+      <main class="flex-1 flex flex-col items-center justify-center px-4 py-6">
+
+        <!-- Progress -->
+        <div class="w-full max-w-3xl mb-6">
+          <div class="flex items-center justify-between mb-2">
+            <span :class="['text-sm font-medium', isDark ? 'text-platinum-400' : 'text-slate-600']">
+              Question {{ currentQuestionIndex + 1 }} of {{ quiz.questions_data.length }}
+            </span>
+            <Transition name="combo-pop">
+              <div v-if="comboCount >= 2" :class="['px-2.5 py-1 rounded-lg border text-sm font-semibold text-amber-500',
+                isDark ? 'bg-amber-900/20 border-amber-700/30' : 'bg-amber-50 border-amber-200']">
+                {{ comboCount }}x Combo!
+              </div>
+            </Transition>
+          </div>
+          <div :class="['h-2 rounded-full overflow-hidden border',
+            isDark ? 'bg-abyss-700 border-abyss-600' : 'bg-slate-100 border-slate-200']">
+            <div
+              class="h-full bg-gradient-to-r from-calm-lavender-500 to-neon-pink-400 rounded-full transition-all duration-700"
+              :style="{ width: ((currentQuestionIndex + 1) / quiz.questions_data.length) * 100 + '%' }"></div>
+          </div>
+        </div>
+
+        <!-- Question Card -->
         <Transition :name="transitionName" mode="out-in">
-          <div :key="currentQuestionIndex" class="w-full max-w-4xl">
-            <!-- 3D Question Card -->
-            <div :class="['relative rounded-2xl md:rounded-3xl border-2 overflow-hidden transition-all mb-5 md:mb-8',
-              isDark ? 'bg-purple-900/40 border-purple-500/50' : 'bg-white border-purple-200',
-              feedbackBorderClass]"
-              style="box-shadow: 0 8px 0 rgba(147, 51, 234, 0.4), 0 16px 40px rgba(147, 51, 234, 0.2);">
-              
-              <!-- Top accent bar -->
-              <div class="h-1.5 md:h-2 bg-gradient-to-r from-purple-600 via-violet-500 to-purple-600"></div>
-              
-              <div class="p-5 md:p-10">
-                <!-- Question number badge -->
-                <div class="flex items-center gap-3 md:gap-4 mb-4 md:mb-6">
-                  <div class="w-12 h-12 md:w-16 md:h-16 rounded-xl md:rounded-2xl bg-gradient-to-br from-purple-500 to-violet-600 flex items-center justify-center text-white text-lg md:text-2xl font-black shadow-lg"
-                    style="box-shadow: 0 4px 0 rgba(109, 40, 217, 0.8);">
+          <div :key="currentQuestionIndex" class="w-full max-w-3xl">
+
+            <!-- Question -->
+            <div :class="['rounded-2xl border-2 overflow-hidden mb-5 transition-all',
+              isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-white border-slate-200',
+              feedbackBorderClass]">
+
+              <div class="h-1 bg-gradient-to-r from-calm-lavender-500 to-neon-pink-400"></div>
+
+              <div class="p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-5">
+                  <div :class="['w-10 h-10 rounded-xl flex items-center justify-center text-white text-base font-bold',
+                    'bg-gradient-to-br from-calm-lavender-500 to-neon-pink-500']">
                     {{ currentQuestionIndex + 1 }}
                   </div>
                   <div>
-                    <p :class="['text-xs md:text-sm font-black uppercase tracking-wider', isDark ? 'text-purple-400' : 'text-purple-500']">
+                    <p
+                      :class="['text-xs font-semibold uppercase tracking-wide', isDark ? 'text-calm-lavender-400' : 'text-calm-lavender-600']">
                       {{ modeLabel }}
                     </p>
-                    <p :class="['text-xs md:text-sm', isDark ? 'text-purple-300/60' : 'text-purple-400']">
-                      Answer correctly to score!
-                    </p>
+                    <p class="text-xs text-platinum-500">Answer correctly to score!</p>
                   </div>
                 </div>
-                
-                <!-- Question Text -->
-                <h2 :class="['text-xl md:text-3xl font-bold leading-relaxed', isDark ? 'text-white' : 'text-purple-900']">
+
+                <h2
+                  :class="['text-xl md:text-2xl font-medium leading-relaxed', isDark ? 'text-platinum-100' : 'text-slate-800']">
                   {{ currentQuestion.question }}
                 </h2>
               </div>
             </div>
 
-            <!-- 3D Answer Options Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
+            <!-- Answer Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <button v-for="(option, index) in currentQuestion.options" :key="index"
-                @click="handleAnswerSelection($event, index)"
-                :disabled="selectedAnswer !== null"
-                :class="['answer-btn group relative text-left transition-all duration-300 rounded-xl md:rounded-2xl border-2 overflow-hidden',
-                  getOptionClass(index)]"
-                :style="getOptionStyle(index)">
-                
-                <div class="p-4 md:p-6 flex items-center gap-3 md:gap-4">
-                  <!-- Letter Badge -->
-                  <div :class="['w-12 h-12 md:w-14 md:h-14 rounded-lg md:rounded-xl flex items-center justify-center text-lg md:text-xl font-black transition-all flex-shrink-0',
-                    getOptionLetterClass(index)]"
-                    style="box-shadow: 0 3px 0 rgba(0,0,0,0.2);">
+                @click="handleAnswerSelection($event, index)" :disabled="selectedAnswer !== null" :class="['answer-btn group relative text-left rounded-xl border-2 overflow-hidden transition-all duration-200',
+                  getOptionClass(index)]">
+
+                <div class="p-4 flex items-center gap-3">
+                  <div :class="['w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold transition-all shrink-0',
+                    getOptionLetterClass(index)]">
                     {{ String.fromCharCode(65 + index) }}
                   </div>
-                  
-                  <!-- Option Text -->
-                  <span :class="['font-semibold text-base md:text-lg flex-1', isDark ? 'text-white' : 'text-purple-900']">
+                  <span :class="['font-medium text-sm flex-1', isDark ? 'text-platinum-200' : 'text-slate-700']">
                     {{ option }}
                   </span>
-                  
-                  <!-- Result Icons -->
+
                   <Transition name="icon-pop">
-                    <div v-if="selectedAnswer !== null && index === currentQuestion.correctAnswer" 
-                      class="w-10 h-10 md:w-12 md:h-12 bg-violet-500 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                      <CheckIcon class="w-5 h-5 md:w-6 md:h-6 text-white" />
+                    <div v-if="selectedAnswer !== null && index === currentQuestion.correctAnswer"
+                      class="w-8 h-8 bg-safety-teal-500 rounded-lg flex items-center justify-center shrink-0">
+                      <CheckIcon class="w-4 h-4 text-white" />
                     </div>
                     <div v-else-if="selectedAnswer === index && index !== currentQuestion.correctAnswer"
-                      class="w-10 h-10 md:w-12 md:h-12 bg-red-500 rounded-lg md:rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
-                      <XIcon class="w-5 h-5 md:w-6 md:h-6 text-white" />
+                      class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center shrink-0">
+                      <XIcon class="w-4 h-4 text-white" />
                     </div>
                   </Transition>
                 </div>
-                
-                <!-- Hover glow effect -->
-                <div v-if="selectedAnswer === null" 
-                  class="absolute inset-0 bg-gradient-to-r from-purple-500/0 via-purple-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
               </button>
             </div>
           </div>
@@ -320,84 +351,80 @@
       </main>
     </div>
 
-    <!-- ==================== RESULTS SCREEN ==================== -->
-    <div v-else-if="isFinished" class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 md:p-6">
+    <!-- ===== RESULTS SCREEN ===== -->
+    <div v-else-if="isFinished" class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+
       <!-- Confetti -->
       <div v-if="scorePercentage >= 70" class="fixed inset-0 pointer-events-none overflow-hidden">
-        <div v-for="i in 60" :key="'conf-'+i" 
-          :class="['confetti absolute', confettiColors[i % confettiColors.length]]"
+        <div v-for="i in 50" :key="'conf-' + i" :class="['confetti absolute', confettiColors[i % confettiColors.length]]"
           :style="getConfettiStyle(i)"></div>
       </div>
 
-      <!-- 3D Results Card -->
-      <div class="max-w-xl w-full animate-in">
-        <div :class="['relative rounded-3xl md:rounded-[3rem] overflow-hidden border-2',
-          isDark ? 'bg-purple-900/50 border-purple-500/50' : 'bg-white border-purple-200']"
-          style="box-shadow: 0 12px 0 rgba(147, 51, 234, 0.4), 0 24px 60px rgba(147, 51, 234, 0.3);">
-          
+      <!-- Results Card -->
+      <div class="max-w-md w-full animate-in">
+        <div :class="['rounded-2xl border-2 overflow-hidden',
+          isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-white border-slate-200']">
+
           <!-- Trophy Section -->
-          <div class="relative py-10 md:py-16">
-            <div :class="['absolute inset-0 blur-[80px] opacity-50', resultGlowClass]"></div>
-            <div :class="['relative w-28 h-28 md:w-40 md:h-40 mx-auto rounded-full flex items-center justify-center shadow-2xl', resultIconClass]"
-              style="box-shadow: 0 8px 0 rgba(0,0,0,0.2);">
-              <TrophyIcon v-if="scorePercentage >= 90" class="w-14 h-14 md:w-20 md:h-20" />
-              <MedalIcon v-else-if="scorePercentage >= 70" class="w-14 h-14 md:w-20 md:h-20" />
-              <StarIcon v-else-if="scorePercentage >= 50" class="w-14 h-14 md:w-20 md:h-20" />
-              <TargetIcon v-else class="w-14 h-14 md:w-20 md:h-20" />
+          <div class="h-1 bg-gradient-to-r from-calm-lavender-500 to-neon-pink-400"></div>
+          <div class="relative py-10 flex items-center justify-center">
+            <div :class="['w-24 h-24 rounded-2xl flex items-center justify-center text-white', resultIconClass]">
+              <TrophyIcon v-if="scorePercentage >= 90" class="w-12 h-12" />
+              <MedalIcon v-else-if="scorePercentage >= 70" class="w-12 h-12" />
+              <StarIcon v-else-if="scorePercentage >= 50" class="w-12 h-12" />
+              <TargetIcon v-else class="w-12 h-12" />
             </div>
           </div>
 
-          <div class="p-6 md:p-10 pt-0 text-center">
-            <h1 :class="['text-3xl md:text-5xl font-black uppercase italic tracking-tight mb-2',
-              isDark ? 'text-white' : 'text-purple-900']">{{ resultTitle }}</h1>
-            <p :class="['text-base md:text-lg mb-8 md:mb-10', isDark ? 'text-purple-300/70' : 'text-purple-500']">{{ resultSubtitle }}</p>
+          <div class="px-6 pb-7 text-center">
+            <h1 :class="['font-madimione text-3xl mb-1', isDark ? 'text-platinum-100' : 'text-slate-800']">
+              {{ resultTitle }}
+            </h1>
+            <p :class="['text-sm mb-6', isDark ? 'text-platinum-500' : 'text-slate-500']">{{ resultSubtitle }}</p>
 
             <!-- XP Display -->
-            <div :class="['rounded-2xl md:rounded-3xl p-6 md:p-8 mb-8 md:mb-10 border-2',
-              isReviewMode ? (isDark ? 'bg-purple-900/30 border-purple-500/30' : 'bg-purple-50 border-purple-200') :
-              'bg-gradient-to-r from-purple-500/20 to-violet-500/20 border-purple-500/50']"
-              style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
-              <p v-if="!isReviewMode" class="text-5xl md:text-7xl font-black bg-gradient-to-r from-purple-500 to-violet-500 bg-clip-text text-transparent">
-                +{{ score }}
-              </p>
-              <p v-else :class="['text-4xl md:text-5xl font-black', isDark ? 'text-purple-400' : 'text-purple-600']">{{ score }}</p>
-              <p :class="['text-xs md:text-sm font-black uppercase tracking-widest mt-2',
-                isReviewMode ? 'text-amber-500' : 'text-purple-500']">
-                {{ isReviewMode ? 'Practice Score' : 'Experience Points' }}
+            <div :class="['rounded-xl border p-5 mb-6',
+              isDark ? 'bg-abyss-800 border-abyss-600' : 'bg-slate-50 border-slate-200']">
+              <p v-if="!isReviewMode" class="text-4xl font-bold brand-gradient-text">+{{ score }}</p>
+              <p v-else :class="['text-3xl font-bold', isDark ? 'text-calm-lavender-400' : 'text-calm-lavender-600']">{{
+                score }}</p>
+              <p :class="['text-xs font-medium uppercase tracking-widest mt-1',
+                isReviewMode ? 'text-amber-500' : 'text-calm-lavender-500']">
+                {{ isReviewMode ? 'Practice Score' : 'Experience Points Earned' }}
               </p>
             </div>
 
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-3 gap-2 md:gap-4 mb-8 md:mb-10">
-              <div :class="['rounded-xl md:rounded-2xl p-3 md:p-5 border-2', isDark ? 'bg-violet-500/20 border-violet-500/30' : 'bg-violet-50 border-violet-200']"
-                style="box-shadow: 0 3px 0 rgba(139, 92, 246, 0.3);">
-                <p class="text-2xl md:text-3xl font-black text-violet-500">{{ correctAnswers }}</p>
-                <p class="text-xs font-black uppercase text-violet-500/60">Correct</p>
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-2 mb-6">
+              <div
+                :class="['rounded-xl border p-3',
+                  isDark ? 'bg-safety-teal-900/20 border-safety-teal-800/30' : 'bg-safety-teal-50 border-safety-teal-200']">
+                <p class="text-xl font-bold text-safety-teal-500">{{ correctAnswers }}</p>
+                <p class="text-[10px] font-medium uppercase text-safety-teal-500/60">Correct</p>
               </div>
-              <div :class="['rounded-xl md:rounded-2xl p-3 md:p-5 border-2', isDark ? 'bg-rose-500/20 border-rose-500/30' : 'bg-rose-50 border-rose-200']"
-                style="box-shadow: 0 3px 0 rgba(244, 63, 94, 0.3);">
-                <p class="text-2xl md:text-3xl font-black text-rose-500">{{ quiz.questions_data.length - correctAnswers }}</p>
-                <p class="text-xs font-black uppercase text-rose-500/60">Wrong</p>
+              <div :class="['rounded-xl border p-3',
+                isDark ? 'bg-red-900/20 border-red-800/30' : 'bg-red-50 border-red-200']">
+                <p class="text-xl font-bold text-red-500">{{ quiz.questions_data.length - correctAnswers }}</p>
+                <p class="text-[10px] font-medium uppercase text-red-500/60">Wrong</p>
               </div>
-              <div :class="['rounded-xl md:rounded-2xl p-3 md:p-5 border-2', isDark ? 'bg-fuchsia-500/20 border-fuchsia-500/30' : 'bg-fuchsia-50 border-fuchsia-200']"
-                style="box-shadow: 0 3px 0 rgba(217, 70, 239, 0.3);">
-                <p class="text-2xl md:text-3xl font-black text-fuchsia-500">{{ formatTime(totalTimeTaken) }}</p>
-                <p class="text-xs font-black uppercase text-fuchsia-500/60">Time</p>
+              <div
+                :class="['rounded-xl border p-3',
+                  isDark ? 'bg-calm-lavender-900/20 border-calm-lavender-800/30' : 'bg-calm-lavender-50 border-calm-lavender-200']">
+                <p class="text-xl font-bold text-calm-lavender-500">{{ formatTime(totalTimeTaken) }}</p>
+                <p class="text-[10px] font-medium uppercase text-calm-lavender-500/60">Time</p>
               </div>
             </div>
 
-            <!-- Action Buttons (3D) -->
-            <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
-              <button @click="router.push({ name: 'user.modules' })" 
-                :class="['flex-1 py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-wider border-2 transition-all hover:-translate-y-1 active:translate-y-0',
-                isDark ? 'bg-purple-900/50 border-purple-500/50 text-purple-300 hover:bg-purple-800' : 'bg-purple-50 border-purple-200 text-purple-700 hover:bg-purple-100']"
-                style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
-                <ArrowLeftIcon class="inline w-5 h-5 mr-2" /> Back
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button @click="router.push({ name: 'user.modules' })"
+                :class="['flex-1 py-3 rounded-xl border text-sm font-medium transition-all hover:-translate-y-0.5',
+                  isDark ? 'bg-abyss-700 border-abyss-500 text-platinum-300 hover:border-calm-lavender-700' : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-calm-lavender-300']">
+                <ArrowLeftIcon class="inline w-4 h-4 mr-1.5" /> Back to Library
               </button>
-              <button @click="router.push({ name: 'user.rewards-shop' })" 
-                class="flex-1 py-4 md:py-5 rounded-xl md:rounded-2xl font-black uppercase tracking-wider text-white bg-gradient-to-r from-purple-600 to-violet-600 border-2 border-purple-500 hover:-translate-y-1 active:translate-y-0 transition-all"
-                style="box-shadow: 0 4px 0 rgba(109, 40, 217, 0.8);">
-                <GiftIcon class="inline w-5 h-5 mr-2" /> Rewards
+              <button @click="router.push({ name: 'user.rewards-shop' })"
+                class="flex-1 py-3 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-calm-lavender-600 to-neon-pink-500 border border-calm-lavender-700 hover:-translate-y-0.5 transition-all">
+                <GiftIcon class="inline w-4 h-4 mr-1.5" /> View Rewards
               </button>
             </div>
           </div>
@@ -405,27 +432,47 @@
       </div>
     </div>
 
-    <!-- ==================== EXIT MODAL ==================== -->
+    <!-- ===== ERROR / EMPTY STATE ===== -->
+    <div v-else class="relative z-10 min-h-screen flex items-center justify-center p-4">
+      <div :class="['max-w-md w-full rounded-2xl border p-6 text-center',
+        isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-white border-slate-200']">
+        <div class="inline-flex p-3 rounded-xl border mb-4"
+          :class="isDark ? 'bg-amber-900/20 border-amber-800/40' : 'bg-amber-50 border-amber-200'">
+          <AlertTriangleIcon class="w-7 h-7 text-amber-500" />
+        </div>
+        <h2 :class="['font-madimione text-2xl mb-2', isDark ? 'text-platinum-100' : 'text-slate-800']">Quiz Unavailable</h2>
+        <p :class="['text-sm mb-6', isDark ? 'text-platinum-500' : 'text-slate-500']">{{ loadError || 'This quiz has no playable questions yet.' }}</p>
+        <button
+          @click="router.push({ name: 'user.modules' })"
+          class="px-4 py-2.5 rounded-xl text-sm font-medium text-white bg-gradient-to-r from-calm-lavender-600 to-neon-pink-500 border border-calm-lavender-700 hover:-translate-y-0.5 transition-all"
+        >
+          Back to Library
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== EXIT MODAL ===== -->
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="isBackModalOpen" class="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <div class="absolute inset-0 bg-black/70 backdrop-blur-md" @click="resumeQuiz"></div>
-          <div :class="['relative max-w-md w-full rounded-2xl md:rounded-[2rem] p-6 md:p-10 text-center border-2',
-            isDark ? 'bg-purple-950 border-purple-500/50' : 'bg-white border-purple-200']"
-            style="box-shadow: 0 8px 0 rgba(147, 51, 234, 0.4);">
-            <AlertTriangleIcon class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 md:mb-6 text-amber-500" />
-            <h3 :class="['text-2xl md:text-3xl font-black uppercase mb-2 md:mb-3', isDark ? 'text-white' : 'text-purple-900']">Exit Quiz?</h3>
-            <p :class="['mb-8 md:mb-10', isDark ? 'text-purple-300/70' : 'text-purple-500']">Your progress will be lost.</p>
-            <div class="flex gap-3 md:gap-4">
-              <button @click="resumeQuiz" 
-                :class="['flex-1 py-3 md:py-4 rounded-xl md:rounded-2xl font-black uppercase border-2 hover:-translate-y-1 active:translate-y-0 transition-all',
-                isDark ? 'bg-purple-900/50 border-purple-500/50 text-purple-300' : 'bg-purple-50 border-purple-200 text-purple-700']"
-                style="box-shadow: 0 4px 0 rgba(147, 51, 234, 0.3);">
+          <div class="absolute inset-0 bg-black/50" @click="resumeQuiz"></div>
+          <div :class="['relative max-w-sm w-full rounded-2xl border-2 p-7 text-center',
+            isDark ? 'bg-abyss-700 border-abyss-500' : 'bg-white border-slate-200']">
+            <div
+              class="inline-flex p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-800/30 mb-4">
+              <AlertTriangleIcon class="w-8 h-8 text-amber-500" />
+            </div>
+            <h3 :class="['font-semibold text-lg mb-1', isDark ? 'text-platinum-100' : 'text-slate-800']">Exit Quiz?</h3>
+            <p :class="['text-sm mb-6', isDark ? 'text-platinum-500' : 'text-slate-500']">Your progress will be lost.
+            </p>
+            <div class="flex gap-3">
+              <button @click="resumeQuiz"
+                :class="['flex-1 py-2.5 rounded-xl border text-sm font-medium transition-all',
+                  isDark ? 'bg-abyss-700 border-abyss-500 text-platinum-300' : 'bg-slate-50 border-slate-200 text-slate-700']">
                 Continue
               </button>
-              <button @click="confirmExit" 
-                class="flex-1 py-3 md:py-4 rounded-xl md:rounded-2xl font-black uppercase text-white bg-red-500 border-2 border-red-400 hover:-translate-y-1 active:translate-y-0 transition-all"
-                style="box-shadow: 0 4px 0 rgba(185, 28, 28, 0.8);">
+              <button @click="confirmExit"
+                class="flex-1 py-2.5 rounded-xl text-sm font-medium text-white bg-red-500 hover:bg-red-600 transition-colors">
                 Exit
               </button>
             </div>
@@ -433,6 +480,7 @@
         </div>
       </Transition>
     </Teleport>
+
   </div>
 </template>
 
@@ -441,7 +489,7 @@ import { ref, computed, onMounted, onUnmounted, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '@/utils/api';
 import { useAuthStore } from '@/stores/auth';
-import { 
+import {
   Clock as ClockIcon, Trophy as TrophyIcon, Flame as FlameIcon, Skull as SkullIcon,
   Star as StarIcon, Target as TargetIcon, X as XIcon, Check as CheckIcon,
   AlertTriangle as AlertTriangleIcon, ArrowLeft as ArrowLeftIcon, BookOpen as BookOpenIcon,
@@ -453,7 +501,6 @@ const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();
 
-// Theme
 const isDark = ref(true);
 const checkTheme = () => { isDark.value = document.documentElement.classList.contains('dark'); };
 const toggleTheme = () => {
@@ -462,9 +509,9 @@ const toggleTheme = () => {
   localStorage.setItem('theme', isDark.value ? 'dark' : 'light');
 };
 
-// State
 const quiz = ref(null);
 const loading = ref(true);
+const loadError = ref('');
 const isReviewMode = ref(false);
 const currentQuestionIndex = ref(0);
 const score = ref(0);
@@ -473,6 +520,7 @@ const timeLeft = ref(0);
 const totalTimeTaken = ref(0);
 const isFinished = ref(false);
 const selectedAnswer = ref(null);
+const userAnswers = ref([]);
 const isBackModalOpen = ref(false);
 const streakCount = ref(0);
 const comboCount = ref(0);
@@ -482,16 +530,15 @@ const screenFlash = ref(null);
 const scorePopups = ref([]);
 const showBossDamage = ref(false);
 const lastBossDamage = ref(0);
+const bossHit = ref(false);
 const feedbackBorderClass = ref('');
 const transitionName = ref('slide-right');
-const userAnswers = ref([]); // Track user's selected answer texts for ML analysis
 let timer = null;
 let popupId = 0;
 let themeObserver = null;
 
-const confettiColors = ['bg-purple-500', 'bg-violet-500', 'bg-fuchsia-500', 'bg-pink-500', 'bg-purple-400', 'bg-violet-400'];
+const confettiColors = ['bg-calm-lavender-500', 'bg-neon-pink-500', 'bg-safety-teal-400', 'bg-amber-400', 'bg-calm-lavender-400', 'bg-neon-pink-400'];
 
-// Computed
 const currentQuestion = computed(() => quiz.value?.questions_data?.[currentQuestionIndex.value] || null);
 const scorePercentage = computed(() => quiz.value ? Math.round((correctAnswers.value / quiz.value.questions_data.length) * 100) : 0);
 
@@ -502,57 +549,68 @@ const modeIcon = computed(() => {
 });
 const modeIconColor = computed(() => {
   if (quiz.value?.quiz_type === 'boss_battle') return 'text-red-500';
-  if (quiz.value?.quiz_type === 'streak') return 'text-orange-500';
-  return 'text-purple-500';
+  if (quiz.value?.quiz_type === 'streak') return 'text-vawc-orange-500';
+  return 'text-calm-lavender-500';
 });
 const modeLabel = computed(() => {
   if (quiz.value?.quiz_type === 'boss_battle') return 'Boss Battle';
   if (quiz.value?.quiz_type === 'streak') return 'Streak';
   return 'Time Attack';
 });
+const isBossBattle = computed(() => quiz.value?.quiz_type === 'boss_battle');
+const isStreakMode = computed(() => quiz.value?.quiz_type === 'streak');
+
+const streakTierText = computed(() => {
+  if (streakCount.value >= 10) return 'Unstoppable';
+  if (streakCount.value >= 7) return 'On Fire';
+  if (streakCount.value >= 4) return 'Heating Up';
+  if (streakCount.value >= 2) return 'Building';
+  return 'Warm Up';
+});
+
+const streakAuraWidth = computed(() => `${Math.min(100, Math.max(8, streakCount.value * 12))}%`);
 
 const resultTitle = computed(() => {
   if (scorePercentage.value >= 90) return 'Legendary!';
   if (scorePercentage.value >= 70) return 'Excellent!';
-  if (scorePercentage.value >= 50) return 'Good Job!';
-  return 'Keep Going!';
+  if (scorePercentage.value >= 50) return 'Good job!';
+  return 'Keep going!';
 });
 const resultSubtitle = computed(() => {
-  if (scorePercentage.value >= 90) return 'You dominated this challenge!';
+  if (scorePercentage.value >= 90) return 'You absolutely dominated this one!';
   if (scorePercentage.value >= 70) return 'Outstanding performance!';
-  if (scorePercentage.value >= 50) return 'You passed!';
-  return 'Review and try again.';
+  if (scorePercentage.value >= 50) return 'You passed — keep it up!';
+  return 'Review the material and try again.';
 });
-const resultGlowClass = computed(() => scorePercentage.value >= 70 ? 'bg-amber-500' : 'bg-purple-500');
 const resultIconClass = computed(() => {
-  if (scorePercentage.value >= 70) return 'bg-gradient-to-br from-amber-400 to-orange-500 text-white';
-  if (scorePercentage.value >= 50) return 'bg-gradient-to-br from-purple-400 to-violet-500 text-white';
-  return 'bg-purple-200 dark:bg-purple-900 text-purple-500';
+  if (scorePercentage.value >= 70) return 'bg-gradient-to-br from-amber-400 to-vawc-orange-500';
+  if (scorePercentage.value >= 50) return 'bg-gradient-to-br from-calm-lavender-500 to-neon-pink-500';
+  return 'bg-gradient-to-br from-slate-300 to-slate-400';
 });
 
-// Methods
-const getCubeStyle = (i) => ({
-  width: `${30 + (i * 10) % 40}px`,
-  height: `${30 + (i * 10) % 40}px`,
-  top: `${(i * 12) % 80}%`,
-  left: `${(i * 13) % 90}%`,
-  animationDelay: `${i * 0.5}s`,
-  animationDuration: `${10 + (i % 5) * 2}s`
+const bossName = computed(() => 'The Shadow Warden');
+const bossDefeated = computed(() => quiz.value?.quiz_type === 'boss_battle' && bossHP.value <= 0);
+const bossStatusText = computed(() => {
+  if (bossDefeated.value) return 'Defeated';
+  if (bossHP.value <= 25) return 'Critical';
+  if (bossHP.value <= 60) return 'Wounded';
+  return 'Enraged';
 });
-const getParticleStyle = (i) => ({ 
-  width: `${4 + (i % 4)}px`,
-  height: `${4 + (i % 4)}px`,
+
+const getParticleStyle = (i) => ({
+  width: `${3 + (i % 3)}px`,
+  height: `${3 + (i % 3)}px`,
   bottom: '-20px',
-  left: `${(i * 5) % 100}%`, 
-  animationDelay: `${i * 0.3}s`,
-  animationDuration: `${4 + (i % 3)}s`
+  left: `${(i * 8) % 100}%`,
+  animationDelay: `${i * 0.4}s`,
+  animationDuration: `${5 + (i % 4)}s`
 });
-const getConfettiStyle = (i) => ({ 
-  left: `${(i * 1.67) % 100}%`, 
-  width: `${6 + (i % 4) * 2}px`, 
-  height: `${6 + (i % 3) * 2}px`, 
-  animationDelay: `${i * 0.05}s`, 
-  animationDuration: `${2 + Math.random()}s` 
+const getConfettiStyle = (i) => ({
+  left: `${(i * 2) % 100}%`,
+  width: `${6 + (i % 4) * 2}px`,
+  height: `${6 + (i % 3) * 2}px`,
+  animationDelay: `${i * 0.06}s`,
+  animationDuration: `${2.5 + (i % 2) * 0.5}s`
 });
 const formatTime = (s) => { const m = Math.floor(s / 60); return m > 0 ? `${m}m ${s % 60}s` : `${s}s`; };
 
@@ -565,10 +623,9 @@ const startTimer = () => {
   }, 1000);
 };
 
-const triggerEffects = (type, event) => {
+const triggerEffects = (type) => {
   screenFlash.value = type;
   setTimeout(() => screenFlash.value = null, 200);
-  
   if (type === 'wrong') {
     isShaking.value = true;
     setTimeout(() => isShaking.value = false, 400);
@@ -578,7 +635,7 @@ const triggerEffects = (type, event) => {
 const addScorePopup = (event, text, type, combo = null) => {
   const id = ++popupId;
   const rect = event?.target?.getBoundingClientRect?.();
-  scorePopups.value.push({ id, text, type, combo, x: rect?.left ?? window.innerWidth/2, y: rect?.top ?? window.innerHeight/2 });
+  scorePopups.value.push({ id, text, type, combo, x: rect?.left ?? window.innerWidth / 2, y: rect?.top ?? window.innerHeight / 2 });
   setTimeout(() => scorePopups.value = scorePopups.value.filter(p => p.id !== id), 1200);
 };
 
@@ -587,24 +644,24 @@ const handleAnswerSelection = (event, index) => {
   if (timer) clearInterval(timer);
   selectedAnswer.value = index;
 
-  // Track the user's selected answer text for ML analysis
-  const selectedOptionText = index >= 0 ? currentQuestion.value.options[index] : 'No answer (timed out)';
+  // Keep the selected answer text per question for ML analysis logging.
+  const selectedOptionText = index >= 0 ? currentQuestion.value?.options?.[index] : 'No answer (timed out)';
   userAnswers.value.push({
-    question: currentQuestion.value.question,
-    selectedAnswer: selectedOptionText,
+    question: currentQuestion.value?.question || '',
+    selectedAnswer: selectedOptionText || '',
     questionIndex: currentQuestionIndex.value
   });
 
   const isCorrect = index === currentQuestion.value.correctAnswer;
-  
+
   if (isCorrect) {
     correctAnswers.value++;
     comboCount.value++;
-    triggerEffects('correct', event);
-    feedbackBorderClass.value = 'ring-4 ring-violet-500/50';
-    
+    triggerEffects('correct');
+    feedbackBorderClass.value = 'border-safety-teal-400 dark:border-safety-teal-600';
+
     let points = quiz.value.points_per_question || 10;
-    
+
     if (quiz.value.quiz_type === 'streak') {
       streakCount.value++;
       points += streakCount.value * 5;
@@ -613,18 +670,20 @@ const handleAnswerSelection = (event, index) => {
       lastBossDamage.value = Math.round(damage);
       showBossDamage.value = true;
       setTimeout(() => { showBossDamage.value = false; }, 800);
+      bossHit.value = true;
+      setTimeout(() => { bossHit.value = false; }, 280);
       bossHP.value = Math.max(0, bossHP.value - damage);
     }
-    
+
     if (comboCount.value >= 3) points += comboCount.value * 2;
     score.value += points;
     addScorePopup(event, `+${points}`, 'correct', comboCount.value >= 2 ? comboCount.value : null);
   } else {
-    triggerEffects('wrong', event);
-    feedbackBorderClass.value = 'ring-4 ring-red-500/50';
+    triggerEffects('wrong');
+    feedbackBorderClass.value = 'border-red-400 dark:border-red-600';
     comboCount.value = 0;
     streakCount.value = 0;
-    addScorePopup(event, 'MISS', 'wrong');
+    addScorePopup(event, 'Miss', 'wrong');
   }
 
   setTimeout(() => {
@@ -638,40 +697,96 @@ const handleAnswerSelection = (event, index) => {
 };
 
 const getOptionClass = (index) => {
-  const base = isDark.value ? 'bg-purple-900/50 border-purple-500/50' : 'bg-white border-purple-200';
-  if (selectedAnswer.value === null) return `${base} hover:-translate-y-2 cursor-pointer`;
-  if (index === currentQuestion.value.correctAnswer) return 'bg-violet-500/20 border-violet-500 scale-[1.02]';
-  if (selectedAnswer.value === index) return 'bg-rose-500/20 border-rose-500 animate-shake';
+  const base = isDark.value ? 'bg-abyss-700 border-abyss-500' : 'bg-white border-slate-200';
+  if (selectedAnswer.value === null) return `${base} hover:-translate-y-0.5 hover:border-calm-lavender-300 dark:hover:border-calm-lavender-700 cursor-pointer`;
+  if (index === currentQuestion.value.correctAnswer) return isDark.value ? 'bg-safety-teal-900/30 border-safety-teal-500' : 'bg-safety-teal-50 border-safety-teal-400';
+  if (selectedAnswer.value === index) return isDark.value ? 'bg-red-900/30 border-red-500' : 'bg-red-50 border-red-400';
   return `${base} opacity-40`;
 };
 
-const getOptionStyle = (index) => {
-  if (selectedAnswer.value === null) return { boxShadow: '0 6px 0 rgba(147, 51, 234, 0.4)' };
-  if (index === currentQuestion.value.correctAnswer) return { boxShadow: '0 6px 0 rgba(16, 185, 129, 0.4)' };
-  if (selectedAnswer.value === index) return { boxShadow: '0 6px 0 rgba(239, 68, 68, 0.4)' };
-  return { boxShadow: '0 4px 0 rgba(147, 51, 234, 0.2)' };
-};
-
 const getOptionLetterClass = (index) => {
-  if (selectedAnswer.value === null) return isDark.value ? 'bg-purple-800 text-purple-300 group-hover:bg-purple-600 group-hover:text-white' : 'bg-purple-100 text-purple-500 group-hover:bg-purple-500 group-hover:text-white';
-  if (index === currentQuestion.value.correctAnswer) return 'bg-violet-500 text-white';
+  if (selectedAnswer.value === null) return isDark.value
+    ? 'bg-abyss-600 text-platinum-400 group-hover:bg-calm-lavender-800 group-hover:text-calm-lavender-300'
+    : 'bg-slate-100 text-slate-500 group-hover:bg-calm-lavender-100 group-hover:text-calm-lavender-600';
+  if (index === currentQuestion.value.correctAnswer) return 'bg-safety-teal-500 text-white';
   if (selectedAnswer.value === index) return 'bg-red-500 text-white';
-  return isDark.value ? 'bg-purple-900 text-purple-500' : 'bg-purple-50 text-purple-300';
+  return isDark.value ? 'bg-abyss-600 text-platinum-500' : 'bg-slate-100 text-slate-400';
 };
 
 const finishQuiz = async () => {
   isFinished.value = true;
   if (timer) clearInterval(timer);
-  if (!isReviewMode.value) {
-    try {
-      await api.post(`/api/v1/quizzes/${quiz.value.id}/submit`, {
-        pointsEarned: score.value, correctCount: correctAnswers.value,
-        totalQuestions: quiz.value.questions_data.length, timeTaken: totalTimeTaken.value,
-        answers: userAnswers.value
-      });
+  try {
+    await api.post(`/api/v1/quizzes/${quiz.value.id}/submit`, {
+      pointsEarned: score.value,
+      correctCount: correctAnswers.value,
+      totalQuestions: quiz.value.questions_data.length,
+      timeTaken: totalTimeTaken.value,
+      answers: userAnswers.value,
+      practiceMode: isReviewMode.value
+    });
+
+    // Refresh user stats only when XP should change.
+    if (!isReviewMode.value) {
       await authStore.fetchUser();
-    } catch (err) { console.error("Submit failed", err); }
+    }
+  } catch (err) {
+    console.error('Submit failed', err);
   }
+};
+
+const normalizeQuestion = (rawQuestion) => {
+  if (!rawQuestion || typeof rawQuestion !== 'object') return null;
+
+  const questionText = String(
+    rawQuestion.question ?? rawQuestion.prompt ?? rawQuestion.text ?? ''
+  ).trim();
+
+  const rawOptions = Array.isArray(rawQuestion.options)
+    ? rawQuestion.options
+    : Array.isArray(rawQuestion.choices)
+      ? rawQuestion.choices
+      : [];
+
+  const options = rawOptions.map((opt) => String(opt ?? '').trim()).filter(Boolean);
+
+  const rawCorrect = rawQuestion.correctAnswer ?? rawQuestion.correct_answer ?? rawQuestion.correct_option;
+  const parsedCorrect = Number(rawCorrect);
+  const correctAnswer = Number.isInteger(parsedCorrect) ? parsedCorrect : 0;
+
+  if (!questionText || options.length < 2 || correctAnswer < 0 || correctAnswer >= options.length) {
+    return null;
+  }
+
+  return {
+    question: questionText,
+    options,
+    correctAnswer
+  };
+};
+
+const normalizeQuizPayload = (rawQuiz) => {
+  if (!rawQuiz || typeof rawQuiz !== 'object') return null;
+
+  let parsedQuestions = rawQuiz.questions_data;
+  if (typeof parsedQuestions === 'string') {
+    try {
+      parsedQuestions = JSON.parse(parsedQuestions);
+    } catch {
+      parsedQuestions = [];
+    }
+  }
+
+  const questions = Array.isArray(parsedQuestions)
+    ? parsedQuestions.map(normalizeQuestion).filter(Boolean)
+    : [];
+
+  return {
+    ...rawQuiz,
+    questions_data: questions,
+    time_limit: Number(rawQuiz.time_limit) > 0 ? Number(rawQuiz.time_limit) : 30,
+    points_per_question: Number(rawQuiz.points_per_question) > 0 ? Number(rawQuiz.points_per_question) : 10
+  };
 };
 
 const triggerBack = () => { if (timer) clearInterval(timer); isBackModalOpen.value = true; };
@@ -687,81 +802,398 @@ onMounted(async () => {
   checkTheme();
   themeObserver = new MutationObserver(checkTheme);
   themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-  
+
   try {
     if (await checkAttempt()) isReviewMode.value = true;
-    quiz.value = (await api.get(`/api/v1/quizzes/${route.params.id}`)).data.quiz;
+    loadError.value = '';
+    const res = await api.get(`/api/v1/quizzes/${route.params.id}`);
+    quiz.value = normalizeQuizPayload(res?.data?.quiz);
+
+    if (!quiz.value) {
+      loadError.value = 'Unable to load this quiz.';
+      return;
+    }
+
+    if (!Array.isArray(quiz.value.questions_data) || quiz.value.questions_data.length === 0) {
+      loadError.value = 'This quiz has no valid questions yet. Please contact your facilitator.';
+      return;
+    }
+
     loading.value = false;
     await nextTick();
     startTimer();
-  } catch (err) { console.error(err); loading.value = false; }
+  } catch (err) {
+    console.error(err);
+    loadError.value = err?.response?.data?.message || 'Failed to load quiz data.';
+    loading.value = false;
+  } finally {
+    loading.value = false;
+  }
 });
 
 onUnmounted(() => { clearInterval(timer); if (themeObserver) themeObserver.disconnect(); });
 </script>
 
 <style scoped>
-/* 3D Cube */
-.cube-3d {
-  animation: cube-float 10s ease-in-out infinite;
-  transform-style: preserve-3d;
-}
-.cube-face {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  border: 1px solid rgba(147, 51, 234, 0.3);
-  backdrop-filter: blur(4px);
-}
-.cube-front { transform: translateZ(15px); }
-.cube-back { transform: translateZ(-15px) rotateY(180deg); }
-.cube-left { transform: translateX(-15px) rotateY(-90deg); }
-.cube-right { transform: translateX(15px) rotateY(90deg); }
-.cube-top { transform: translateY(-15px) rotateX(90deg); }
-.cube-bottom { transform: translateY(15px) rotateX(-90deg); }
-@keyframes cube-float { 
-  0%, 100% { transform: translateY(0) rotateX(0) rotateY(0); } 
-  50% { transform: translateY(-30px) rotateX(180deg) rotateY(180deg); } 
+.brand-gradient-text {
+  background: linear-gradient(to right, #9333ea, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Animations */
-@keyframes pulse-slow { 0%, 100% { opacity: 0.2; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.1); } }
-.animate-pulse-slow { animation: pulse-slow 4s ease-in-out infinite; }
-@keyframes breathe { 0%, 100% { opacity: 0.1; transform: translate(-50%, -50%) scale(1); } 50% { opacity: 0.2; transform: translate(-50%, -50%) scale(1.2); } }
-.animate-breathe { animation: breathe 6s ease-in-out infinite; }
-@keyframes float-up { 0% { transform: translateY(0) scale(1); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateY(-100vh) scale(0.5); opacity: 0; } }
-.animate-float-up { animation: float-up 5s ease-in-out infinite; }
-@keyframes spin-slow { 0% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
-.animate-spin-slow { animation: spin-slow 3s linear infinite; }
-@keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-.animate-shimmer { animation: shimmer 2s infinite; }
-@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
-.animate-shake { animation: shake 0.4s ease-in-out; }
-@keyframes confetti-fall { 0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
-.confetti { animation: confetti-fall 3s ease-in-out infinite; border-radius: 2px; }
-.animate-in { animation: entry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-@keyframes entry { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.boss-battle-mode {
+  background: #090b10;
+}
+
+.boss-battle-bg {
+  background:
+    radial-gradient(circle at 18% 14%, rgba(220, 38, 38, 0.22) 0%, rgba(220, 38, 38, 0) 42%),
+    radial-gradient(circle at 84% 82%, rgba(249, 115, 22, 0.18) 0%, rgba(249, 115, 22, 0) 46%),
+    linear-gradient(160deg, rgba(10, 12, 16, 0.98) 0%, rgba(23, 12, 12, 0.95) 52%, rgba(6, 6, 9, 1) 100%);
+  animation: arena-pulse 3.8s ease-in-out infinite;
+}
+
+.boss-battle-grid {
+  background-image:
+    linear-gradient(to right, rgba(248, 113, 113, 0.09) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(248, 113, 113, 0.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.9));
+}
+
+.streak-mode {
+  background: #120f0a;
+}
+
+.streak-bg {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0) 42%),
+    radial-gradient(circle at 14% 78%, rgba(249, 115, 22, 0.2) 0%, rgba(249, 115, 22, 0) 44%),
+    linear-gradient(165deg, rgba(21, 14, 8, 1) 0%, rgba(35, 18, 8, 0.98) 50%, rgba(11, 9, 7, 1) 100%);
+  animation: streak-pulse 3.2s ease-in-out infinite;
+}
+
+.streak-speedlines {
+  background-image: repeating-linear-gradient(
+    -22deg,
+    rgba(251, 191, 36, 0.06) 0,
+    rgba(251, 191, 36, 0.06) 2px,
+    transparent 2px,
+    transparent 34px
+  );
+  animation: streak-lines 12s linear infinite;
+}
+
+.streak-token {
+  background: radial-gradient(circle at 30% 26%, rgba(251, 191, 36, 0.95) 0%, rgba(249, 115, 22, 0.9) 45%, rgba(127, 29, 29, 0.8) 100%);
+  box-shadow: 0 10px 24px rgba(245, 158, 11, 0.28);
+}
+
+@keyframes streak-pulse {
+  0%,
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+
+  50% {
+    filter: saturate(1.18) brightness(1.08);
+  }
+}
+
+@keyframes streak-lines {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 420px 0;
+  }
+}
+
+@keyframes arena-pulse {
+  0%,
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+
+  50% {
+    filter: saturate(1.15) brightness(1.08);
+  }
+}
+
+/* Particles float up */
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  90% {
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translateY(-100vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+.animate-float-up {
+  animation: float-up linear infinite;
+}
+
+/* Shake */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-6px);
+  }
+
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.35s ease-in-out;
+}
+
+/* Confetti fall */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti {
+  animation: confetti-fall 3s ease-in-out infinite;
+  border-radius: 2px;
+}
+
+/* Entry animation */
+.animate-in {
+  animation: entry 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes entry {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* Transitions */
-.flash-enter-active, .flash-leave-active { transition: opacity 0.2s; }
-.flash-enter-from, .flash-leave-to { opacity: 0; }
-.score-pop-enter-active { animation: score-pop 1.2s ease-out forwards; }
-.score-pop-leave-active { opacity: 0; }
-@keyframes score-pop { 0% { transform: translateY(0) scale(0.5); opacity: 0; } 20% { transform: translateY(-30px) scale(1.4); opacity: 1; } 100% { transform: translateY(-120px) scale(1); opacity: 0; } }
-.icon-pop-enter-active { animation: icon-pop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-@keyframes icon-pop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-.combo-pop-enter-active { animation: combo-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-.combo-pop-leave-active { transition: all 0.2s; }
-.combo-pop-leave-to { opacity: 0; transform: scale(0.8); }
-@keyframes combo-pop { 0% { transform: scale(0) rotate(-10deg); } 100% { transform: scale(1) rotate(0); } }
-.damage-pop-enter-active { animation: damage-pop 0.5s ease-out; }
-.damage-pop-leave-active { transition: opacity 0.3s; }
-.damage-pop-leave-to { opacity: 0; }
-@keyframes damage-pop { 0% { transform: scale(0) translateY(10px); opacity: 0; } 50% { transform: scale(1.3) translateY(-10px); opacity: 1; } 100% { transform: scale(1) translateY(0); } }
-.slide-right-enter-active { transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
-.slide-right-leave-active { transition: all 0.3s ease-in; }
-.slide-right-enter-from { opacity: 0; transform: translateX(60px) scale(0.95); }
-.slide-right-leave-to { opacity: 0; transform: translateX(-60px) scale(0.95); }
-.modal-enter-active, .modal-leave-active { transition: all 0.3s ease; }
-.modal-enter-from, .modal-leave-to { opacity: 0; }
+.flash-enter-active,
+.flash-leave-active {
+  transition: opacity 0.15s;
+}
+
+.flash-enter-from,
+.flash-leave-to {
+  opacity: 0;
+}
+
+.score-pop-enter-active {
+  animation: score-pop 1.2s ease-out forwards;
+}
+
+.score-pop-leave-active {
+  opacity: 0;
+}
+
+@keyframes score-pop {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 0;
+  }
+
+  20% {
+    transform: translateY(-25px) scale(1.3);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100px) scale(1);
+    opacity: 0;
+  }
+}
+
+.icon-pop-enter-active {
+  animation: icon-pop 0.25s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes icon-pop {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.combo-pop-enter-active {
+  animation: combo-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.combo-pop-leave-active {
+  transition: all 0.15s;
+}
+
+.combo-pop-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+@keyframes combo-pop {
+  0% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.damage-pop-enter-active {
+  animation: damage-pop 0.4s ease-out;
+}
+
+.damage-pop-leave-active {
+  transition: opacity 0.2s;
+}
+
+.damage-pop-leave-to {
+  opacity: 0;
+}
+
+.boss-avatar-wrap {
+  position: relative;
+}
+
+.boss-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at 25% 20%, #ef4444 0%, #b91c1c 45%, #450a0a 100%);
+  border: 2px solid rgba(248, 113, 113, 0.5);
+  box-shadow: 0 10px 24px rgba(127, 29, 29, 0.35);
+  animation: boss-idle 2s ease-in-out infinite;
+}
+
+.boss-hit {
+  animation: boss-hit 0.25s ease-out;
+}
+
+.boss-defeated {
+  filter: saturate(0.35);
+  opacity: 0.7;
+}
+
+.boss-hp-grid {
+  background-image: repeating-linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.18) 0,
+    rgba(255, 255, 255, 0.18) 2px,
+    transparent 2px,
+    transparent 28px
+  );
+}
+
+@keyframes boss-idle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes boss-hit {
+  0% {
+    transform: scale(1) translateX(0);
+  }
+
+  35% {
+    transform: scale(0.9) translateX(-5px);
+  }
+
+  70% {
+    transform: scale(1.05) translateX(4px);
+  }
+
+  100% {
+    transform: scale(1) translateX(0);
+  }
+}
+
+@keyframes damage-pop {
+  0% {
+    transform: scale(0) translateY(8px);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.2) translateY(-8px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+.slide-right-enter-active {
+  transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-right-leave-active {
+  transition: all 0.25s ease-in;
+}
+
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(40px) scale(0.97);
+}
+
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(-40px) scale(0.97);
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.2s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
 </style>

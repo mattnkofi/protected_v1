@@ -1,8 +1,6 @@
 <template>
-    <div class="min-h-screen bg-slate-50 dark:bg-[#06050a] custom-font-poppins text-black dark:text-white relative selection:bg-purple-500/30 transition-colors duration-500">
+    <div class="min-h-screen bg-slate-50 dark:bg-abyss-900 custom-font-poppins text-black dark:text-white relative selection:bg-purple-500/30 transition-colors duration-500">
         
-        <div class="fixed top-[-5%] left-[-2%] w-[500px] h-[500px] bg-purple-600/5 dark:bg-purple-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
-        <div class="fixed bottom-[-5%] right-[-2%] w-[500px] h-[500px] bg-fuchsia-600/5 dark:bg-fuchsia-600/10 rounded-full blur-[100px] pointer-events-none z-0"></div>
         
         <FacilitatorSidebar />
 

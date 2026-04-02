@@ -1,6 +1,7 @@
 // backend/src/controller/NotificationController.js
 const db = require('../model');
 const { Op } = require('sequelize');
+const personalizationService = require('../services/PersonalizationService');
 
 const NotificationController = {
   /**
@@ -57,6 +58,28 @@ const NotificationController = {
     } catch (error) {
       console.error('[NotificationController] getUnreadCount error:', error);
       res.status(500).json({ success: false, message: 'Failed to get count' });
+    }
+  },
+
+  /**
+   * Get personalized recommendations and intervention alerts
+   * GET /api/v1/notifications/personalized-guidance
+   */
+  async getPersonalizedGuidance(req, res) {
+    try {
+      const userId = req.user.id;
+      const guidance = await personalizationService.buildGuidance(userId);
+
+      // Deliver early intervention alert through notifications when needed.
+      await personalizationService.createAlertIfNeeded(userId, guidance, { source: 'guidance_endpoint' });
+
+      res.json({
+        success: true,
+        guidance
+      });
+    } catch (error) {
+      console.error('[NotificationController] getPersonalizedGuidance error:', error);
+      res.status(500).json({ success: false, message: 'Failed to generate personalized guidance' });
     }
   },
 

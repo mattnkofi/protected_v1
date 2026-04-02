@@ -1,140 +1,162 @@
 <template>
   <Transition name="modal">
     <div v-if="isOpen" class="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
-      <!-- Backdrop -->
-      <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity" @click="close"></div>
 
-      <!-- Modal Content -->
-      <div class="relative w-full max-w-6xl max-h-[90vh] bg-white dark:bg-[#04020a] rounded-[3rem] border-2 border-slate-200 dark:border-white/20 shadow-[0_0_100px_rgba(107,33,168,0.2)] overflow-hidden flex flex-col animate-modal-in">
-        
-        <!-- Animated Background Orbs (Inside Modal) -->
-        <div class="absolute top-[-10%] left-[-10%] w-[300px] h-[300px] bg-purple-600/10 rounded-full blur-[80px] pointer-events-none"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[300px] h-[300px] bg-fuchsia-600/10 rounded-full blur-[80px] pointer-events-none"></div>
+      <!-- Backdrop -->
+      <div class="absolute inset-0 bg-slate-900/50 transition-opacity" @click="close"></div>
+
+      <!-- Modal Panel -->
+      <div class="relative w-full max-w-5xl max-h-[90vh] bg-platinum-50 dark:bg-abyss-800 rounded-2xl border-2 border-platinum-200 dark:border-abyss-600 overflow-hidden flex flex-col animate-modal-in">
 
         <!-- Header -->
-        <div class="relative z-10 flex items-center justify-between px-8 py-6 border-b-2 border-slate-100 dark:border-white/10 bg-white/50 dark:bg-white/5 backdrop-blur-xl">
-          <div class="flex items-center gap-4">
-            <div class="p-2.5 rounded-xl liquid-gem-logo shadow-xl border border-white/20">
-              <Trophy class="w-5 h-5 text-white" />
+        <div class="flex items-center justify-between px-6 py-4 border-b-2 border-platinum-200 dark:border-abyss-600 bg-white dark:bg-abyss-700 shrink-0">
+          <div class="flex items-center gap-3">
+            <div class="card-icon-wrap">
+              <Trophy class="w-4 h-4 text-calm-lavender-600 dark:text-calm-lavender-400" />
             </div>
             <div>
-              <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic leading-none"><span class="text-purple-600 italic">Leaderboards</span></h2>
-              <p class="text-[9px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-[0.4em] italic mt-1">Class Rankings</p>
+              <h2 class="font-bold text-lg text-slate-800 dark:text-platinum-100 leading-none">
+                <span class="brand-gradient-text">Leaderboard</span>
+              </h2>
+              <p class="field-subtext mt-0.5">Class Rankings</p>
             </div>
           </div>
-          
-          <button @click="close" class="group p-3 rounded-xl bg-slate-100 dark:bg-white/5 border-2 border-slate-200 dark:border-white/10 hover:border-purple-500 transition-all">
-            <X class="w-5 h-5 text-slate-400 group-hover:text-purple-500 transition-colors" />
+
+          <button @click="close"
+            class="btn-secondary !p-2 !px-2">
+            <X class="w-4 h-4" />
           </button>
         </div>
 
-        <!-- Body (Scrollable) -->
-        <div class="relative z-10 flex-1 overflow-y-auto hide-scrollbar p-6 lg:p-8">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
-                <!-- Leaderboard Table Area -->
-                <div class="lg:col-span-8">
-                    <div v-if="loading" class="py-24 text-center">
-                        <div class="relative h-10 w-10 text-purple-600 mx-auto mb-4 scale-125">
-                            <div class="absolute inset-0 rounded-full border-2 border-current opacity-10"></div>
-                            <div class="absolute inset-0 rounded-full border-2 border-t-transparent animate-spin"></div>
-                        </div>
-                        <p class="text-[9px] font-[900] uppercase tracking-[0.4em] text-purple-500 italic">Finding Scores...</p>
-                    </div>
-                    
-                    <div v-else class="space-y-3">
-                        <div v-for="(learner, index) in learners" :key="learner.id"
-                            @click="selectedStudent = learner"
-                            class="group relative flex items-center gap-4 p-4 rounded-[2rem] bg-white/60 dark:bg-white/[0.03] border-2 border-transparent hover:border-purple-500/30 hover:bg-white/80 dark:hover:bg-white/5 transition-all duration-500 cursor-pointer shadow-sm hover:shadow-xl"
-                            :class="{'border-purple-500/40 bg-white/90 dark:bg-white/10': selectedStudent?.id === learner.id}">
-                            
-                            <!-- Rank Number -->
-                            <div class="flex-shrink-0 w-12 text-center flex justify-center items-center">
-                                <span v-if="index < 3" class="transform group-hover:scale-110 transition-transform duration-500">
-                                    <div v-if="index === 0" class="p-1.5 bg-yellow-400/10 rounded-lg border border-yellow-400/20">
-                                        <Trophy class="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                                    </div>
-                                    <div v-else-if="index === 1" class="p-1.5 bg-slate-300/10 rounded-lg border border-slate-300/20">
-                                        <Medal class="w-4 h-4 text-slate-400 fill-slate-300" />
-                                    </div>
-                                    <div v-else class="p-1.5 bg-amber-700/10 rounded-lg border border-amber-700/20">
-                                        <Medal class="w-4 h-4 text-amber-700 fill-amber-700" />
-                                    </div>
-                                </span>
-                                <span v-else class="text-sm font-black text-slate-300 dark:text-gray-700 italic">#{{ index + 1 }}</span>
-                            </div>
+        <!-- Body -->
+        <div class="flex-1 overflow-y-auto hide-scrollbar p-5 lg:p-6">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
 
-                            <!-- Student Info -->
-                            <div class="flex-1 flex items-center gap-4">
-                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-fuchsia-600 flex items-center justify-center text-white text-sm font-black shadow-lg uppercase">
-                                    {{ learner.initials || learner.name?.charAt(0) }}
-                                </div>
-                                <div class="space-y-0.5">
-                                    <h3 class="text-sm font-black text-slate-900 dark:text-white uppercase tracking-tight italic">{{ learner.name }}</h3>
-                                    <span class="px-2 py-0.5 bg-purple-500/10 text-purple-600 dark:text-purple-400 rounded-md text-[8px] font-black uppercase tracking-widest italic">Lvl {{ learner.level }}</span>
-                                </div>
-                            </div>
+            <!-- Leaderboard List -->
+            <div class="lg:col-span-8">
 
-                            <!-- Score -->
-                            <div class="text-right flex-shrink-0 px-3">
-                                <p class="text-lg font-black text-purple-600 dark:text-fuchsia-400 italic tabular-nums leading-none">{{ learner.points?.toLocaleString() }}</p>
-                                <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1 text-center">XP</p>
-                            </div>
-                        </div>
+              <!-- Loading -->
+              <div v-if="loading" class="py-20 text-center">
+                <div class="spinner mx-auto mb-4"></div>
+                <p class="loading-text">Loading scores...</p>
+              </div>
+
+              <!-- List -->
+              <div v-else class="space-y-2">
+                <div v-for="(learner, index) in learners" :key="learner.id"
+                  @click="selectedStudent = learner"
+                  class="group flex items-center gap-4 p-3.5 rounded-xl bg-white dark:bg-abyss-700 border-2 cursor-pointer transition-all duration-200"
+                  :class="selectedStudent?.id === learner.id
+                    ? 'border-calm-lavender-400 dark:border-calm-lavender-600'
+                    : 'border-platinum-200 dark:border-abyss-500 hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800'">
+
+                  <!-- Rank -->
+                  <div class="shrink-0 w-10 flex justify-center items-center">
+                    <span v-if="index < 3">
+                      <div v-if="index === 0" class="p-1.5 bg-yellow-50 dark:bg-yellow-400/10 rounded-lg border border-yellow-200 dark:border-yellow-400/20">
+                        <Trophy class="w-4 h-4 text-yellow-500 fill-yellow-400" />
+                      </div>
+                      <div v-else-if="index === 1" class="p-1.5 bg-slate-100 dark:bg-slate-300/10 rounded-lg border border-slate-200 dark:border-slate-300/20">
+                        <Medal class="w-4 h-4 text-slate-400 fill-slate-300" />
+                      </div>
+                      <div v-else class="p-1.5 bg-vawc-orange-50 dark:bg-amber-700/10 rounded-lg border border-vawc-orange-200 dark:border-amber-700/20">
+                        <Medal class="w-4 h-4 text-vawc-orange-600 fill-vawc-orange-400" />
+                      </div>
+                    </span>
+                    <span v-else class="text-sm font-medium text-platinum-500 dark:text-platinum-600 tabular-nums">
+                      #{{ index + 1 }}
+                    </span>
+                  </div>
+
+                  <!-- Student Info -->
+                  <div class="flex-1 flex items-center gap-3 min-w-0">
+                    <div class="avatar-md !bg-calm-lavender-100 dark:!bg-calm-lavender-900/30 !text-calm-lavender-700 dark:!text-calm-lavender-300 !border-calm-lavender-200 dark:!border-calm-lavender-800/40 shrink-0">
+                      {{ learner.initials || learner.name?.charAt(0) }}
                     </div>
+                    <div class="min-w-0">
+                      <h3 class="font-semibold text-sm text-slate-800 dark:text-platinum-100 truncate group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+                        {{ learner.name }}
+                      </h3>
+                      <span class="badge badge-lavender text-xs mt-0.5">Lvl {{ learner.level }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Score -->
+                  <div class="text-right shrink-0">
+                    <p class="font-bold text-base text-calm-lavender-600 dark:text-calm-lavender-400 tabular-nums leading-none">
+                      {{ learner.points?.toLocaleString() }}
+                    </p>
+                    <p class="field-subtext text-center mt-0.5">XP</p>
+                  </div>
                 </div>
-
-                <!-- Sidebar Details -->
-                <div class="lg:col-span-4 lg:sticky lg:top-0">
-                    <div class="bg-white/80 dark:bg-[#0d0d15] border-2 border-slate-200 dark:border-white/20 p-6 rounded-[2.5rem] shadow-2xl relative overflow-hidden h-full min-h-[350px]">
-                        <div v-if="selectedStudent" class="space-y-6 relative z-10 animate-fade-in">
-                            <div class="text-center space-y-3">
-                                <div class="relative inline-block mt-2">
-                                    <div class="absolute -inset-2 bg-gradient-to-tr from-purple-600 to-fuchsia-600 rounded-2xl blur opacity-30"></div>
-                                    <div class="relative w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-700 to-fuchsia-800 flex items-center justify-center text-white text-2xl font-black shadow-2xl uppercase">
-                                        {{ selectedStudent.initials || selectedStudent.name?.charAt(0) }}
-                                    </div>
-                                </div>
-                                <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter italic">{{ selectedStudent.name }}</h2>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="p-4 rounded-[2rem] bg-slate-50 dark:bg-white/[0.03] border-2 border-slate-100 dark:border-white/5 text-center shadow-inner">
-                                    <p class="text-lg font-black text-purple-600 italic">#{{ getRank(selectedStudent) }}</p>
-                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1">Rank</p>
-                                </div>
-                                <div class="p-4 rounded-[2rem] bg-slate-50 dark:bg-white/[0.03] border-2 border-slate-100 dark:border-white/5 text-center shadow-inner">
-                                    <p class="text-lg font-black text-fuchsia-600 italic">{{ selectedStudent.points }}</p>
-                                    <p class="text-[8px] font-black text-slate-400 uppercase tracking-widest mt-1">Total XP</p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-3">
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] text-center italic">Top Skills</p>
-                                <div class="flex flex-wrap gap-2 justify-center">
-                                    <span v-for="skill in ['Fast Reader', 'Quiz Master', 'Top Learner']" :key="skill"
-                                        class="px-4 py-2 bg-white/50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-xl text-[8px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-tight italic">
-                                        {{ skill }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div v-else class="h-full min-h-[300px] flex flex-col items-center justify-center text-center space-y-4">
-                            <div class="p-5 rounded-[2.5rem] bg-slate-50 dark:bg-white/5 border-2 border-slate-100 dark:border-white/10 shadow-inner">
-                                <MousePointer2 class="w-8 h-8 text-slate-300 dark:text-gray-700 animate-bounce" />
-                            </div>
-                            <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.3em] italic px-8">Select a student name to see their card!</p>
-                        </div>
-                    </div>
-                </div>
+              </div>
             </div>
+
+            <!-- Student Detail Sidebar -->
+            <div class="lg:col-span-4 lg:sticky lg:top-0">
+              <div class="card border-2 border-platinum-200 dark:border-abyss-500 min-h-[320px] flex flex-col justify-center">
+
+                <!-- Selected Student -->
+                <div v-if="selectedStudent" class="space-y-5 animate-fade-in">
+
+                  <!-- Avatar + Name -->
+                  <div class="text-center space-y-2">
+                    <div class="mx-auto w-16 h-16 rounded-2xl bg-calm-lavender-100 dark:bg-calm-lavender-900/30 border-2 border-calm-lavender-200 dark:border-calm-lavender-800/40 flex items-center justify-center text-calm-lavender-700 dark:text-calm-lavender-300 text-xl font-bold uppercase">
+                      {{ selectedStudent.initials || selectedStudent.name?.charAt(0) }}
+                    </div>
+                    <h2 class="font-bold text-base text-slate-800 dark:text-platinum-100">
+                      {{ selectedStudent.name }}
+                    </h2>
+                  </div>
+
+                  <!-- Stats Grid -->
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="info-row flex-col items-center justify-center text-center gap-1 py-3 rounded-xl">
+                      <p class="font-bold text-lg text-calm-lavender-600 dark:text-calm-lavender-400 leading-none">
+                        #{{ getRank(selectedStudent) }}
+                      </p>
+                      <p class="stat-pill-label mt-0.5">Rank</p>
+                    </div>
+                    <div class="info-row flex-col items-center justify-center text-center gap-1 py-3 rounded-xl">
+                      <p class="font-bold text-lg text-neon-pink-600 dark:text-neon-pink-400 leading-none">
+                        {{ selectedStudent.points?.toLocaleString() }}
+                      </p>
+                      <p class="stat-pill-label mt-0.5">Total XP</p>
+                    </div>
+                  </div>
+
+                  <!-- Skills -->
+                  <div class="space-y-2">
+                    <p class="field-subtext text-center">Top Skills</p>
+                    <div class="flex flex-wrap gap-2 justify-center">
+                      <span v-for="skill in ['Fast Reader', 'Quiz Master', 'Top Learner']" :key="skill"
+                        class="badge badge-lavender text-xs">
+                        {{ skill }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Empty Prompt -->
+                <div v-else class="flex flex-col items-center justify-center text-center space-y-3 py-8">
+                  <div class="empty-state-icon">
+                    <MousePointer2 class="w-6 h-6 text-platinum-400 animate-bounce" />
+                  </div>
+                  <p class="empty-state-title">No student selected</p>
+                  <p class="empty-state-desc">Click on a student in the list to view their profile card.</p>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
         </div>
 
         <!-- Footer -->
-        <div class="relative z-10 px-8 py-5 border-t-2 border-slate-100 dark:border-white/10 bg-white/50 dark:bg-white/5 text-center">
-            <p class="text-[8px] font-black text-slate-400 uppercase tracking-[0.4em] italic">Stay Kind // Study Hard // Reach the Top</p>
+        <div class="shrink-0 px-6 py-3 border-t-2 border-platinum-200 dark:border-abyss-600 bg-white dark:bg-abyss-700 text-center">
+          <p class="field-subtext">Stay kind · Study hard · Reach the top</p>
         </div>
+
       </div>
     </div>
   </Transition>
@@ -190,26 +212,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.liquid-gem-logo {
-    background: radial-gradient(circle at 35% 35%, #a855f7 0%, #6b21a8 55%, #2e1065 100%);
-    box-shadow: inset -5px -5px 12px rgba(0,0,0,0.5), inset 5px 5px 10px rgba(255,255,255,0.3);
-}
+@reference "@/style.css";
 
 .animate-modal-in {
-  animation: modalIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: modalIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes modalIn {
-  from { opacity: 0; transform: translateY(40px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { opacity: 0; transform: translateY(24px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
 }
 
-.modal-enter-active, .modal-leave-active { transition: opacity 0.4s ease; }
-.modal-enter-from, .modal-leave-to { opacity: 0; }
+.modal-enter-active,
+.modal-leave-active { transition: opacity 0.3s ease; }
+.modal-enter-from,
+.modal-leave-to     { opacity: 0; }
 
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-.animate-fade-in { animation: fadeIn 0.4s ease forwards; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in {
+  animation: fadeSlideUp 0.3s ease forwards;
+}
+
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
 </style>

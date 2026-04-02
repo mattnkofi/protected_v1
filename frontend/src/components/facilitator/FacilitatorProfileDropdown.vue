@@ -123,7 +123,7 @@ const confirmLogout = async () => {
         await authStore.logout();
         profileStore.$reset();
     } finally {
-        router.push('/facilitator/login');
+        router.push({ name: 'login' });
     }
 };
 
@@ -142,7 +142,7 @@ onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 </script>
 
 <style scoped>
-@reference "../../style.css";
+@reference "@/style.css";
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap');
 

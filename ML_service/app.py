@@ -7,7 +7,6 @@ Called by the Node.js backend after quiz submissions to analyze student answers.
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from bertopic import BERTopic
 
 app = Flask(__name__)
 CORS(app)
@@ -18,10 +17,12 @@ CORS(app)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "vawc_bertopic_model")
 print("Loading BERTopic model...")
 try:
+    # Lazy import to avoid crashing service when BERTopic/TensorFlow stack is incompatible.
+    from bertopic import BERTopic  # pylint: disable=import-outside-toplevel
     model = BERTopic.load(MODEL_PATH)
     print("Model loaded successfully.")
 except Exception as e:
-    print(f"Error loading model: {e}")
+    print(f"Error loading BERTopic model, switching to keyword fallback mode: {e}")
     model = None
 
 # --------------------------
@@ -280,4 +281,4 @@ def analyze_single():
 if __name__ == "__main__":
     port = int(os.environ.get("ML_SERVICE_PORT", 5001))
     print(f"Starting ML Analysis API on port {port}...")
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)

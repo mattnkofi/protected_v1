@@ -1,168 +1,209 @@
 <template>
-    <div class="space-y-10 custom-font-poppins animate-in fade-in duration-700 text-black dark:text-white transition-all selection:bg-purple-500/30">
-        
-        <header class="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-slate-200 dark:border-white/5 pb-8 relative">
-            <div class="space-y-2">
-                <div class="flex items-center gap-2.5">
-                    <div class="h-1 w-8 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-full shadow-[0_2px_10px_rgba(139,92,246,0.4)]"></div>
-                    <span class="text-[10px] font-extrabold uppercase tracking-[0.3em] text-purple-600 dark:text-purple-400">Admin Console</span>
-                </div>
-                <h1 class="text-3xl md:text-4xl font-[900] text-black dark:text-white uppercase tracking-tighter leading-tight italic">
-                    Admin <span class="bg-gradient-to-r from-purple-600 via-fuchsia-500 to-purple-500 bg-clip-text text-transparent">Dashboard</span>
+    <div class="page-wrapper animate-in font-poppins">
+
+        <!-- ═══════════════════════════════════════════════════
+             HEADER
+        ════════════════════════════════════════════════════ -->
+        <header class="page-header">
+            <div class="space-y-1.5">
+                <p class="section-eyebrow">Admin Console</p>
+                <h1 class="page-title tracking-wide">
+                    Admin <span class="brand-gradient-text">Dashboard</span>
                 </h1>
-                <p class="text-xs font-medium text-black/50 dark:text-slate-400 italic tracking-tight">Welcome! A simple look at how your community is doing.</p>
+                <p class="page-subtitle">A quick look at how your community is doing.</p>
             </div>
-            
-            <div class="flex gap-3">
-                <button @click="downloadReport" :disabled="isDownloading" class="group flex items-center gap-3 px-6 py-3 bg-purple-600 border border-purple-500 rounded-2xl hover:bg-purple-700 transition-all duration-300 disabled:opacity-50 shadow-lg shadow-purple-500/20">
-                    <DownloadIcon :class="['h-4 w-4 text-white', isDownloading && 'animate-bounce']" />
-                    <span class="text-[10px] font-[900] tracking-widest text-white uppercase italic">{{ isDownloading ? 'Generating...' : 'Download Report' }}</span>
-                </button>
-                <button @click="refreshAnalytics" :disabled="isLoading" class="group flex items-center gap-3 px-6 py-3 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl hover:border-purple-500/50 hover:bg-purple-500/10 transition-all duration-300 disabled:opacity-50">
-                    <RefreshCwIcon :class="['h-4 w-4 text-slate-500 dark:text-gray-500 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-all', isLoading && 'animate-spin']" />
-                    <span class="text-[10px] font-[900] tracking-widest text-slate-600 dark:text-gray-300 uppercase italic">Refresh</span>
+
+            <div class="flex items-center gap-3 shrink-0">
+                <!-- Download Report — GenerateReport modal component -->
+                <GenerateReport endpoint="/api/v1/admin/reports/download" filename="ProtectEd_Report_{date}"
+                    title="Download Analytics Report"
+                    description="Generates a full PDF — users, modules, classrooms & more"
+                    :includes="['Executive Summary', 'Key Metrics', 'Users by Role', 'Recent Users', 'Module Status', 'Classroom Status', 'Quiz Attempts', 'Badge Overview']" />
+
+                <!-- Refresh — flat-3D secondary -->
+                <button @click="refreshAnalytics" :disabled="isLoading"
+                    class="btn-secondary btn-3d--secondary disabled:opacity-50">
+                    <RefreshCwIcon :class="['h-4 w-4', isLoading && 'animate-spin']" />
+                    <span>Refresh</span>
                 </button>
             </div>
         </header>
 
-        <!-- Loading State -->
-        <div v-if="isLoading && !stats.totalUsers" class="flex items-center justify-center py-20">
-            <div class="text-center space-y-4">
-                <div class="relative h-12 w-12 text-purple-600 mx-auto">
-                    <div class="absolute inset-0 rounded-full border-2 border-current opacity-10"></div>
-                    <div class="absolute inset-0 rounded-full border-2 border-t-transparent animate-spin"></div>
-                </div>
-                <p class="text-[10px] font-[900] uppercase tracking-[0.4em] text-purple-500 italic">Loading Analytics...</p>
+        <!-- ═══════════════════════════════════════════════════
+             LOADING STATE
+        ════════════════════════════════════════════════════ -->
+        <div v-if="isLoading && !stats.totalUsers" class="flex items-center justify-center py-24">
+            <div class="flex flex-col items-center gap-4">
+                <div class="spinner"></div>
+                <p class="loading-text">Loading analytics…</p>
             </div>
         </div>
 
         <template v-else>
-            <!-- Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div v-for="stat in statsCards" :key="stat.label" 
-                    class="relative overflow-hidden bg-white dark:bg-[#0d0d15]/60 backdrop-blur-3xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 transition-all duration-500 hover:border-purple-500/40 group shadow-lg hover:shadow-purple-500/10">
-                    
-                    <div class="relative z-10 flex flex-col justify-between h-full">
-                        <div class="flex justify-between items-start mb-6">
-                            <div class="p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-inner">
-                                <component :is="stat.icon" class="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                            </div>
-                            <span class="px-3 py-1 bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-[8px] font-[900] uppercase tracking-widest rounded-full italic">{{ stat.sub }}</span>
+
+            <!-- ═══════════════════════════════════════════════
+                 PRIMARY STAT TILES
+                 L1 layer: platinum-100 / abyss-700
+            ════════════════════════════════════════════════ -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div v-for="stat in statsCards" :key="stat.label" class="stat-tile group">
+                    <div class="flex items-start justify-between mb-5">
+                        <div class="ds-icon-badge ds-icon-badge--lavender
+                                    group-hover:bg-calm-lavender-100 dark:group-hover:bg-calm-lavender-800/40
+                                    transition-colors">
+                            <component :is="stat.icon" class="h-5 w-5" />
                         </div>
-                        <div>
-                            <p class="text-[9px] font-black text-black/40 dark:text-slate-500 uppercase tracking-widest leading-none mb-1.5 italic">{{ stat.label }}</p>
-                            <p class="text-3xl font-[900] text-black dark:text-white tracking-tighter italic leading-none">{{ stat.val }}</p>
-                        </div>
+                        <span class="badge badge-lavender">{{ stat.sub }}</span>
                     </div>
-                    <div class="absolute inset-0 bg-gradient-to-tr from-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <p class="stat-tile__label">{{ stat.label }}</p>
+                    <p class="stat-tile__value">{{ stat.val }}</p>
                 </div>
             </div>
 
-            <!-- Secondary Stats -->
+            <!-- ═══════════════════════════════════════════════
+                 SECONDARY STAT TILES
+                 L2 inset: platinum-200 / abyss-600
+            ════════════════════════════════════════════════ -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div v-for="stat in secondaryStats" :key="stat.label"
-                    class="bg-white/80 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 rounded-2xl p-5 text-center hover:border-purple-500/30 transition-all">
-                    <component :is="stat.icon" class="h-5 w-5 mx-auto mb-2 text-purple-500" />
-                    <p class="text-2xl font-black text-black dark:text-white italic">{{ stat.val }}</p>
-                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">{{ stat.label }}</p>
+                <div v-for="stat in secondaryStats" :key="stat.label" class="secondary-tile">
+                    <div class="ds-icon-badge ds-icon-badge--lavender mx-auto mb-3">
+                        <component :is="stat.icon" class="h-4 w-4" />
+                    </div>
+                    <p class="stat-tile__value !text-2xl">{{ stat.val }}</p>
+                    <p class="stat-tile__label mt-1">{{ stat.label }}</p>
                 </div>
             </div>
 
-            <!-- Charts Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- User Growth Chart -->
-                <div class="bg-white/90 dark:bg-[#0d0d15]/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 shadow-lg">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="h-6 w-1 bg-purple-600 rounded-full"></div>
-                        <h3 class="text-lg font-[900] text-black dark:text-white uppercase tracking-tighter italic">User Registrations</h3>
+            <!-- ═══════════════════════════════════════════════
+                 CHARTS SECTION
+                 Each chart panel = L1 layer
+            ════════════════════════════════════════════════ -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+                <!-- User Registrations -->
+                <div class="chart-panel">
+                    <div class="chart-panel__header">
+                        <div class="ds-icon-badge ds-icon-badge--lavender">
+                            <UsersIcon class="w-4 h-4" />
+                        </div>
+                        <h3 class="chart-panel__title">User Registrations</h3>
                     </div>
                     <div class="h-64">
                         <Line v-if="chartData.monthlyUsers.length" :data="userChartData" :options="lineChartOptions" />
-                        <div v-else class="flex items-center justify-center h-full text-slate-400 text-sm italic">Loading chart data...</div>
+                        <div v-else class="chart-empty">Loading chart data…</div>
                     </div>
                 </div>
 
-                <!-- Quiz Attempts Chart -->
-                <div class="bg-white/90 dark:bg-[#0d0d15]/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 shadow-lg">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="h-6 w-1 bg-fuchsia-600 rounded-full"></div>
-                        <h3 class="text-lg font-[900] text-black dark:text-white uppercase tracking-tighter italic">Quiz Activity</h3>
+                <!-- Quiz Activity -->
+                <div class="chart-panel">
+                    <div class="chart-panel__header">
+                        <div class="ds-icon-badge ds-icon-badge--pink">
+                            <ActivityIcon class="w-4 h-4" />
+                        </div>
+                        <h3 class="chart-panel__title">Quiz Activity</h3>
                     </div>
                     <div class="h-64">
-                        <Bar v-if="chartData.monthlyQuizAttempts.length" :data="quizChartData" :options="barChartOptions" />
-                        <div v-else class="flex items-center justify-center h-full text-slate-400 text-sm italic">Loading chart data...</div>
+                        <Bar v-if="chartData.monthlyQuizAttempts.length" :data="quizChartData"
+                            :options="barChartOptions" />
+                        <div v-else class="chart-empty">Loading chart data…</div>
                     </div>
                 </div>
 
-                <!-- Role Distribution Chart -->
-                <div class="bg-white/90 dark:bg-[#0d0d15]/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 shadow-lg">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="h-6 w-1 bg-violet-600 rounded-full"></div>
-                        <h3 class="text-lg font-[900] text-black dark:text-white uppercase tracking-tighter italic">User Distribution</h3>
+                <!-- User Distribution -->
+                <div class="chart-panel">
+                    <div class="chart-panel__header">
+                        <div class="ds-icon-badge ds-icon-badge--lavender">
+                            <UserCogIcon class="w-4 h-4" />
+                        </div>
+                        <h3 class="chart-panel__title">User Distribution</h3>
                     </div>
                     <div class="h-64 flex items-center justify-center">
                         <div class="w-56 h-56">
-                            <Doughnut v-if="chartData.roleDistribution.length" :data="roleChartData" :options="doughnutChartOptions" />
-                            <div v-else class="flex items-center justify-center h-full text-slate-400 text-sm italic">Loading chart data...</div>
+                            <Doughnut v-if="chartData.roleDistribution.length" :data="roleChartData"
+                                :options="doughnutChartOptions" />
+                            <div v-else class="chart-empty">Loading chart data…</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Module Creation Chart -->
-                <div class="bg-white/90 dark:bg-[#0d0d15]/60 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-[2rem] p-6 shadow-lg">
-                    <div class="flex items-center gap-3 mb-6">
-                        <div class="h-6 w-1 bg-purple-500 rounded-full"></div>
-                        <h3 class="text-lg font-[900] text-black dark:text-white uppercase tracking-tighter italic">Module Creation</h3>
+                <!-- Module Creation -->
+                <div class="chart-panel">
+                    <div class="chart-panel__header">
+                        <div class="ds-icon-badge ds-icon-badge--lavender">
+                            <BookOpenIcon class="w-4 h-4" />
+                        </div>
+                        <h3 class="chart-panel__title">Module Creation</h3>
                     </div>
                     <div class="h-64">
-                        <Line v-if="chartData.monthlyModules.length" :data="moduleChartData" :options="lineChartOptions" />
-                        <div v-else class="flex items-center justify-center h-full text-slate-400 text-sm italic">Loading chart data...</div>
+                        <Line v-if="chartData.monthlyModules.length" :data="moduleChartData"
+                            :options="lineChartOptions" />
+                        <div v-else class="chart-empty">Loading chart data…</div>
                     </div>
                 </div>
+
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                
-                <div class="lg:col-span-7 bg-white/90 dark:bg-[#0d0d15]/40 backdrop-blur-2xl border border-slate-200 dark:border-white/10 rounded-[2.5rem] p-8 shadow-2xl relative overflow-hidden">
-                    <div class="flex items-center justify-between mb-8 px-2">
-                        <div class="flex items-center gap-3">
-                            <div class="h-6 w-1 bg-purple-600 rounded-full"></div>
-                            <h3 class="text-xl font-[900] text-black dark:text-white uppercase tracking-tighter italic">Recent Activity</h3>
+            <!-- ═══════════════════════════════════════════════
+                 RECENT ACTIVITY  +  QUICK TASKS
+            ════════════════════════════════════════════════ -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                <!-- Recent Activity — L1 panel -->
+                <div class="lg:col-span-7 ds-panel">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="ds-icon-badge ds-icon-badge--lavender">
+                            <ActivityIcon class="w-4 h-4" />
                         </div>
+                        <h3 class="font-bold text-base text-abyss-800 dark:text-platinum-100">Recent Activity</h3>
                     </div>
-                    
-                    <div class="space-y-3">
-                        <div v-for="activity in recentActivity" :key="activity.id"
-                            class="flex items-center justify-between p-4 rounded-[1.5rem] transition-all duration-300 bg-slate-50 dark:bg-white/[0.02] border border-slate-100 dark:border-white/5 hover:border-purple-500/30 group">
-                            <div class="flex items-center gap-4 min-w-0">
-                                <div class="p-3 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 group-hover:scale-110 transition-all">
-                                    <component :is="activity.icon" class="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                                </div>
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-black dark:text-slate-200 truncate">{{ activity.title }}</p>
-                                    <p class="text-[9px] font-bold text-slate-400 dark:text-gray-600 uppercase tracking-widest mt-0.5 italic">{{ activity.time }}</p>
-                                </div>
+
+                    <div class="space-y-2">
+                        <div v-for="activity in recentActivity" :key="activity.id" class="activity-row group">
+                            <div class="ds-icon-badge ds-icon-badge--lavender shrink-0
+                                        group-hover:bg-calm-lavender-100 dark:group-hover:bg-calm-lavender-800/40
+                                        transition-colors">
+                                <component :is="activity.icon" class="h-4 w-4" />
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-sm font-medium text-abyss-800 dark:text-platinum-200 truncate">
+                                    {{ activity.title }}
+                                </p>
+                                <p class="field-subtext mt-0.5">{{ activity.time }}</p>
                             </div>
                         </div>
-                        <div v-if="recentActivity.length === 0" class="text-center py-8">
-                            <p class="text-sm text-slate-400 italic">No recent activity</p>
+
+                        <div v-if="recentActivity.length === 0" class="empty-state !py-12">
+                            <div class="empty-state-icon">
+                                <ActivityIcon class="w-7 h-7 text-platinum-400" />
+                            </div>
+                            <p class="empty-state-title">No recent activity</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 bg-slate-50/50 dark:bg-[#0b0a12]/50 border border-slate-200 dark:border-white/5 rounded-[2.5rem] p-8 shadow-inner backdrop-blur-sm">
-                    <h3 class="text-xl font-[900] text-black dark:text-white uppercase tracking-tighter italic mb-8 px-2">Quick Tasks</h3>
-                    <div class="grid grid-cols-1 gap-4">
-                        <router-link v-for="action in quickActions" :key="action.label" :to="action.to"
-                            class="flex items-center gap-5 p-5 rounded-[1.8rem] bg-white dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 transition-all duration-500 group hover:shadow-xl hover:-translate-y-1 hover:border-purple-500/30">
-                            <div :class="`p-3 rounded-2xl ${action.bg} text-white transition-all group-hover:rotate-6 group-hover:scale-110 shadow-lg ${action.shadow}`">
+                <!-- Quick Tasks — L1 panel -->
+                <div class="lg:col-span-5 ds-panel">
+                    <h3 class="font-bold text-base text-abyss-800 dark:text-platinum-100 mb-5">Quick Tasks</h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        <router-link v-for="action in quickActions" :key="action.label" :to="{ name: action.name }"
+                            class="quick-action-row group">
+                            <div :class="['ds-icon-badge border-2 shrink-0 transition-colors', action.iconClass]">
                                 <component :is="action.icon" class="h-5 w-5" />
                             </div>
-                            <span class="text-xs font-bold text-black dark:text-slate-300 group-hover:text-purple-600 dark:group-hover:text-white uppercase tracking-[0.15em] transition-colors">{{ action.label }}</span>
+                            <span class="text-sm font-medium text-abyss-800 dark:text-platinum-200
+                                         group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400
+                                         transition-colors">
+                                {{ action.label }}
+                            </span>
+                            <ArrowRightIcon class="w-4 h-4 text-platinum-400 ml-auto shrink-0
+                                                    group-hover:text-calm-lavender-500 group-hover:translate-x-0.5
+                                                    transition-all" />
                         </router-link>
                     </div>
                 </div>
+
             </div>
+
         </template>
     </div>
 </template>
@@ -170,6 +211,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { Line, Bar, Doughnut } from 'vue-chartjs';
+import GenerateReport from '@/components/ui/GenerateReport.vue';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -197,7 +239,8 @@ import {
     TrophyIcon,
     MegaphoneIcon,
     ClipboardListIcon,
-    DownloadIcon
+    DownloadIcon,
+    ArrowRight as ArrowRightIcon
 } from 'lucide-vue-next';
 import api from '@/utils/api';
 
@@ -216,7 +259,6 @@ ChartJS.register(
 );
 
 const isLoading = ref(false);
-const isDownloading = ref(false);
 const stats = ref({
     totalUsers: 0,
     newUsersThisMonth: 0,
@@ -247,29 +289,29 @@ const recentUsers = ref([]);
 const recentModules = ref([]);
 
 const statsCards = computed(() => [
-    { 
-        label: 'Total Users', 
-        val: stats.value.totalUsers, 
-        sub: `+${stats.value.newUsersThisMonth} New`, 
-        icon: UsersIcon 
+    {
+        label: 'Total Users',
+        val: stats.value.totalUsers,
+        sub: `+${stats.value.newUsersThisMonth} New`,
+        icon: UsersIcon
     },
-    { 
-        label: 'Facilitators', 
-        val: stats.value.totalFacilitators, 
-        sub: `${stats.value.educators} Edu / ${stats.value.moderators} Mod`, 
-        icon: UserCogIcon 
+    {
+        label: 'Facilitators',
+        val: stats.value.totalFacilitators,
+        sub: `${stats.value.educators} Edu / ${stats.value.moderators} Mod`,
+        icon: UserCogIcon
     },
-    { 
-        label: 'Modules', 
-        val: stats.value.totalModules, 
-        sub: `${stats.value.publishedModules} Published`, 
-        icon: BookOpenIcon 
+    {
+        label: 'Modules',
+        val: stats.value.totalModules,
+        sub: `${stats.value.publishedModules} Published`,
+        icon: BookOpenIcon
     },
-    { 
-        label: 'Classrooms', 
-        val: stats.value.totalClassrooms, 
-        sub: `${stats.value.activeClassrooms} Active`, 
-        icon: GraduationCapIcon 
+    {
+        label: 'Classrooms',
+        val: stats.value.totalClassrooms,
+        sub: `${stats.value.activeClassrooms} Active`,
+        icon: GraduationCapIcon
     }
 ]);
 
@@ -439,7 +481,7 @@ const roleChartData = computed(() => ({
 
 const recentActivity = computed(() => {
     const activities = [];
-    
+
     recentUsers.value.forEach(user => {
         activities.push({
             id: `user-${user.id}`,
@@ -448,7 +490,7 @@ const recentActivity = computed(() => {
             time: formatTimeAgo(user.created_at)
         });
     });
-    
+
     recentModules.value.forEach(module => {
         activities.push({
             id: `module-${module.id}`,
@@ -457,15 +499,35 @@ const recentActivity = computed(() => {
             time: formatTimeAgo(module.created_at)
         });
     });
-    
+
     return activities.sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 6);
 });
 
 const quickActions = [
-    { to: '/admin/facilitators', icon: UserPlusIcon, label: 'Manage Users', bg: 'bg-purple-600', shadow: 'shadow-purple-500/20' },
-    { to: '/admin/announcements', icon: MegaphoneIcon, label: 'Announcements', bg: 'bg-fuchsia-600', shadow: 'shadow-fuchsia-500/20' },
-    { to: '/admin/content', icon: FileTextIcon, label: 'Manage Lessons', bg: 'bg-violet-600', shadow: 'shadow-violet-500/20' },
-    { to: '/admin/settings', icon: SettingsIcon, label: 'System Settings', bg: 'bg-slate-600', shadow: 'shadow-slate-500/20' }
+    {
+        name: 'admin.facilitators',
+        icon: UserPlusIcon,
+        label: 'Manage Users',
+        iconClass: 'bg-calm-lavender-50 dark:bg-calm-lavender-900/20 border-calm-lavender-200 dark:border-calm-lavender-800/40 text-calm-lavender-600 dark:text-calm-lavender-400'
+    },
+    {
+        name: 'admin.announcements',
+        icon: MegaphoneIcon,
+        label: 'Announcements',
+        iconClass: 'bg-neon-pink-50 dark:bg-neon-pink-900/20 border-neon-pink-200 dark:border-neon-pink-800/40 text-neon-pink-600 dark:text-neon-pink-400'
+    },
+    {
+        name: 'admin.dashboard',
+        icon: FileTextIcon,
+        label: 'Manage Lessons',
+        iconClass: 'bg-calm-lavender-50 dark:bg-calm-lavender-900/20 border-calm-lavender-200 dark:border-calm-lavender-800/40 text-calm-lavender-600 dark:text-calm-lavender-400'
+    },
+    {
+        name: 'settings',
+        icon: SettingsIcon,
+        label: 'System Settings',
+        iconClass: 'bg-platinum-200 dark:bg-abyss-600 border-platinum-300 dark:border-abyss-500 text-platinum-600 dark:text-platinum-400'
+    }
 ];
 
 const formatTimeAgo = (dateStr) => {
@@ -475,7 +537,7 @@ const formatTimeAgo = (dateStr) => {
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
-    
+
     if (minutes < 60) return `${minutes}m ago`;
     if (hours < 24) return `${hours}h ago`;
     return `${days}d ago`;
@@ -488,7 +550,7 @@ const fetchAnalytics = async () => {
             api.get('/api/v1/admin/analytics'),
             api.get('/api/v1/admin/analytics/charts')
         ]);
-        
+
         if (analyticsRes.data?.analytics) {
             const data = analyticsRes.data.analytics;
             stats.value = {
@@ -510,7 +572,7 @@ const fetchAnalytics = async () => {
             recentUsers.value = data.recentActivity.users || [];
             recentModules.value = data.recentActivity.modules || [];
         }
-        
+
         if (chartRes.data?.chartData) {
             chartData.value = chartRes.data.chartData;
         }
@@ -518,55 +580,6 @@ const fetchAnalytics = async () => {
         console.error('Failed to fetch analytics:', error);
     } finally {
         isLoading.value = false;
-    }
-};
-
-const downloadReport = async () => {
-    isDownloading.value = true;
-    try {
-        const response = await api.get('/api/v1/admin/reports/download', {
-            responseType: 'blob',
-            headers: {
-                'Accept': 'application/pdf'
-            }
-        });
-        
-        // Check if response is actually an error (JSON returned as blob)
-        const contentType = response.headers['content-type'];
-        if (contentType && contentType.includes('application/json')) {
-            // It's an error response, parse it
-            const text = await response.data.text();
-            const errorData = JSON.parse(text);
-            throw new Error(errorData.message || 'Failed to generate report');
-        }
-        
-        // Create download link for PDF
-        const blob = new Blob([response.data], { type: 'application/pdf' });
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        const today = new Date().toISOString().split('T')[0];
-        link.setAttribute('download', `ProtectEd_Report_${today}.pdf`);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
-        window.URL.revokeObjectURL(url);
-    } catch (error) {
-        console.error('Failed to download report:', error);
-        // Try to extract error message from blob response
-        if (error.response?.data instanceof Blob) {
-            try {
-                const text = await error.response.data.text();
-                const errorData = JSON.parse(text);
-                alert(errorData.message || 'Failed to download report. Please try again.');
-            } catch {
-                alert('Failed to download report. Please try again.');
-            }
-        } else {
-            alert(error.message || 'Failed to download report. Please try again.');
-        }
-    } finally {
-        isDownloading.value = false;
     }
 };
 
@@ -580,9 +593,147 @@ onMounted(() => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap');
+@reference "@/style.css";
 
-.custom-font-poppins {
-    font-family: 'Poppins', sans-serif !important;
+/* ═══════════════════════════════════════════════════════════
+   PAGE WRAPPER
+═══════════════════════════════════════════════════════════ */
+.page-wrapper {
+    @apply space-y-7 text-abyss-800 dark:text-platinum-100;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DS-PANEL  —  L1: platinum-100 / abyss-700
+═══════════════════════════════════════════════════════════ */
+.ds-panel {
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-6;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ICON BADGE
+═══════════════════════════════════════════════════════════ */
+.ds-icon-badge {
+    @apply p-2.5 rounded-xl border-2 flex items-center justify-center shrink-0;
+}
+
+.ds-icon-badge--lavender {
+    @apply bg-calm-lavender-50 dark:bg-calm-lavender-900/20;
+    @apply border-calm-lavender-200 dark:border-calm-lavender-800/40;
+    @apply text-calm-lavender-600 dark:text-calm-lavender-400;
+}
+
+.ds-icon-badge--pink {
+    @apply bg-neon-pink-50 dark:bg-neon-pink-900/20;
+    @apply border-neon-pink-200 dark:border-neon-pink-800/40;
+    @apply text-neon-pink-600 dark:text-neon-pink-400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   PRIMARY STAT TILE  —  L1: platinum-100 / abyss-700
+═══════════════════════════════════════════════════════════ */
+.stat-tile {
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-5;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/60;
+    @apply transition-all duration-200;
+}
+
+.stat-tile__label {
+    @apply text-xs font-medium uppercase tracking-wide;
+    @apply text-platinum-600 dark:text-platinum-500;
+}
+
+.stat-tile__value {
+    @apply text-3xl font-bold leading-none mt-1;
+    @apply text-abyss-800 dark:text-platinum-100;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECONDARY STAT TILE  —  L2: platinum-200 / abyss-600
+═══════════════════════════════════════════════════════════ */
+.secondary-tile {
+    @apply flex flex-col items-center text-center;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-5;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/50;
+    @apply transition-all duration-200;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   CHART PANEL  —  L1: platinum-100 / abyss-700
+   No backdrop-blur, no shadow — border defines the panel
+═══════════════════════════════════════════════════════════ */
+.chart-panel {
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-6;
+}
+
+.chart-panel__header {
+    @apply flex items-center gap-3 mb-6;
+}
+
+.chart-panel__title {
+    @apply font-bold text-base text-abyss-800 dark:text-platinum-100;
+}
+
+.chart-empty {
+    @apply flex items-center justify-center h-full;
+    @apply font-mplusrounded text-sm font-normal text-platinum-600 dark:text-platinum-400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ACTIVITY ROW  —  L2 inset inside Recent Activity panel
+═══════════════════════════════════════════════════════════ */
+.activity-row {
+    @apply flex items-center gap-4 p-3.5 rounded-xl transition-all duration-150;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/50;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   QUICK ACTION ROW  —  L2 inset inside Quick Tasks panel
+═══════════════════════════════════════════════════════════ */
+.quick-action-row {
+    @apply flex items-center gap-4 p-4 rounded-xl transition-all duration-150;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/50;
+    @apply hover:-translate-y-0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLAT-3D BUTTON MODIFIERS
+═══════════════════════════════════════════════════════════ */
+.btn-3d {
+    @apply border-b-4 border-black/10 active:border-b active:translate-y-px;
+}
+
+.btn-3d--secondary {
+    @apply border-b-4 border-platinum-400 dark:border-abyss-400 active:border-b active:translate-y-px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ENTRY ANIMATION
+═══════════════════════════════════════════════════════════ */
+.animate-in {
+    animation: fadeSlideUp 0.4s ease-out forwards;
+}
+
+@keyframes fadeSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 </style>

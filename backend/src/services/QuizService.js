@@ -25,7 +25,9 @@ class QuizService {
     /**
      * Submission Logic: Nag-o-automate ng pag-save ng attempt at pag-update ng EXP/Title
      */
-    async submitAttempt(userId, quizId, results) {
+    async submitAttempt(userId, quizId, results, options = {}) {
+        const { awardExperience = true } = options;
+
         // 1. Siguraduhing Number ang values para hindi mag-error ang Sequelize
         const points = parseInt(results.pointsEarned) || 0;
         const correct = parseInt(results.correctCount) || 0;
@@ -42,19 +44,23 @@ class QuizService {
             time_taken: time
         });
 
-        // 3. EXP at Automated Title Update
-        // Base sa logic natin, ang correct answers ang multiplier para sa EXP (e.g., 20 EXP per correct answer)
-        const expGained = correct * 20;
-        
-        // Tinatawag ang gamificationService para sa automatic Title threshold checking
-        const updatedStats = await gamificationService.addExperience(userId, expGained);
+        let expGained = 0;
+        let updatedStats = null;
+
+        if (awardExperience) {
+            // Base sa logic natin, ang correct answers ang multiplier para sa EXP (e.g., 20 EXP per correct answer)
+            expGained = correct * 20;
+            // Tinatawag ang gamificationService para sa automatic Title threshold checking
+            updatedStats = await gamificationService.addExperience(userId, expGained);
+        }
 
         return { 
             success: true,
             attempt, 
             experienceGained: expGained,
-            currentTotalExp: updatedStats.experience_points, 
-            currentTitle: updatedStats.current_title // Ibinabalik ang bagong title kung nag-level up
+            currentTotalExp: updatedStats?.experience_points ?? null,
+            currentTitle: updatedStats?.current_title ?? null,
+            experienceAwarded: awardExperience // Ibinabalik kung nag-award ng EXP o practice mode lang
         };
     }
 

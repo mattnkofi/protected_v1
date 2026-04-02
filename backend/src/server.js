@@ -7,6 +7,17 @@ const { scheduleCleanup } = require('./jobs/CleanupJob');
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
 
+server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+        console.error(`❌ Port ${PORT} is already in use.`);
+        console.error('Stop the existing process or change PORT in backend/.env, then restart.');
+        process.exit(1);
+    }
+
+    console.error('❌ Server error:', error.message);
+    process.exit(1);
+});
+
 const startServer = async () => {
     try {
         // Test database connection

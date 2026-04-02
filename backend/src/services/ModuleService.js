@@ -1,4 +1,14 @@
-const { Module, User, ModuleView, Classroom, Sequelize } = require('../model');
+const {
+    Module,
+    User,
+    ModuleView,
+    Classroom,
+    Quiz,
+    QuizAttempt,
+    MLAnalysisResult,
+    Sequelize,
+    sequelize
+} = require('../model');
 const FileStorageService = require('./FileStorageService');
 const { Op } = require('sequelize');
 
@@ -160,19 +170,51 @@ class ModuleService {
     }
 
     /**
-     * Delete module (soft delete)
+     * Delete module with dependent data cleanup.
+     * Uses force delete to match the UI warning about permanent removal.
      */
     async deleteModule(moduleId) {
         try {
-            const module = await Module.findByPk(moduleId);
-            if (!module) throw new Error('Module not found');
+            return await sequelize.transaction(async (transaction) => {
+                const module = await Module.findByPk(moduleId, { transaction });
+                if (!module) throw new Error('Module not found');
 
-            await module.destroy();
+                const quizzes = await Quiz.findAll({
+                    where: { module_id: moduleId },
+                    attributes: ['id'],
+                    transaction
+                });
+                const quizIds = quizzes.map((quiz) => quiz.id);
 
-            return {
-                success: true,
-                message: 'Module deleted successfully'
-            };
+                if (quizIds.length > 0) {
+                    await MLAnalysisResult.destroy({
+                        where: { quiz_id: { [Op.in]: quizIds } },
+                        transaction
+                    });
+
+                    await QuizAttempt.destroy({
+                        where: { quiz_id: { [Op.in]: quizIds } },
+                        transaction
+                    });
+
+                    await Quiz.destroy({
+                        where: { id: { [Op.in]: quizIds } },
+                        transaction
+                    });
+                }
+
+                await ModuleView.destroy({
+                    where: { module_id: moduleId },
+                    transaction
+                });
+
+                await module.destroy({ force: true, transaction });
+
+                return {
+                    success: true,
+                    message: 'Module deleted successfully'
+                };
+            });
         } catch (error) {
             console.error('ModuleService.deleteModule error:', error);
             throw error;

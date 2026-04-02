@@ -5,6 +5,8 @@ import api, {
     setAuthToken,
     clearAuthToken,
     getAuthToken,
+    setRefreshToken,
+    clearRefreshToken,
     logout as apiLogout,
     logoutEverywhere as apiLogoutEverywhere
 } from "@/utils/api";
@@ -60,10 +62,12 @@ async function login({ email, password }) {
     try {
         const res = await api.post("/api/v1/auth/login", { email, password });
         const token = res?.data?.token;
+        const refreshToken = res?.data?.refreshToken || res?.data?.refresh_token;
 
         if (!token) throw new Error("Login failed: Access token missing.");
 
         setAuthToken(token);
+        if (refreshToken) setRefreshToken(refreshToken);
         user.value = res.data.user;
         
         // 🟢 Alisin ang toast.success dito kung mayroon man, sa component na lang
@@ -87,6 +91,7 @@ async function login({ email, password }) {
             console.error("Logout error:", error);
         } finally {
             clearAuthToken();
+            clearRefreshToken();
             user.value = null;
             activeSessions.value = [];
         }

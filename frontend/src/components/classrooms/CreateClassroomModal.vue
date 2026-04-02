@@ -1,79 +1,94 @@
 <template>
-  <div 
-    class="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-slate-900/60 dark:bg-[#020203]/90 backdrop-blur-md transition-all duration-500" 
-    @click.self="$emit('close')"
-  >
-    <div 
-      class="relative bg-white dark:bg-[#0d0d12] p-8 md:p-10 rounded-[2.5rem] border border-slate-200 dark:border-white/10 shadow-[0_30px_80px_rgba(0,0,0,0.15)] dark:shadow-[0_30px_80px_rgba(0,0,0,0.8)] max-w-lg w-full max-h-[90vh] flex flex-col transition-all duration-500 animate-in"
+    <!-- ── Overlay ──────────────────────────────────────────────
+         backdrop-blur-sm scrim — gentle blur + solid dim.
+    ─────────────────────────────────────────────────────────── -->
+    <div
+        class="modal-overlay !z-[200] !bg-abyss-950/60 backdrop-blur-sm !items-start !overflow-y-auto py-10"
+        @click.self="$emit('close')"
     >
-      
-      <div class="absolute -top-24 -left-24 w-48 h-48 bg-purple-600/5 dark:bg-purple-600/15 rounded-full blur-[100px] pointer-events-none"></div>
-      <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-fuchsia-600/5 dark:bg-fuchsia-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+        <!-- ── Modal panel ─────────────────────────────────────
+             L1 layer: platinum-100 / abyss-700
+             border-2 border-platinum-300 — "stamped" boundary
+        ────────────────────────────────────────────────────── -->
+        <div class="modal-shell animate-modal mx-auto">
 
-      <div class="relative z-10 mb-10 shrink-0 text-center md:text-left">
-        <div class="flex items-center justify-center md:justify-start gap-2.5 mb-3">
-            <div class="h-1 w-8 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-full shadow-[0_2px_10px_rgba(139,92,246,0.4)]"></div>
-            <span class="text-[10px] font-black uppercase tracking-[0.3em] text-purple-600 dark:text-purple-400 italic">Registry Deployment</span>
+            <!-- Header ───────────────────────────────────────── -->
+            <div class="shrink-0 mb-7">
+                <p class="section-eyebrow mb-2">New Classroom</p>
+                <h2 class="font-madimione text-3xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                    Create a <span class="brand-gradient-text">Classroom</span>
+                </h2>
+                <p class="field-subtext mt-1.5">
+                    Fill in the details below. A unique join code will be generated automatically.
+                </p>
+            </div>
+
+            <!-- Form ──────────────────────────────────────────── -->
+            <form
+                @submit.prevent="handleSubmit"
+                class="flex-1 overflow-y-auto custom-scrollbar space-y-5 pr-1"
+            >
+                <!-- Classroom name -->
+                <div class="space-y-1.5">
+                    <label class="field-label">
+                        Classroom Name <span class="text-red-400">*</span>
+                    </label>
+                    <input
+                        v-model="form.name"
+                        type="text"
+                        required
+                        placeholder="e.g. Grade 10 — Cybersecurity"
+                        class="input-field"
+                    />
+                </div>
+
+                <!-- Description -->
+                <div class="space-y-1.5">
+                    <label class="field-label">Description</label>
+                    <textarea
+                        v-model="form.description"
+                        rows="3"
+                        placeholder="Enter classroom objectives or a short description…"
+                        class="input-field resize-none"
+                    ></textarea>
+                    <p class="field-subtext">Optional — helps students understand the classroom purpose.</p>
+                </div>
+
+                <!-- Info notice ────────────────────────────────
+                     L2 inset tile: platinum-200 / abyss-600
+                ─────────────────────────────────────────────── -->
+                <div class="info-notice">
+                    <div class="info-notice__icon">
+                        <InfoIcon class="w-4 h-4" />
+                    </div>
+                    <p class="field-subtext !text-calm-lavender-700 dark:!text-calm-lavender-300">
+                        A unique 6-character access code will be auto-generated once the classroom is created.
+                    </p>
+                </div>
+            </form>
+
+            <!-- Actions ──────────────────────────────────────── -->
+            <div class="shrink-0 grid grid-cols-2 gap-3 pt-6 border-t-2 border-platinum-200 dark:border-abyss-600 mt-6">
+                <button
+                    type="button"
+                    @click="$emit('close')"
+                    class="btn-secondary btn-3d--secondary justify-center"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    @click="handleSubmit"
+                    :disabled="props.loading"
+                    class="btn-primary btn-3d justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span>{{ props.loading ? 'Creating…' : 'Create Classroom' }}</span>
+                    <ZapIcon v-if="!props.loading" class="w-4 h-4" />
+                </button>
+            </div>
+
         </div>
-        <h2 class="text-3xl font-[900] uppercase italic tracking-tighter text-slate-900 dark:text-white leading-none">
-          Establish <span class="bg-gradient-to-r from-purple-600 to-fuchsia-500 bg-clip-text text-transparent italic">Classroom</span>
-        </h2>
-      </div>
-
-      <form @submit.prevent="handleSubmit" class="relative z-10 space-y-8 overflow-y-auto custom-scrollbar pr-1">
-        <div class="space-y-2 group">
-          <label class="text-[10px] font-[900] uppercase tracking-widest text-slate-400 dark:text-gray-500 group-focus-within:text-purple-600 transition-colors italic">Classroom Designation</label>
-          <input 
-            v-model="form.name"
-            type="text"
-            required
-            placeholder="EX: GRADE 10 - CYBERSECURITY"
-            class="w-full bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-gray-700 outline-none focus:border-purple-500/50 focus:bg-white dark:focus:bg-white/[0.05] transition-all shadow-inner uppercase tracking-wider"
-          />
-        </div>
-
-        <div class="space-y-2 group">
-          <label class="text-[10px] font-[900] uppercase tracking-widest text-slate-400 dark:text-gray-500 group-focus-within:text-purple-600 transition-colors italic">Operational Brief</label>
-          <textarea 
-            v-model="form.description"
-            rows="3"
-            placeholder="Enter classroom objectives..."
-            class="w-full bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/5 rounded-2xl px-6 py-4 text-sm font-bold text-slate-900 dark:text-white placeholder:text-slate-300 dark:placeholder:text-gray-700 outline-none focus:border-purple-500/50 focus:bg-white dark:focus:bg-white/[0.05] transition-all resize-none shadow-inner uppercase tracking-wider leading-relaxed"
-          ></textarea>
-        </div>
-
-        <div class="p-4 rounded-2xl bg-purple-500/5 border border-purple-500/10 flex items-start gap-3 shadow-inner">
-          <div class="p-2 rounded-lg bg-purple-500/10 dark:bg-purple-500/20 text-purple-600 dark:text-purple-400">
-            <InfoIcon class="w-4 h-4" />
-          </div>
-          <p class="text-[9px] font-black text-purple-600/80 dark:text-purple-400/80 uppercase tracking-widest leading-relaxed italic">
-            Note: System will auto-generate a unique 6-character access code upon successful deployment.
-          </p>
-        </div>
-      </form>
-
-      <div class="grid grid-cols-2 gap-4 pt-8 shrink-0 relative z-10">
-        <button 
-          type="button" 
-          @click="$emit('close')"
-          class="px-6 py-4 rounded-2xl bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/5 text-[10px] font-[900] uppercase tracking-widest text-slate-500 dark:text-gray-400 hover:bg-slate-200 dark:hover:bg-white/10 transition-all italic"
-        >
-          Abort
-        </button>
-        <button 
-          @click="handleSubmit"
-          type="submit"
-          :disabled="loading"
-          class="group relative px-6 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-2xl text-[10px] font-[900] uppercase tracking-widest text-white overflow-hidden shadow-[0_10px_20px_-5px_rgba(124,58,237,0.4)] hover:scale-105 active:scale-95 transition-all disabled:opacity-50 italic"
-        >
-          <span class="relative z-10 flex items-center justify-center gap-2">
-            {{ loading ? 'Processing...' : 'Deploy Classroom' }}
-            <ZapIcon v-if="!loading" class="w-3.5 h-3.5 animate-pulse fill-current" />
-          </span>
-        </button>
-      </div>
     </div>
-  </div>
 </template>
 
 <script setup>
@@ -84,49 +99,82 @@ const emit = defineEmits(['close', 'created']);
 const props = defineProps({ loading: Boolean });
 
 const form = ref({
-  name: '',
-  description: ''
+    name: '',
+    description: ''
 });
 
 const handleSubmit = () => {
-  if (form.value.name?.trim()) {
-    emit('created', { ...form.value });
-  }
+    if (form.value.name?.trim()) {
+        emit('created', { ...form.value });
+    }
 };
 </script>
 
 <style scoped>
-input, textarea, button {
-  font-family: 'Poppins', sans-serif !important;
+@reference "@/style.css";
+
+/* ── Modal shell ────────────────────────────────────────────
+   L1: platinum-100 panel on the abyss-950/60 scrim
+   border-2 border-platinum-300 = "stamped" tactile boundary
+   Dark counterpart: abyss-700 on abyss-950/60 scrim
+──────────────────────────────────────────────────────────── */
+.modal-shell {
+    @apply relative w-full max-w-lg flex flex-col;
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl p-7;
 }
 
-.animate-in {
-    animation: modalEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* ── Info notice (L2 inset) ─────────────────────────────────
+   platinum-200 on platinum-100 panel  →  visible depth step
+   abyss-600   on abyss-700   panel    →  subtle depth step
+──────────────────────────────────────────────────────────── */
+.info-notice {
+    @apply flex items-start gap-3 p-4 rounded-xl;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-calm-lavender-200 dark:border-calm-lavender-800/40;
+}
+
+.info-notice__icon {
+    @apply p-2 rounded-lg shrink-0 flex items-center justify-center;
+    @apply bg-calm-lavender-100 dark:bg-calm-lavender-900/30;
+    @apply border border-calm-lavender-200 dark:border-calm-lavender-800/40;
+    @apply text-calm-lavender-600 dark:text-calm-lavender-400;
+}
+
+/* ── Flat-3D button modifiers ───────────────────────────────
+   Adds border-b-4 "press depth" on top of the global
+   .btn-primary / .btn-secondary from style.css
+──────────────────────────────────────────────────────────── */
+.btn-3d {
+    @apply border-b-4 border-black/10 active:border-b active:translate-y-px;
+}
+
+.btn-3d--secondary {
+    @apply border-b-4 border-platinum-400 dark:border-abyss-400 active:border-b active:translate-y-px;
+}
+
+/* ── Modal entry animation ──────────────────────────────────
+   Clean scale+fade — no blur filter
+──────────────────────────────────────────────────────────── */
+.animate-modal {
+    animation: modalEntry 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 @keyframes modalEntry {
-    from { 
-      opacity: 0; 
-      transform: scale(0.97) translateY(20px);
-      filter: blur(4px);
+    from {
+        opacity: 0;
+        transform: scale(0.97) translateY(16px);
     }
-    to { 
-      opacity: 1; 
-      transform: scale(1) translateY(0);
-      filter: blur(0);
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
     }
 }
 
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-thumb { 
-  background: rgba(124, 58, 237, 0.2); 
-  border-radius: 10px; 
-}
-
-::placeholder {
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  font-size: 10px;
-  font-weight: 800;
+/* ── Scrollbar ──────────────────────────────────────────────*/
+.custom-scrollbar::-webkit-scrollbar { width: 3px; }
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-platinum-300 dark:bg-abyss-500;
 }
 </style>

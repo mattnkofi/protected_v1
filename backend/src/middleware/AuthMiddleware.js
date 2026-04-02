@@ -157,9 +157,11 @@ exports.requireRole = (roles) => {
         }
 
         const allowedRoles = Array.isArray(roles) ? roles : [roles];
+        // Backward compatibility: some legacy accounts still use `facilitator`.
+        const normalizedRole = req.user.role === 'facilitator' ? 'educator' : req.user.role;
 
         // I-check kung ang user role ay kasama sa allowed roles
-        if (!allowedRoles.includes(req.user.role)) {
+        if (!allowedRoles.includes(normalizedRole)) {
             return res.status(403).json({
                 message: 'You do not have permission to access this resource.',
                 code: 'INSUFFICIENT_PERMISSIONS',

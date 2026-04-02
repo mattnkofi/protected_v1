@@ -1,84 +1,72 @@
 <template>
-  <div class="custom-font-poppins animate-in min-h-screen p-4 md:p-10 text-black dark:text-white bg-slate-50 dark:bg-[#050507] transition-all duration-500 selection:bg-purple-500/30">
-    
-    <header class="max-w-[1600px] mx-auto mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
-      <div class="space-y-2">
-        <h1 class="text-3xl md:text-4xl font-[900] uppercase tracking-tighter italic leading-none text-black dark:text-white">
-          Academy <span class="text-purple-600">Library</span>
+  <div class="page-wrapper animate-in">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="space-y-1.5">
+        <p class="section-eyebrow">Knowledge Base</p>
+        <h1 class="page-title">
+          Learning <span class="brand-gradient-text">Library</span>
         </h1>
-        <p class="text-[11px] font-bold uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">Institutional Knowledge Base</p>
+        <p class="page-subtitle">Explore modules curated for your growth and awareness.</p>
       </div>
 
       <div class="flex items-center gap-4">
-        <div v-if="stats" class="hidden md:flex items-center gap-6 mr-6 border-r border-slate-200 dark:border-white/10 pr-6">
-           <div class="text-right">
-              <div class="text-[10px] uppercase font-black text-slate-400 tracking-widest">Total Units</div>
-              <div class="text-2xl font-[900] italic leading-none text-black dark:text-white">{{ stats.total_modules || 0 }}</div>
-           </div>
-           <div class="text-right">
-              <div class="text-[10px] uppercase font-black text-slate-400 tracking-widest">Total Reads</div>
-              <div class="text-2xl font-[900] italic leading-none text-black dark:text-white">{{ stats.total_views || 0 }}</div>
-           </div>
-        </div>
-
-        <button v-if="canManageModules" @click="showCreateModal = true"
-          class="btn-3d-purple group flex items-center gap-3 px-6 py-3 text-white text-[10px] font-black uppercase tracking-widest rounded-xl transition-all shadow-lg active:scale-95 hover:-translate-y-0.5">
-          <PlusIcon class="w-4 h-4" />
-          <span>New Entry</span>
-        </button>
-      </div>
-    </header>
-
-    <main class="max-w-[1600px] mx-auto space-y-12">
-      
-      <!-- Featured Section (Horizontal) -->
-      <section v-if="featuredModules?.length > 0" class="space-y-4">
-        <div class="flex items-center gap-4">
-            <div class="h-8 w-1 bg-purple-600 rounded-full"></div>
-            <h2 class="text-sm font-black uppercase tracking-[0.2em] text-slate-400 italic">Priority Units</h2>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div v-for="module in featuredModules" :key="module.id" 
-            @click="viewModule(module.id)"
-            class="group bg-white dark:bg-[#0d0d12] border border-slate-200 dark:border-white/5 p-6 rounded-[2rem] hover:border-purple-600/50 transition-all cursor-pointer shadow-sm hover:shadow-2xl hover:-translate-y-1 relative overflow-hidden">
-            
-            <!-- Decor -->
-            <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-500/5 rounded-full group-hover:bg-purple-500/10 transition-colors"></div>
-
-            <div class="relative z-10 flex flex-col h-full justify-between gap-4">
-              <div class="flex justify-between items-start">
-                  <div class="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-500/10 flex items-center justify-center text-purple-600">
-                    <BookOpenIcon class="w-5 h-5" />
-                  </div>
-                  <span class="text-[9px] font-black uppercase tracking-widest text-purple-600 bg-purple-50 dark:bg-purple-500/10 px-2 py-1 rounded-lg">Featured</span>
-              </div>
-              
-              <div>
-                <h3 class="text-sm font-black uppercase italic tracking-tight leading-tight group-hover:text-purple-600 transition-colors line-clamp-2 mb-1">
-                  {{ module.title }}
-                </h3>
-                <p class="text-[10px] font-medium text-slate-400 line-clamp-1 dark:text-slate-500">{{ module.category || 'Standard' }}</p>
-              </div>
-            </div>
+        <!-- Stats -->
+        <div v-if="stats"
+          class="hidden md:flex items-center gap-5 pr-5 border-r border-platinum-200 dark:border-abyss-500">
+          <div class="text-right">
+            <p class="stat-pill-label">Total Units</p>
+            <p class="stat-value">{{ stats.total_modules || 0 }}</p>
+          </div>
+          <div class="text-right">
+            <p class="stat-pill-label">Total Reads</p>
+            <p class="stat-value">{{ stats.total_views || 0 }}</p>
           </div>
         </div>
-      </section>
 
-      <!-- Main Registry Interface -->
-      <section class="space-y-6">
-         <!-- Module List Container -->
-        <div class="min-h-[600px]">
-          <ModuleList />
+        <button v-if="canManageModules" @click="showCreateModal = true" class="btn-primary">
+          <PlusIcon class="w-4 h-4" />
+          <span>New Module</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Featured Section -->
+    <section v-if="featuredModules?.length > 0" class="space-y-5">
+      <h2 class="section-eyebrow">Featured</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div v-for="module in featuredModules" :key="module.id"
+          @click="viewModule(module.id)"
+          class="card card-hover cursor-pointer group flex flex-col justify-between gap-5">
+
+          <div class="flex items-start justify-between">
+            <div class="card-icon-wrap !p-3">
+              <BookOpenIcon class="w-5 h-5 text-calm-lavender-600 dark:text-calm-lavender-400" />
+            </div>
+            <span class="badge badge-lavender">Featured</span>
+          </div>
+
+          <div>
+            <h3 class="featured-title group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+              {{ module.title }}
+            </h3>
+            <p class="featured-category">{{ module.category || 'Standard' }}</p>
+          </div>
         </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
-    <CreateModuleModal 
-        v-if="showCreateModal" 
-        @saved="handleModuleCreated" 
-        @cancel="showCreateModal = false" 
-    />
+    <!-- All Modules Section -->
+    <section class="space-y-5">
+      <h2 class="section-eyebrow">All Modules</h2>
+      <div class="min-h-[400px]">
+        <ModuleList />
+      </div>
+    </section>
+
+    <Teleport to="body"><CreateModuleModal v-if="showCreateModal" @saved="handleModuleCreated" @cancel="showCreateModal = false" /></Teleport>
   </div>
 </template>
 
@@ -88,8 +76,7 @@ import { useRouter } from 'vue-router';
 import { useModuleStore } from '@/stores/module';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/utils/useToast';
-import { PlusIcon, BookOpenIcon, EyeIcon, ArrowRightIcon } from 'lucide-vue-next';
-import ModuleCard from '@/components/modules/ModuleCard.vue';
+import { PlusIcon, BookOpenIcon } from 'lucide-vue-next';
 import ModuleList from '@/components/modules/ModuleList.vue';
 import CreateModuleModal from '@/components/modules/CreateModuleModal.vue';
 
@@ -103,60 +90,88 @@ const featuredModules = computed(() => moduleStore.featuredModules);
 const stats = computed(() => moduleStore.stats);
 
 const canManageModules = computed(() => {
-    return ['admin', 'educator', 'moderator'].includes(authStore.user?.role);
+  return ['admin', 'educator', 'moderator'].includes(authStore.user?.role);
 });
 
 const viewModule = (id) => {
-    router.push({ name: 'user.module', params: { id } });
+  const role = authStore.user?.role;
+  const isFacilitator = ['admin', 'educator', 'moderator'].includes(role);
+  router.push({
+      name: isFacilitator ? 'facilitator.modules.detail' : 'ModuleDetail',
+      params: { id }
+  });
 };
 
 const handleModuleCreated = async () => {
-    showCreateModal.value = false;
-    toast.success('Integrity Check: Lesson Successfully Uploaded');
-    
-    await moduleStore.fetchModules();
-    await moduleStore.fetchFeaturedModules();
-    if (canManageModules.value) {
-        await moduleStore.fetchStats();
-    }
+  showCreateModal.value = false;
+  toast.success('Module created successfully.');
+  await moduleStore.fetchModules();
+  await moduleStore.fetchFeaturedModules();
+  if (canManageModules.value) {
+    await moduleStore.fetchStats();
+  }
 };
 
 onMounted(async () => {
-    const promises = [moduleStore.fetchFeaturedModules()];
-    if (canManageModules.value) {
-        promises.push(moduleStore.fetchStats());
-    }
-    await Promise.all(promises).catch(err => {
-        console.error("Archive Link Failure:", err);
-    });
+  const promises = [moduleStore.fetchFeaturedModules()];
+  if (canManageModules.value) {
+    promises.push(moduleStore.fetchStats());
+  }
+  await Promise.all(promises).catch(err => {
+    console.error("Archive Link Failure:", err);
+  });
 });
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap');
+@reference "@/style.css";
 
-.custom-font-poppins { font-family: 'Poppins', sans-serif !important; }
+/* ── Typography scale-up ── */
 
-/* REFINED 3D BUTTON (Solid shadows, no glowing neon) */
-.btn-3d-purple {
-  background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
-  box-shadow: 
-    0 10px 20px -5px rgba(124, 58, 237, 0.4), 
-    inset 0 2px 4px rgba(255, 255, 255, 0.35), 
-    inset 0 -3px 6px rgba(0, 0, 0, 0.15);
+/* Eyebrow labels: xs → sm */
+.section-eyebrow {
+  @apply text-sm font-semibold uppercase tracking-widest text-calm-lavender-600 dark:text-calm-lavender-400;
 }
 
-.animate-in { 
-  animation: portalEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+/* Page title: 3xl → 4xl */
+.page-title {
+  @apply font-madimione text-4xl text-slate-800 dark:text-platinum-100 leading-tight tracking-wide;
 }
 
-@keyframes portalEntry {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Subtitle: sm → base */
+.page-subtitle {
+  @apply font-mplusrounded text-base text-platinum-600 dark:text-platinum-500;
 }
 
-/* Slim Custom Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-.dark ::-webkit-scrollbar-thumb { background: #1e1e2d; }
+/* Stat pill label: [10px] → xs */
+.stat-pill-label {
+  @apply text-xs font-medium text-platinum-500 uppercase tracking-wide mb-0.5;
+}
+
+/* Stat value: xl → 2xl */
+.stat-value {
+  @apply text-2xl font-bold text-slate-800 dark:text-platinum-100 leading-none;
+}
+
+/* Badge text: xs → sm */
+.badge {
+  @apply inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium;
+}
+
+/* Featured card title: base → lg */
+.featured-title {
+  @apply font-semibold text-lg text-slate-700 dark:text-platinum-200 leading-snug line-clamp-2 mb-1.5;
+}
+
+/* Featured card subtext: field-subtext override → sm */
+.featured-category {
+  @apply font-mplusrounded text-sm text-platinum-500 dark:text-platinum-600;
+}
+
+/* Button text: sm → base */
+.btn-primary {
+  @apply flex items-center gap-2 px-5 py-3 rounded-xl text-base font-medium;
+  @apply bg-calm-lavender-600 hover:bg-calm-lavender-700 dark:bg-calm-lavender-700 dark:hover:bg-calm-lavender-600;
+  @apply text-white border border-calm-lavender-700 transition-all shrink-0;
+}
 </style>

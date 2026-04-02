@@ -7,6 +7,44 @@ const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:5001';
 
 class MLAnalysisService {
     /**
+     * Build access scope for facilitator analytics.
+     * A facilitator can see:
+     * 1) analyses from students in classrooms they created
+     * 2) analyses tied to quizzes they authored
+     */
+    async _buildFacilitatorAccessScope(facilitatorId) {
+        const classrooms = await Classroom.findAll({
+            where: { created_by: facilitatorId },
+            attributes: ['id']
+        });
+        const classroomIds = classrooms.map(c => c.id);
+
+        const members = classroomIds.length
+            ? await ClassroomMember.findAll({
+                where: { classroom_id: { [Op.in]: classroomIds } },
+                attributes: ['user_id']
+            })
+            : [];
+        const studentIds = [...new Set(members.map(m => m.user_id))];
+
+        const facilitatorQuizzes = await Quiz.findAll({
+            where: { created_by: facilitatorId },
+            attributes: ['id']
+        });
+        const quizIds = facilitatorQuizzes.map(q => q.id);
+
+        const orConditions = [];
+        if (studentIds.length) orConditions.push({ user_id: { [Op.in]: studentIds } });
+        if (quizIds.length) orConditions.push({ quiz_id: { [Op.in]: quizIds } });
+
+        return {
+            studentIds,
+            quizIds,
+            accessWhere: orConditions.length ? { [Op.or]: orConditions } : null
+        };
+    }
+
+    /**
      * Send answers to the ML service for VAWC analysis
      * @param {string[]} answers - Array of answer texts
      * @returns {Object} - { results, summary }
@@ -56,15 +94,27 @@ class MLAnalysisService {
      * Analyze quiz answers and store results in the database
      * Called after a quiz submission
      */
-    async analyzeAndStore(userId, quizId, answers, quizAttemptId = null) {
+    async analyzeAndStore(userId, quizId, answers, quizAttemptId = null, answerEntries = []) {
         try {
             const { results, summary } = await this.analyzeAnswers(answers);
+
+            // Preserve quiz context so facilitator can verify exactly which option was assessed.
+            const enrichedResults = results.map((result, index) => {
+                const entry = Array.isArray(answerEntries) ? answerEntries[index] : null;
+                return {
+                    ...result,
+                    question_text: entry?.question || null,
+                    selected_answer: entry?.selectedAnswer || result.answer_text || '',
+                    question_index: Number.isInteger(entry?.questionIndex) ? entry.questionIndex : index,
+                    selected_option_index: Number.isInteger(entry?.selectedOptionIndex) ? entry.selectedOptionIndex : null
+                };
+            });
 
             const record = await MLAnalysisResult.create({
                 user_id: userId,
                 quiz_id: quizId,
                 quiz_attempt_id: quizAttemptId,
-                analysis_results: results,
+                analysis_results: enrichedResults,
                 overall_risk_level: summary.overall_risk_level,
                 dominant_category: summary.dominant_category,
                 category_breakdown: summary.category_breakdown,
@@ -75,7 +125,8 @@ class MLAnalysisService {
 
             return record;
         } catch (error) {
-            console.error('[MLAnalysisService] Error storing analysis:', error.message);
+            const detail = error?.errors?.map(e => e.message).join(' | ') || '';
+            console.error('[MLAnalysisService] Error storing analysis:', error.message, detail);
             // Don't throw — we don't want ML failures to break quiz submission
             return null;
         }
@@ -88,26 +139,12 @@ class MLAnalysisService {
     async getResultsForFacilitator(facilitatorId, options = {}) {
         const { page = 1, limit = 20, riskLevel, flaggedOnly, quizId, reviewed } = options;
 
-        // Get classroom IDs where this facilitator is the creator
-        const classrooms = await Classroom.findAll({
-            where: { created_by: facilitatorId },
-            attributes: ['id']
-        });
-        const classroomIds = classrooms.map(c => c.id);
-
-        // Get student IDs in those classrooms
-        const members = await ClassroomMember.findAll({
-            where: { classroom_id: { [Op.in]: classroomIds } },
-            attributes: ['user_id']
-        });
-        const studentIds = [...new Set(members.map(m => m.user_id))];
-
-        if (studentIds.length === 0) {
+        const { accessWhere } = await this._buildFacilitatorAccessScope(facilitatorId);
+        if (!accessWhere) {
             return { results: [], total: 0, page, totalPages: 0 };
         }
 
-        // Build where clause
-        const where = { user_id: { [Op.in]: studentIds } };
+        const where = { ...accessWhere };
         if (riskLevel) where.overall_risk_level = riskLevel;
         if (flaggedOnly === true || flaggedOnly === 'true') where.flags_detected = true;
         if (quizId) where.quiz_id = quizId;
@@ -115,7 +152,10 @@ class MLAnalysisService {
             where.reviewed = reviewed === true || reviewed === 'true';
         }
 
-        const offset = (page - 1) * limit;
+        const parsedPage = parseInt(page, 10) || 1;
+        const parsedLimit = parseInt(limit, 10) || 20;
+        const offset = (parsedPage - 1) * parsedLimit;
+
         const { rows, count } = await MLAnalysisResult.findAndCountAll({
             where,
             include: [
@@ -146,15 +186,15 @@ class MLAnalysisService {
                 ['overall_risk_level', 'DESC'],
                 ['created_at', 'DESC']
             ],
-            limit: parseInt(limit),
+            limit: parsedLimit,
             offset
         });
 
         return {
             results: rows,
             total: count,
-            page: parseInt(page),
-            totalPages: Math.ceil(count / limit)
+            page: parsedPage,
+            totalPages: Math.ceil(count / parsedLimit)
         };
     }
 
@@ -217,20 +257,8 @@ class MLAnalysisService {
      * Get aggregate statistics for a facilitator's dashboard
      */
     async getStatsForFacilitator(facilitatorId) {
-        // Get student IDs in facilitator's classrooms
-        const classrooms = await Classroom.findAll({
-            where: { created_by: facilitatorId },
-            attributes: ['id']
-        });
-        const classroomIds = classrooms.map(c => c.id);
-
-        const members = await ClassroomMember.findAll({
-            where: { classroom_id: { [Op.in]: classroomIds } },
-            attributes: ['user_id']
-        });
-        const studentIds = [...new Set(members.map(m => m.user_id))];
-
-        if (studentIds.length === 0) {
+        const { accessWhere } = await this._buildFacilitatorAccessScope(facilitatorId);
+        if (!accessWhere) {
             return {
                 totalAnalyses: 0,
                 flaggedCount: 0,
@@ -241,7 +269,7 @@ class MLAnalysisService {
             };
         }
 
-        const where = { user_id: { [Op.in]: studentIds } };
+        const where = { ...accessWhere };
 
         const totalAnalyses = await MLAnalysisResult.count({ where });
         const flaggedCount = await MLAnalysisResult.count({ where: { ...where, flags_detected: true } });

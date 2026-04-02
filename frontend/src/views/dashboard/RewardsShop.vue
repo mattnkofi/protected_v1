@@ -1,121 +1,152 @@
 <template>
-    <div class="min-h-screen bg-transparent custom-font-poppins text-slate-900 dark:text-white selection:bg-purple-500/30 overflow-x-hidden transition-colors duration-500">
-        
-        <div class="p-4 lg:p-8 space-y-6 animate-in relative z-10 max-w-[1920px] mx-auto">
-            
-            <!-- Compact Modern Header -->
-            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 dark:border-purple-500/10 pb-6">
-                <div class="space-y-1">
-                    <div class="flex items-center gap-2 text-purple-600 dark:text-purple-400">
-                        <div class="p-1 bg-purple-500/10 rounded-md shadow-inner">
-                            <Trophy class="w-3.5 h-3.5 fill-current" />
-                        </div>
-                        <span class="text-[9px] font-[900] uppercase tracking-[0.3em] italic">Redemption Registry</span>
-                    </div>
-                    <h1 class="text-3xl lg:text-5xl font-[900] uppercase tracking-tighter italic leading-none">
-                        GAD <span class="text-purple-600 italic">Rewards</span>
-                    </h1>
-                </div>
+    <div class="page-wrapper animate-in font-poppins">
 
-                <div class="flex items-center gap-4">
-                    <!-- Balance Pill -->
-                    <div class="bg-white dark:bg-[#0d0d12] border border-slate-200 dark:border-purple-500/20 px-5 py-2.5 rounded-xl shadow-sm hover:shadow-purple-500/10 transition-all flex items-center gap-3 group">
-                        <div class="flex flex-col items-end leading-none">
-                            <span class="text-[8px] font-[900] text-slate-400 uppercase tracking-widest italic">Available</span>
-                            <span class="text-xl font-[900] text-purple-600 dark:text-purple-400 italic tabular-nums group-hover:scale-105 transition-transform">
-                                {{ authStore.user?.gamification?.experience_points?.toLocaleString() || 0 }}
-                            </span>
-                        </div>
-                        <Flame class="w-5 h-5 text-orange-500 animate-pulse drop-shadow-[0_0_8px_rgba(249,115,22,0.4)]" />
-                    </div>
-
-                     <!-- Inventory Link -->
-                    <router-link :to="{ name: 'user.my-inventory' }" 
-                        class="px-5 py-3 bg-slate-100 dark:bg-white/5 hover:bg-purple-500/10 text-slate-500 hover:text-purple-600 rounded-xl border border-slate-200 dark:border-white/10 transition-all flex items-center gap-2 group">
-                        <Package class="w-4 h-4 group-hover:rotate-12 transition-transform" />
-                        <span class="text-[9px] font-[900] uppercase tracking-widest italic hidden md:inline">My Inventory</span>
-                    </router-link>
-                </div>
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="space-y-1.5">
+                <p class="section-eyebrow">Redemption Center</p>
+                <h1 class="page-title">
+                    GAD <span class="brand-gradient-text">Rewards</span>
+                </h1>
             </div>
 
-            <!-- Ultra-Dense Grid Layout -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 lg:gap-4">
-                <div v-for="item in rewards" :key="item.id" 
-                    class="group relative bg-white dark:bg-[#0d0d12] border border-slate-200 dark:border-white/5 rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 transition-all duration-300 flex flex-col">
-                    
-                    <!-- Stock Badge Overlay -->
-                    <div class="absolute top-2 right-2 z-20 pointer-events-none">
-                         <span v-if="item.stock_quantity > 0" class="px-2 py-0.5 bg-black/60 backdrop-blur-md rounded-md border border-white/10 text-[8px] font-[900] text-white uppercase tracking-wider italic">
-                            {{ item.stock_quantity }} Left
-                        </span>
-                        <span v-else class="px-2 py-0.5 bg-red-500/90 backdrop-blur-md rounded-md text-[8px] font-[900] text-white uppercase tracking-wider italic">
-                            Sold Out
-                        </span>
-                    </div>
-
-                    <!-- Image Area (Compact) -->
-                    <div class="h-28 lg:h-32 bg-slate-50 dark:bg-white/[0.02] relative overflow-hidden group-hover:bg-purple-50 dark:group-hover:bg-purple-900/10 transition-colors shrink-0">
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-10"></div>
-                        <img v-if="item.image_url" :src="item.image_url" class="object-cover w-full h-full opacity-90 group-hover:opacity-100 group-hover:scale-110 transition-transform duration-700 ease-out" />
-                        <div v-else class="w-full h-full flex items-center justify-center">
-                            <Gift class="w-8 h-8 text-slate-300 dark:text-gray-700 group-hover:text-purple-400 transition-colors" />
-                        </div>
-                    </div>
-
-                    <!-- Content -->
-                    <div class="p-3 flex flex-col flex-1 gap-2">
-                        <div class="min-h-[2.5rem]">
-                            <h3 class="text-xs lg:text-sm font-[900] text-slate-900 dark:text-white uppercase italic tracking-tighter leading-none mb-1 line-clamp-2 group-hover:text-purple-600 transition-colors">
-                                {{ item.title }}
-                            </h3>
-                        </div>
-
-                        <div class="mt-auto pt-2 border-t border-slate-100 dark:border-white/5 flex items-center justify-between gap-2">
-                            <div class="flex flex-col">
-                                <span class="text-[8px] font-[900] text-slate-400 uppercase tracking-wider italic">XP Cost</span>
-                                <span class="text-xs font-[900] italic tabular-nums leading-none" :class="canAfford(item) ? 'text-purple-600 dark:text-purple-400' : 'text-slate-400'">
-                                    {{ item.xp_required.toLocaleString() }}
-                                </span>
-                            </div>
-                            
-                            <button 
-                                @click="claimReward(item)"
-                                :disabled="!canAfford(item) || item.stock_quantity <= 0"
-                                :class="['w-8 h-8 rounded-lg flex items-center justify-center transition-all shadow-lg',
-                                    canAfford(item) && item.stock_quantity > 0
-                                    ? 'bg-gradient-to-br from-purple-600 to-fuchsia-600 text-white hover:scale-105 active:scale-95 shadow-purple-500/20' 
-                                    : 'bg-slate-100 dark:bg-white/5 text-slate-300 dark:text-gray-700 cursor-not-allowed border border-slate-200 dark:border-white/5 shadow-none']"
-                                :title="canAfford(item) ? 'Redeem Item' : 'Insufficient XP'">
-                                <ArrowRight v-if="canAfford(item) && item.stock_quantity > 0" class="w-4 h-4" />
-                                <Lock v-else class="w-3 h-3 opacity-50" />
-                            </button>
-                        </div>
+            <div class="flex items-center gap-3 shrink-0">
+                <!-- XP Balance chip -->
+                <div class="stat-pill">
+                    <Flame class="w-5 h-5 text-vawc-orange-500 shrink-0" />
+                    <div>
+                        <p class="stat-pill-label">Available XP</p>
+                        <p class="stat-pill-value text-calm-lavender-600 dark:text-calm-lavender-400">
+                            {{ authStore.user?.gamification?.experience_points?.toLocaleString() || 0 }}
+                        </p>
                     </div>
                 </div>
-            </div>
 
-            <!-- Empty State -->
-            <div v-if="rewards.length === 0" class="py-20 text-center animate-pulse">
-                <div class="inline-flex p-4 bg-slate-100 dark:bg-white/5 rounded-2xl mb-4">
-                    <Gift class="w-8 h-8 text-slate-300 dark:text-gray-600" />
-                </div>
-                <h3 class="text-lg font-[900] uppercase italic tracking-tighter text-slate-400">Registry Empty</h3>
-                <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500 mt-1 italic">Synchronization pending...</p>
+                <!-- Inventory link -->
+                <router-link :to="{ name: 'user.my-inventory' }" class="btn-secondary group">
+                    <Package class="w-4 h-4 group-hover:rotate-6 transition-transform" />
+                    <span class="hidden sm:inline">My Inventory</span>
+                </router-link>
             </div>
         </div>
+
+        <!-- Rewards Grid -->
+        <div v-if="rewards.length > 0" class="space-y-5">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
+            <div
+                v-for="item in paginatedRewards"
+                :key="item.id"
+                class="item-card group"
+                :class="{ 'item-card-disabled': !canAfford(item) || item.stock_quantity <= 0 }"
+            >
+                <!-- Stock badge -->
+                <div class="absolute top-2 right-2 z-10">
+                    <span
+                        v-if="item.stock_quantity > 0"
+                        class="px-2 py-0.5 bg-abyss-800/70 text-platinum-100 text-[10px] font-medium rounded-md"
+                    >
+                        {{ item.stock_quantity }} left
+                    </span>
+                    <span v-else class="px-2 py-0.5 bg-red-500 text-white text-[10px] font-medium rounded-md">
+                        Sold out
+                    </span>
+                </div>
+
+                <!-- Image -->
+                <div class="item-image-wrap">
+                    <img
+                        v-if="item.image_url"
+                        :src="item.image_url"
+                        class="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                    <div v-else class="w-full h-full flex items-center justify-center">
+                        <Gift class="w-7 h-7 text-platinum-400 dark:text-platinum-600
+                                    group-hover:text-calm-lavender-400 transition-colors" />
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="p-3.5 flex flex-col flex-1 gap-2">
+                    <h3 class="text-sm font-semibold text-abyss-800 dark:text-platinum-200
+                               leading-snug line-clamp-2
+                               group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400
+                               transition-colors">
+                        {{ item.title }}
+                    </h3>
+
+                    <div class="mt-auto pt-2.5 border-t-2 border-platinum-200 dark:border-abyss-500
+                                flex items-center justify-between gap-2">
+                        <div>
+                            <p class="font-mplusrounded text-[10px] text-platinum-500">XP Cost</p>
+                            <p class="text-xs font-semibold leading-none"
+                               :class="canAfford(item)
+                                   ? 'text-calm-lavender-600 dark:text-calm-lavender-400'
+                                   : 'text-platinum-500'">
+                                {{ item.xp_required.toLocaleString() }}
+                            </p>
+                        </div>
+
+                        <!-- Redeem button -->
+                        <button
+                            @click="claimReward(item)"
+                            :disabled="!canAfford(item) || item.stock_quantity <= 0"
+                            :class="[
+                                'redeem-btn',
+                                canAfford(item) && item.stock_quantity > 0
+                                    ? 'redeem-btn-active'
+                                    : 'redeem-btn-disabled'
+                            ]"
+                            :title="canAfford(item) ? 'Redeem Item' : 'Not enough XP'"
+                        >
+                            <ArrowRight v-if="canAfford(item) && item.stock_quantity > 0" class="w-3.5 h-3.5" />
+                            <Lock v-else class="w-3 h-3 opacity-60" />
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <AppPagination
+                v-model="currentPage"
+                :total="rewards.length"
+                :page-size="PAGE_SIZE"
+                item-label="rewards"
+            />
+        </div>
+
+        <!-- Empty State -->
+        <div v-if="rewards.length === 0" class="empty-state">
+            <div class="empty-state-icon">
+                <Gift class="w-8 h-8 text-platinum-400" />
+            </div>
+            <p class="empty-state-title">No rewards available</p>
+            <p class="empty-state-desc">Check back later for new items.</p>
+        </div>
+
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { Gift, Trophy, Flame, ArrowRight, Lock, Package } from 'lucide-vue-next';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/utils/useToast';
 import axios from '@/utils/api';
+import AppPagination from '@/components/ui/AppPagination.vue';
 
 const authStore = useAuthStore();
 const toast = useToast();
 const rewards = ref([]);
+
+const PAGE_SIZE = 6;
+const currentPage = ref(1);
+
+const paginatedRewards = computed(() => {
+    const start = (currentPage.value - 1) * PAGE_SIZE;
+    return rewards.value.slice(start, start + PAGE_SIZE);
+});
+
+watch(() => rewards.value.length, () => { currentPage.value = 1; });
 
 const canAfford = (item) => (authStore.user?.gamification?.experience_points || 0) >= item.xp_required;
 
@@ -130,13 +161,12 @@ const claimReward = async (item) => {
     try {
         const { data } = await axios.post(`/api/rewards/claim/${item.id}`);
         toast.success(`Success! Visit the GAD Office to claim your item.`);
-        
-        // Update local XP display
+
         if (authStore.user?.gamification && data.remaining_xp !== undefined) {
             authStore.user.gamification.experience_points = data.remaining_xp;
         }
-        
-        loadRewards(); 
+
+        loadRewards();
     } catch (err) {
         toast.error(err.response?.data?.message || 'Error executing redemption.');
     }
@@ -146,22 +176,91 @@ onMounted(loadRewards);
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap');
+@reference "@/style.css";
 
-.custom-font-poppins {
-    font-family: 'Poppins', sans-serif !important;
+/* ═══════════════════════════════════════════════════════════
+   PAGE WRAPPER
+═══════════════════════════════════════════════════════════ */
+.page-wrapper {
+    @apply space-y-6 text-abyss-800 dark:text-platinum-100;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   STAT PILL  —  L1 stamped chip
+═══════════════════════════════════════════════════════════ */
+.stat-pill {
+    @apply flex items-center gap-3;
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-xl px-4 py-2.5;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/50;
+    @apply transition-colors duration-150;
+}
+
+.stat-pill-label {
+    @apply font-mplusrounded text-xs text-platinum-500 uppercase tracking-wide;
+}
+
+.stat-pill-value {
+    @apply text-lg font-bold leading-none mt-0.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ITEM CARD  —  L1: platinum-100 / abyss-700
+═══════════════════════════════════════════════════════════ */
+.item-card {
+    @apply relative flex flex-col overflow-hidden rounded-2xl transition-all duration-200;
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply hover:border-calm-lavender-200 dark:hover:border-calm-lavender-800/60;
+    @apply hover:-translate-y-0.5;
+}
+
+.item-card-disabled {
+    @apply opacity-60;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   IMAGE WRAP  —  L2 inset: platinum-200 / abyss-600
+═══════════════════════════════════════════════════════════ */
+.item-image-wrap {
+    @apply h-28 lg:h-32 relative overflow-hidden shrink-0;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply group-hover:bg-calm-lavender-50 dark:group-hover:bg-calm-lavender-900/10;
+    @apply transition-colors;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REDEEM BUTTON
+═══════════════════════════════════════════════════════════ */
+.redeem-btn {
+    @apply w-8 h-8 rounded-xl flex items-center justify-center transition-all shrink-0;
+}
+
+.redeem-btn-active {
+    @apply bg-calm-lavender-600 dark:bg-calm-lavender-700 text-white;
+    @apply border-2 border-calm-lavender-700 dark:border-calm-lavender-600;
+    @apply border-b-4 border-b-calm-lavender-800;
+    @apply hover:bg-calm-lavender-700 dark:hover:bg-calm-lavender-600;
+    @apply active:border-b-2 active:translate-y-px;
+}
+
+.redeem-btn-disabled {
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply text-platinum-400 dark:text-platinum-600;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply cursor-not-allowed;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ENTRY ANIMATION
+═══════════════════════════════════════════════════════════ */
 .animate-in {
-    animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    animation: fadeSlideUp 0.4s ease-out forwards;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px) scale(0.99); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
-
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-thumb { background: rgba(147, 51, 234, 0.2); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #9333ea; }
 </style>

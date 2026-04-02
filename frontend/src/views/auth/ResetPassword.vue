@@ -1,97 +1,111 @@
 <template>
-  <div class="min-h-screen w-full flex items-center justify-center bg-[#fdfcff] dark:bg-[#04020a] font-['Poppins'] relative overflow-hidden px-4 py-8 transition-colors duration-700">
-    
-    <div class="absolute top-[-10%] left-[-10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-purple-600/10 rounded-full blur-[80px] sm:blur-[130px] pointer-events-none animate-pulse"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[300px] sm:w-[600px] h-[300px] sm:h-[600px] bg-fuchsia-600/10 rounded-full blur-[80px] sm:blur-[130px] pointer-events-none animate-pulse delay-700"></div>
+  <div
+    class="min-h-screen w-full flex items-center justify-center container-bg-dark transition-colors duration-500 font-sans p-0 sm:p-6">
 
-    <div class="w-full max-w-[1000px] relative z-10 animate-vessel">
-      
-      <div class="bg-white/40 dark:bg-white/[0.03] backdrop-blur-3xl border border-white dark:border-white/10 rounded-[3rem] sm:rounded-[3.5rem] 
-        shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15),inset_0_1px_2px_rgba(255,255,255,1)] 
-        dark:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.6)] overflow-hidden">
-        
-        <div class="flex flex-col lg:flex-row">
-          
-          <div class="lg:w-[45%] p-8 sm:p-12 lg:p-16 flex flex-col justify-center items-center lg:items-start text-center lg:text-left bg-gradient-to-br from-purple-500/5 to-transparent border-b lg:border-b-0 lg:border-r border-white dark:border-white/5">
-            <div class="h-20 w-20 rounded-3xl liquid-gem-logo shadow-2xl mb-8 rotate-3 relative overflow-hidden">
-              <svg class="w-10 h-10 text-white drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
-              </svg>
-              <div class="absolute top-1 left-1 w-4 h-4 bg-white/40 blur-[2px] rounded-full"></div>
-            </div>
-            
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-[900] text-slate-900 dark:text-white uppercase italic tracking-tighter leading-none mb-4">
-              Reset <span class="text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-fuchsia-500 to-fuchsia-600">Access</span>
-            </h1>
-            <p class="text-slate-500 dark:text-slate-400 text-sm sm:text-base font-medium italic tracking-wide mb-6">
-              Establish a high-strength security protocol to regain entry to your dashboard.
-            </p>
-            <div class="hidden lg:block h-2 w-24 liquid-3d-underline rounded-full shadow-[0_10px_20px_rgba(168,85,247,0.3)]"></div>
-          </div>
+    <div class="w-full max-w-4xl flex flex-col md:flex-row overflow-hidden sm:rounded-2xl">
 
-          <div class="lg:w-[55%] p-8 sm:p-12 lg:p-16">
-            <form @submit.prevent="submit" class="space-y-6">
-              
-              <div class="space-y-2">
-                <label class="block text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2">Verified Identity</label>
-                <div class="relative group">
-                  <input v-model.trim="email" type="email" readonly
-                    class="w-full px-6 py-4 rounded-[1.5rem] bg-slate-100/50 dark:bg-white/[0.01] border border-slate-200 dark:border-white/5 text-slate-400 cursor-not-allowed outline-none italic font-medium" />
-                  <Lock class="absolute right-6 top-4 w-4 h-4 text-slate-300 dark:text-slate-700" />
-                </div>
-              </div>
+      <div
+        class="relative w-full md:w-1/2 h-48 md:h-auto flex items-center justify-center bg-cover bg-center overflow-hidden"
+        :style="{ backgroundImage: `url(${hero})` }">
 
-              <div class="space-y-4">
-                <div class="space-y-2">
-                  <label class="block text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2">New Password</label>
-                  <input v-model="password" type="password" placeholder="••••••••" required @input="validatePassword"
-                    class="w-full px-6 py-4 rounded-[1.5rem] bg-white/60 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 
-                    focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-500 shadow-[inset_0_1px_3px_rgba(255,255,255,0.8)] dark:shadow-none"
-                    :class="{ 'border-red-500/50': errors.password }" />
-                </div>
+        <div class="absolute inset-0 bg-calm-lavender-300 dark:bg-calm-lavender-800 opacity-70">
+        </div>
 
-                <div v-if="password" class="space-y-3 px-2 animate-in fade-in slide-in-from-top-2">
-                  <div class="w-full bg-slate-100 dark:bg-white/5 rounded-full h-1.5 overflow-hidden shadow-inner">
-                    <div class="h-full transition-all duration-700 ease-out relative" :class="strengthBarColor" :style="{ width: strengthWidth }">
-                       <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
-                    </div>
-                  </div>
-                  <div class="grid grid-cols-2 gap-2">
-                    <div v-for="(check, key) in passwordChecksDisplay" :key="key" 
-                      class="flex items-center gap-2 text-[9px] font-black uppercase tracking-tighter transition-all duration-500"
-                      :class="check.valid ? 'text-purple-500' : 'text-slate-300 dark:text-slate-600'">
-                      <div class="w-1 h-1 rounded-full bg-current"></div> {{ check.label }}
-                    </div>
-                  </div>
-                </div>
+        <div class="absolute inset-0 bg-abyss-900/10"></div>
 
-                <div class="space-y-2">
-                  <label class="block text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2">Repeat Password</label>
-                  <input v-model="password_confirmation" type="password" placeholder="••••••••" required
-                    class="w-full px-6 py-4 rounded-[1.5rem] bg-white/60 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 
-                    focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-500 shadow-[inset_0_1px_3px_rgba(255,255,255,0.8)] dark:shadow-none" />
-                </div>
-              </div>
+        <div
+          class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-platinum-50 dark:from-abyss-800 to-transparent md:hidden z-10">
+        </div>
 
-              <p v-if="errors.password" class="text-[10px] text-red-500 font-black ml-2 uppercase italic text-center">{{ errors.password }}</p>
-
-              <button type="submit" :disabled="loading || !isPasswordValid" 
-                class="btn-purple-liquid w-full py-5 text-white font-[900] uppercase tracking-[0.4em] rounded-[1.5rem] transition-all duration-500 flex items-center justify-center gap-4 relative overflow-hidden group hover:scale-[1.03] active:scale-95 shadow-2xl disabled:opacity-30">
-                <span v-if="!loading" class="relative z-10 drop-shadow-xl">Finalize Update</span>
-                <div v-else class="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-                <div class="absolute top-[10%] left-[10%] w-full h-full bg-gradient-to-br from-white/30 to-transparent opacity-50 blur-[2px]"></div>
-              </button>
-
-              <div class="text-center pt-4 border-t border-slate-100 dark:border-white/5">
-                <router-link :to="{ name: 'login' }"
-                  class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500 hover:text-purple-600 transition-all italic">
-                  Cancel and return to login
-                </router-link>
-              </div>
-            </form>
+        <div class="relative z-20 p-4">
+          <div
+            class="inline-flex items-center justify-center h-16 w-16 md:h-24 md:w-24 rounded-2xl bg-white/20 dark:bg-black/20 backdrop-blur-md border border-white/30 shadow-2xl group hover:scale-105 transition-transform duration-500">
+            <svg class="w-8 h-8 md:w-12 md:h-12 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
+            </svg>
           </div>
         </div>
       </div>
+
+      <div
+        class="w-full md:w-1/2 p-6 sm:p-10 relative z-20 border-t-0 border-r-0 border-b-0 rounded-none mt-6 sm:mt-0 sm:border-t-2 sm:border-b-2 sm:border-r-2 sm:border-calm-lavender-300 sm:dark:border-calm-lavender-800/50 sm:rounded-r-2xl container-bg-dark">
+        <div class="w-full max-w-sm mx-auto">
+
+          <div class="mb-8 text-center sm:text-left mt-[-1rem] md:mt-0">
+            <h1 class="form-title mb-1">
+              Reset Access
+            </h1>
+            <p class="form-subtitle">
+              Establish a strong protocol to regain entry.
+            </p>
+          </div>
+
+          <form @submit.prevent="submit" class="space-y-4">
+
+            <div class="space-y-1.5">
+              <label class="block field-label">Verified Identity</label>
+              <div class="relative">
+                <input v-model.trim="email" type="email" readonly
+                  class="w-full px-4 py-2.5 rounded-lg border border-platinum-200 dark:border-abyss-800 bg-platinum-50 dark:bg-abyss-950 text-platinum-500 dark:text-abyss-600 cursor-not-allowed outline-none font-medium italic" />
+                <Lock class="absolute right-4 top-3 w-4 h-4 text-platinum-300 dark:text-abyss-800" />
+              </div>
+            </div>
+
+            <div class="space-y-4">
+              <div class="space-y-1.5">
+                <label for="password" class="block field-label">New Password</label>
+                <input id="password" v-model="password" type="password" placeholder="••••••••" required
+                  @input="validatePassword" class="input-field" :class="{ 'input-field-error': errors.password }" />
+              </div>
+
+              <div v-if="password" class="space-y-3 px-1.5 animate-in">
+                <div class="w-full bg-slate-200 dark:bg-abyss-800 rounded-full h-1 overflow-hidden shadow-inner">
+                  <div class="h-full transition-all duration-700 ease-out animate-pulse" :class="strengthBarColor"
+                    :style="{ width: strengthWidth }">
+                  </div>
+                </div>
+                <div class="grid grid-cols-2 gap-x-3 gap-y-1.5">
+                  <div v-for="(check, key) in passwordChecksDisplay" :key="key"
+                    class="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide transition-all duration-300"
+                    :class="check.valid ? 'text-calm-lavender-600 dark:text-calm-lavender-400' : 'text-slate-400 dark:text-slate-600'">
+                    <div class="w-1 h-1 rounded-full bg-current"></div> {{ check.label }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="space-y-1.5">
+                <label for="confirm" class="block field-label">Repeat Password</label>
+                <input id="confirm" v-model="password_confirmation" type="password" placeholder="••••••••" required
+                  class="input-field" />
+              </div>
+            </div>
+
+            <p v-if="errors.password" class="field-subtext-error text-center mt-1 pt-2">{{ errors.password }}</p>
+
+            <div class="pt-4 pb-2">
+              <button type="submit" :disabled="loading || !isPasswordValid"
+                class="w-full py-3 px-4 bg-calm-lavender-600 text-white font-semibold rounded-lg 
+                                       hover:bg-calm-lavender-700 focus:ring-4 focus:ring-calm-lavender-500/30
+                                       disabled:opacity-60 disabled:cursor-not-allowed
+                                       transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                <span v-if="!loading" class="relative z-10 drop-shadow-xl">Finalize Protocol</span>
+                <div v-else class="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
+              </button>
+            </div>
+
+          </form>
+
+          <div class="mt-4 pt-4 border-t border-platinum-200 dark:border-abyss-800 text-center">
+            <router-link :to="{ name: 'login' }"
+              class="text-xs font-medium text-slate-500 hover:text-calm-lavender-600 transition-colors">
+              Cancel and return to login
+            </router-link>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -102,6 +116,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from "@stores/auth";
 import { useToast } from '@/utils/useToast';
 import { Lock } from 'lucide-vue-next';
+
+// Imported to match the new Hero layout
+import hero from '@/assets/bgimage.jpg';
 
 const route = useRoute()
 const router = useRouter()
@@ -116,110 +133,68 @@ const password_confirmation = ref('')
 const loading = ref(false)
 const errors = ref({ email: '', password: '' })
 
-// Password validation logic
+// Integrated Password validation logic (using global styles)
 const passwordChecks = computed(() => ({
-    length: password.value.length >= 8,
-    uppercase: /[A-Z]/.test(password.value),
-    number: /[0-9]/.test(password.value)
+  length: password.value.length >= 8,
+  uppercase: /[A-Z]/.test(password.value),
+  number: /[0-9]/.test(password.value)
 }));
 
 const passwordChecksDisplay = computed(() => [
-    { label: '8+ Characters', valid: passwordChecks.value.length },
-    { label: 'Uppercase', valid: passwordChecks.value.uppercase },
-    { label: 'Number', valid: passwordChecks.value.number },
-    { label: 'Match', valid: password.value && password.value === password_confirmation.value }
+  { label: '8+ Characters', valid: passwordChecks.value.length },
+  { label: 'Uppercase', valid: passwordChecks.value.uppercase },
+  { label: 'Number', valid: passwordChecks.value.number },
+  { label: 'Match', valid: password.value && password.value === password_confirmation.value }
 ]);
 
 const strengthWidth = computed(() => {
-    const count = Object.values(passwordChecks.value).filter(Boolean).length;
-    return ['25%', '50%', '75%', '100%'][count - 1] || '0%';
+  const count = Object.values(passwordChecks.value).filter(Boolean).length;
+  // Map width percentages to standard tailwind fractions
+  return ['25%', '50%', '75%', '100%'][count - 1] || '0%';
 });
 
+// Stylized bar colors using brand palette
 const strengthBarColor = computed(() => {
-    const count = Object.values(passwordChecks.value).filter(Boolean).length;
-    return ['bg-rose-500', 'bg-fuchsia-500', 'bg-violet-500', 'bg-purple-500'][count - 1] || 'bg-slate-500';
+  const count = Object.values(passwordChecks.value).filter(Boolean).length;
+  // Maps: Red-500 -> Lavendar-500 -> Lavendar-600 -> Purple-600
+  return ['bg-red-500', 'bg-calm-lavender-500', 'bg-calm-lavender-600', 'bg-purple-600'][count - 1] || 'bg-slate-500';
 });
 
 const isPasswordValid = computed(() => {
-    return Object.values(passwordChecks.value).every(Boolean) && 
-           password.value === password_confirmation.value;
+  return Object.values(passwordChecks.value).every(Boolean) &&
+    password.value === password_confirmation.value;
 });
 
 const validatePassword = () => { errors.value.password = ''; };
 
 onMounted(() => {
-    token.value = route.query.token?.toString() || ''
-    email.value = route.query.email?.toString() || ''
+  token.value = route.query.token?.toString() || ''
+  email.value = route.query.email?.toString() || ''
 })
 
 async function submit() {
-    errors.value = { email: '', password: '' }
-    loading.value = true
+  errors.value = { email: '', password: '' }
+  loading.value = true
 
-    try {
-        await authStore.performPasswordReset({
-            token: token.value,
-            email: email.value,
-            password: password.value,
-            password_confirmation: password_confirmation.value,
-        })
+  try {
+    await authStore.performPasswordReset({
+      token: token.value,
+      email: email.value,
+      password: password.value,
+      password_confirmation: password_confirmation.value,
+    })
 
-        toast.success('System Updated. Re-authorizing...');
-        setTimeout(() => router.push({ name: 'login' }), 1500)
-    } catch (e) {
-        const data = e?.response?.data
-        if (data?.errors) {
-            errors.value.email = data.errors.email?.[0] || ''
-            errors.value.password = data.errors.password?.[0] || ''
-        }
-        toast.error(data?.message || 'Update rejected.');
-    } finally {
-        loading.value = false
+    toast.success('System Updated. Re-authorizing...');
+    setTimeout(() => router.push({ name: 'login' }), 1500)
+  } catch (e) {
+    const data = e?.response?.data
+    if (data?.errors) {
+      errors.value.email = data.errors.email?.[0] || ''
+      errors.value.password = data.errors.password?.[0] || ''
     }
+    toast.error(data?.message || 'Update rejected.');
+  } finally {
+    loading.value = false
+  }
 }
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
-
-.liquid-gem-logo {
-  background: radial-gradient(circle at 35% 35%, #a855f7 0%, #6b21a8 55%, #2e1065 100%);
-  box-shadow: inset -5px -5px 12px rgba(0,0,0,0.5), inset 5px 5px 10px rgba(255,255,255,0.3), 0 20px 40px rgba(107, 33, 168, 0.4);
-}
-
-.btn-purple-liquid {
-  background: radial-gradient(circle at 30% 30%, #7c3aed 0%, #4c1d95 55%, #1e1b4b 100%);
-  box-shadow: inset -8px -8px 25px rgba(0,0,0,0.6), inset 8px 8px 15px rgba(255,255,255,0.2), 0 30px 60px rgba(76, 29, 149, 0.4);
-}
-
-:where(.dark) .btn-purple-liquid {
-  background: radial-gradient(circle at 30% 30%, #a855f7 0%, #6d28d9 55%, #2e1065 100%);
-}
-
-.liquid-3d-underline {
-  background: radial-gradient(circle at 30% 30%, #f472b6 0%, #db2777 55%, #831843 100%);
-}
-
-.animate-vessel {
-  animation: vesselSlideIn 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes vesselSlideIn {
-  from { opacity: 0; transform: translateY(40px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-.animate-shimmer {
-  animation: shimmer 2s infinite linear;
-}
-
-input {
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  -webkit-appearance: none;
-}
-</style>

@@ -9,14 +9,14 @@ import UserDashboardLayout from '@/layouts/UserDashboardLayout.vue';
  * kahit nanggaling ang user sa malalim na nested route gaya ng classrooms/:id.
  */
 const sharedModuleRoute = {
-    path: '/modules/:id', 
+    path: '/modules/:id',
     name: 'ModuleDetail',
     component: () => import('@/views/ModuleDetail.vue'),
-    meta: { 
+    meta: {
         requiresAuth: true,
         // Pinapayagan ang lahat ng roles para hindi harangin ng RoleGuard
         requiresRole: ['player', 'educator', 'moderator', 'admin'],
-        title: 'Learning Module' 
+        title: 'Learning Module'
     }
 };
 
@@ -25,10 +25,10 @@ const authenticatedRoutes = [
     {
         path: '/dashboard',
         component: UserDashboardLayout,
-        meta: { 
-            requiresAuth: true, 
-            requiresRole: 'player' 
-        }, 
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'player'
+        },
         children: [
             {
                 path: '',
@@ -55,7 +55,7 @@ const authenticatedRoutes = [
                 meta: { title: 'Learning Modules' }
             },
             // Load Module Detail within Student Layout
-            sharedModuleRoute, 
+            sharedModuleRoute,
             {
                 path: 'learning-paths/:id',
                 name: 'user.learning-path',
@@ -66,7 +66,7 @@ const authenticatedRoutes = [
                 path: 'leaderboard',
                 name: 'user.leaderboard',
                 component: () => import('@/views/dashboard/Leaderboard.vue'),
-                meta: { 
+                meta: {
                     title: 'Leaderboards',
                     requiresRole: ['player', 'educator', 'moderator', 'admin']
                 }
@@ -88,6 +88,12 @@ const authenticatedRoutes = [
                 name: 'user.my-inventory',
                 component: () => import('@/views/dashboard/MyInventory.vue'),
                 meta: { title: 'My Inventory' }
+            },
+            {
+                path: 'behavior-assessment',
+                name: 'user.behavior-assessment',
+                component: () => import('@/views/dashboard/BehavioralAssessment.vue'),
+                meta: { title: 'Behavioral Risk Check' }
             }
         ]
     },
@@ -96,8 +102,8 @@ const authenticatedRoutes = [
     {
         path: '/facilitator',
         component: FacilitatorDashboardLayout,
-        meta: { 
-            requiresAuth: true, 
+        meta: {
+            requiresAuth: true,
             requiresRole: ['educator', 'moderator', 'admin']
         },
         children: [
@@ -131,7 +137,7 @@ const authenticatedRoutes = [
             },
             // Load Module Detail within Facilitator Layout
             // Ginamit ang unique name para sa facilitator context
-            { ...sharedModuleRoute, name: 'facilitator.modules.detail' }, 
+            { ...sharedModuleRoute, name: 'facilitator.modules.detail' },
             {
                 path: 'module-stats/:id',
                 name: 'facilitator.module-stats',
@@ -157,9 +163,9 @@ const authenticatedRoutes = [
     {
         path: '/admin',
         component: AdminDashboardLayout,
-        meta: { 
-            requiresAuth: true, 
-            requiresRole: 'admin' 
+        meta: {
+            requiresAuth: true,
+            requiresRole: 'admin'
         },
         children: [
             {
@@ -198,30 +204,50 @@ const authenticatedRoutes = [
         path: '/quiz/play/:id',
         name: 'quiz.player',
         component: () => import('@/views/QuizPlayer.vue'),
-        meta: { 
-            requiresAuth: true, 
-            requiresRole: ['player', 'educator', 'moderator', 'admin'], 
-            title: 'Quiz Challenge' 
-        }
-    },
-    {
-        path: '/profile',
-        name: 'profile',
-        component: () => import('@/views/Profile.vue'),
         meta: {
             requiresAuth: true,
-            title: 'My Profile'
+            requiresRole: ['player', 'educator', 'moderator', 'admin'],
+            title: 'Quiz Challenge'
         }
     },
+    // {
+    //     path: '/profile',
+    //     name: 'profile',
+    //     component: () => import('@/views/Profile.vue'),
+    //     meta: {
+    //         requiresAuth: true,
+    //         title: 'My Profile'
+    //     }
+    // },
+    // {
+    //     path: '/settings',
+    //     name: 'settings',
+    //     component: () => import('@/views/Settings.vue'),
+    //     meta: {
+    //         requiresAuth: true,
+    //         title: 'Account Settings'
+    //     }
+    // }
+
     {
-        path: '/settings',
-        name: 'settings',
-        component: () => import('@/views/Settings.vue'),
-        meta: {
-            requiresAuth: true,
-            title: 'Account Settings'
-        }
-    }
+        path: '/me',
+        component: () => import('@layouts/UserProfileLayout.vue'),
+        meta: { requiresAuth: true},
+        children: [
+            {
+                path: 'profile',
+                name: 'profile',
+                component: () => import('@views/Profile.vue'),
+                meta: { title: 'My Profile' }
+            },
+            {
+                path: 'settings',
+                name: 'settings',
+                component: () => import('@views/Settings.vue'),
+                meta: { title: 'Settings' }
+            },
+        ]
+    },
 ];
 
 export default authenticatedRoutes;

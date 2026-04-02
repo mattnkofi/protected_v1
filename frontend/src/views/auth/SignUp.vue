@@ -106,7 +106,7 @@ const isGoogleLoading = ref(false);
 const signUpWithGoogle = async () => {
     isGoogleLoading.value = true;
     try {
-        const { data } = await api.get('/api/auth/google/redirect');
+        const { data } = await api.get('/api/v1/auth/google/redirect');
         window.location.href = data.authUrl;
     } catch (error) {
         isGoogleLoading.value = false;

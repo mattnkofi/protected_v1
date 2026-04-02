@@ -1,59 +1,87 @@
 <template>
-  <div class="min-h-screen w-full flex items-center justify-center bg-[#fdfcff] dark:bg-[#04020a] font-['Poppins'] relative overflow-hidden p-4 transition-colors duration-700">
-    
-    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-fuchsia-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse delay-700"></div>
+  <div
+    class="min-h-screen w-full flex items-center justify-center container-bg-dark transition-colors duration-500 font-sans p-0 sm:p-6">
 
-    <div class="w-full max-w-[480px] relative z-10 animate-vessel">
-      <div class="bg-white/40 dark:bg-white/[0.03] backdrop-blur-3xl border border-white dark:border-white/10 p-10 sm:p-12 rounded-[3.5rem] 
-        shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15),inset_0_1px_2px_rgba(255,255,255,1)] 
-        dark:shadow-[0_50px_100px_-20px_rgba(0,0,0,0.5),inset_0_1px_1px_rgba(255,255,255,0.05)]">
-        
-        <div class="text-center mb-10">
-          <div class="inline-flex items-center justify-center h-16 w-16 rounded-2xl liquid-gem-logo shadow-xl mb-6 rotate-3 hover:rotate-0 transition-all duration-500 relative overflow-hidden">
-            <svg class="w-8 h-8 text-white drop-shadow-md" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z" />
-            </svg>
-            <div class="absolute top-1 left-1 w-3 h-3 bg-white/40 blur-[1px] rounded-full"></div>
-          </div>
-          
-          <h1 class="text-4xl font-[950] text-slate-900 dark:text-white uppercase italic tracking-tighter leading-none mb-3">
-            Forgot <span class="text-transparent bg-clip-text bg-gradient-to-br from-purple-600 via-fuchsia-500 to-fuchsia-600">Access?</span>
-          </h1>
-          <p class="text-slate-500 dark:text-slate-400 text-sm font-medium italic">Enter your email to reset your protocol.</p>
-          <div class="h-1.5 w-20 liquid-3d-underline mt-4 rounded-full shadow-[0_10px_20px_rgba(168,85,247,0.3)] mx-auto"></div>
+    <div class="w-full max-w-4xl flex flex-col md:flex-row overflow-hidden sm:rounded-2xl">
+
+      <div
+        class="relative w-full md:w-1/2 h-48 md:h-auto flex items-center justify-center bg-cover bg-center overflow-hidden"
+        :style="{ backgroundImage: `url(${hero})` }">
+
+        <div class="absolute inset-0 bg-calm-lavender-300 dark:bg-calm-lavender-800 opacity-70">
         </div>
 
-        <form @submit.prevent="submit" class="space-y-7">
-          <div class="space-y-3">
-            <label class="block text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 ml-2">Email Address</label>
-            <div class="relative group">
-              <input v-model.trim="email" type="email" placeholder="name@email.com" required
-                class="w-full px-7 py-5 rounded-[1.8rem] bg-white/60 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder-slate-400 
-                focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-500 shadow-[inset_0_1px_3px_rgba(255,255,255,0.8)] dark:shadow-none"
-                :class="{ 'border-red-500/50 focus:ring-red-500/30': fieldError }" />
-            </div>
-            <p v-if="fieldError" class="mt-1 text-[10px] font-black uppercase text-fuchsia-500 ml-2 italic">{{ fieldError }}</p>
-          </div>
+        <div class="absolute inset-0 bg-abyss-900/10"></div>
 
-          <button type="submit" :disabled="loading"
-            class="btn-purple-liquid w-full py-5 text-white font-[900] uppercase tracking-[0.3em] rounded-[1.5rem] transition-all duration-500 flex items-center justify-center gap-3 relative overflow-hidden group hover:scale-[1.03] active:scale-[0.97] shadow-2xl disabled:opacity-50">
-            <span v-if="!loading" class="relative z-10 drop-shadow-lg">Send Reset Link</span>
-            <div v-else class="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
-            <div class="absolute top-[10%] left-[10%] w-full h-full bg-gradient-to-br from-white/30 to-transparent opacity-50 blur-[2px]"></div>
-          </button>
-        </form>
+        <div
+          class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-platinum-50 dark:from-abyss-800 to-transparent md:hidden z-10">
+        </div>
 
-        <div class="mt-10 text-center border-t border-slate-200 dark:border-white/10 pt-8">
-          <router-link :to="{ name: 'login' }"
-            class="text-[11px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500 hover:text-purple-600 dark:hover:text-fuchsia-400 transition-all flex items-center justify-center gap-2 italic">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        <div class="relative z-20 p-4">
+          <div
+            class="inline-flex items-center justify-center h-16 w-16 md:h-24 md:w-24 rounded-2xl bg-white/20 dark:bg-black/20 backdrop-blur-md border border-white/30 shadow-2xl group hover:scale-105 transition-transform duration-500">
+            <svg class="w-8 h-8 md:w-12 md:h-12 text-white drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24">
+              <path
+                d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-9V6a6 6 0 10-12 0v2h-1v14h14V8h-1zm-6-8a4 4 0 014 4v2H8V6a4 4 0 014-4z" />
             </svg>
-            Back to secure login
-          </router-link>
+          </div>
         </div>
       </div>
+
+      <div
+        class="w-full md:w-1/2 p-6 sm:p-10 relative z-20 border-t-0 border-r-0 border-b-0 rounded-none mt-6 sm:mt-0 sm:border-t-2 sm:border-b-2 sm:border-r-2 sm:border-calm-lavender-300 sm:dark:border-calm-lavender-800/50 sm:rounded-r-2xl container-bg-dark flex flex-col justify-center">
+        <div class="w-full max-w-sm mx-auto">
+
+          <div class="mb-8 text-center sm:text-left mt-[-1rem] md:mt-0">
+            <h1 class="form-title mb-1">
+              Forgot Access?
+            </h1>
+            <p class="form-subtitle">
+              Enter your email to reset your password.
+            </p>
+          </div>
+
+          <form @submit.prevent="submit" class="space-y-6">
+
+            <div class="space-y-1.5">
+              <label for="email" class="block field-label">
+                Email Address
+              </label>
+              <input id="email" v-model.trim="email" type="email" placeholder="you@example.com" required
+                class="input-field" :class="{ 'input-field-error': fieldError }" />
+              <p v-if="fieldError" class="field-subtext-error">{{ fieldError }}</p>
+            </div>
+
+            <button type="submit" :disabled="loading"
+              class="w-full py-3 px-4 main-button-text bg-calm-lavender-600 text-white rounded-lg 
+                                   hover:bg-calm-lavender-700 focus:ring-4 focus:ring-calm-lavender-500/30
+                                   disabled:opacity-70 disabled:cursor-not-allowed
+                                   transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+              <span v-if="!loading">Send Reset Link</span>
+              <span v-else class="flex items-center gap-2">
+                <svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <path class="opacity-75" fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Sending...
+              </span>
+            </button>
+          </form>
+
+          <div class="mt-8 pt-6 text-center link-lavender">
+            <router-link :to="{ name: 'login' }"
+              class="inline-flex items-center justify-center gap-2 return-button-text">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to secure login
+            </router-link>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -64,6 +92,9 @@ import { useRouter } from "vue-router";
 import { useAuthStore } from "@stores/auth";
 import { useToast } from '@/utils/useToast';
 
+// Import Hero Image for the left pane
+import hero from '@/assets/bgimage.jpg';
+
 const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToast();
@@ -73,60 +104,22 @@ const loading = ref(false)
 const fieldError = ref('')
 
 async function submit() {
-    fieldError.value = ''
-    loading.value = true
+  fieldError.value = ''
+  loading.value = true
 
-    try {
-        await authStore.requestPasswordReset(email.value);
-        toast.success('If that email exists, a reset link has been sent.');
-        email.value = '';
-    } catch (e) {
-        const data = e?.response?.data;
-        if (data?.errors?.email) {
-            fieldError.value = data.errors.email[0];
-        } else {
-            toast.error(data?.message || 'Something went wrong. Please try again.');
-        }
-    } finally {
-        loading.value = false;
+  try {
+    await authStore.requestPasswordReset(email.value);
+    toast.success('If that email exists, a reset link has been sent.');
+    email.value = '';
+  } catch (e) {
+    const data = e?.response?.data;
+    if (data?.errors?.email) {
+      fieldError.value = data.errors.email[0];
+    } else {
+      toast.error(data?.message || 'Something went wrong. Please try again.');
     }
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
-
-<style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
-
-/* --- 3D LIQUID PHYSICS --- */
-.liquid-gem-logo {
-  background: radial-gradient(circle at 35% 35%, #a855f7 0%, #6b21a8 55%, #2e1065 100%);
-  box-shadow: inset -4px -4px 10px rgba(0,0,0,0.5), inset 4px 4px 8px rgba(255,255,255,0.3), 0 15px 30px rgba(107, 33, 168, 0.3);
-}
-
-.btn-purple-liquid {
-  background: radial-gradient(circle at 30% 30%, #7c3aed 0%, #4c1d95 55%, #1e1b4b 100%);
-  box-shadow: inset -8px -8px 20px rgba(0,0,0,0.6), inset 8px 8px 15px rgba(255,255,255,0.2), 0 20px 40px rgba(76, 29, 149, 0.3);
-}
-
-:where(.dark) .btn-purple-liquid {
-  background: radial-gradient(circle at 30% 30%, #a855f7 0%, #6d28d9 55%, #2e1065 100%);
-}
-
-.liquid-3d-underline {
-  background: radial-gradient(circle at 30% 30%, #f472b6 0%, #db2777 55%, #831843 100%);
-  box-shadow: inset -2px -2px 5px rgba(0,0,0,0.4), inset 2px 2px 5px rgba(255,255,255,0.4);
-}
-
-/* Entrance Animation */
-.animate-vessel {
-  animation: vesselSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-@keyframes vesselSlideIn {
-  from { opacity: 0; transform: translateY(40px) scale(0.95); filter: blur(10px); }
-  to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
-}
-
-input {
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-</style>

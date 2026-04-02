@@ -123,12 +123,12 @@ const defaultAvatar = 'https://ui-avatars.com/api/?name=Admin&background=0d0d12&
 
 const goProfile = () => {
     isOpen.value = false;
-    router.push('/profile');
-};
+    router.push({ name: 'profile' });
+}
 
 const goSettings = () => {
     isOpen.value = false;
-    router.push('/settings');
+    router.push({ name: 'settings' });
 };
 
 const triggerLogout = () => {
@@ -140,7 +140,9 @@ const confirmLogout = async () => {
     showModal.value = false;
     try {
         await authStore.logout();
-        router.push('/facilitator/login');
+        
+        router.push({ name: 'login' }); 
+        
     } catch (error) {
         console.error('Logout error:', error);
     }

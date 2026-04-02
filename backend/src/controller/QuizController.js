@@ -1,8 +1,6 @@
 // backend/src/controller/QuizController.js
 const { Module, UserGamification, User, QuizAttempt } = require('../model');
 const QuizService = require('../services/QuizService');
-const gamificationService = require('../services/GamificationService'); // In-import natin ang bagong service
-const mlAnalysisService = require('../services/MLAnalysisService');
 
 class QuizController {
     /**
@@ -105,76 +103,29 @@ class QuizController {
         try {
             const quizId = req.params.id;
             const userId = req.user.id;
-            const { pointsEarned, correctCount, answers } = req.body;
+            const isPracticeMode = req.body.practiceMode === true || req.body.practiceMode === 'true';
             
             // 1. I-save ang attempt sa database (QuizAttempt)
-            const result = await QuizService.submitAttempt(userId, quizId, req.body);
-            
-            // 2. EXP Logic: Magbigay ng EXP base sa dami ng tamang sagot
-            // Halimbawa: 20 EXP per correct answer
-            const expGained = (correctCount || 0) * 20;
-            
-            // 3. I-update ang Gamification Status (EXP at Title)
-            const updatedGamification = await gamificationService.addExperience(userId, expGained);
+            // Practice mode still records attempts and ML data, but does not award EXP.
+            const result = await QuizService.submitAttempt(userId, quizId, req.body, {
+                awardExperience: !isPracticeMode
+            });
 
-            // 4. ML Analysis: Analyze student answers for VAWC indicators (async, non-blocking)
-            // Extract answer texts from the submission for ML analysis
-            const answerTexts = this._extractAnswerTexts(answers, req.body);
-            if (answerTexts.length > 0) {
-                const attemptId = result?.attempt?.id || null;
-                // Fire and forget — don't await so it doesn't slow down the response
-                mlAnalysisService.analyzeAndStore(userId, quizId, answerTexts, attemptId)
-                    .then(mlResult => {
-                        if (mlResult && mlResult.flags_detected) {
-                            console.log(`[ML] Flags detected for user ${userId} on quiz ${quizId} — Risk: ${mlResult.overall_risk_level}`);
-                        }
-                    })
-                    .catch(err => console.error('[ML] Background analysis error:', err.message));
-            }
-            
             return res.status(200).json({ 
                 success: true, 
                 message: 'Progress saved successfully!',
                 data: {
                     attempt: result,
-                    expGained: expGained,
-                    currentExp: updatedGamification.experience_points,
-                    currentTitle: updatedGamification.current_title
+                    expGained: result.experienceGained || 0,
+                    currentExp: result.currentTotalExp,
+                    currentTitle: result.currentTitle,
+                    practiceMode: isPracticeMode
                 }
             });
         } catch (error) {
             console.error('QuizController.submitResults error:', error);
             return res.status(500).json({ success: false, message: error.message });
         }
-    }
-
-    /**
-     * Extract answer texts from quiz submission data.
-     * Supports multiple formats that the frontend might send.
-     */
-    _extractAnswerTexts(answers, body) {
-        // If answers array is explicitly provided
-        if (Array.isArray(answers)) {
-            return answers
-                .map(a => {
-                    if (typeof a === 'string') return a;
-                    if (a && typeof a === 'object') {
-                        // Support { answer: "text" }, { text: "text" }, { selectedAnswer: "text" }
-                        return a.answer || a.text || a.selectedAnswer || a.value || '';
-                    }
-                    return '';
-                })
-                .filter(a => a && a.trim().length > 0);
-        }
-
-        // Fallback: try to extract from other body fields
-        if (body.userAnswers && Array.isArray(body.userAnswers)) {
-            return body.userAnswers
-                .map(a => typeof a === 'string' ? a : (a?.answer || a?.text || ''))
-                .filter(a => a && a.trim().length > 0);
-        }
-
-        return [];
     }
 
     /**

@@ -40,6 +40,9 @@ router.get('/', NotificationController.getNotifications);
 // GET /api/v1/notifications/unread-count - Get unread count
 router.get('/unread-count', NotificationController.getUnreadCount);
 
+// GET /api/v1/notifications/personalized-guidance - Behavior + stress recommendations
+router.get('/personalized-guidance', NotificationController.getPersonalizedGuidance);
+
 // PATCH /api/v1/notifications/read-all - Mark all as read
 router.patch('/read-all', NotificationController.markAllAsRead);
 

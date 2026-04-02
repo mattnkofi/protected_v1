@@ -1,84 +1,139 @@
 <template>
-    <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" @click.self="$emit('close')">
-        <div class="absolute inset-0 bg-slate-900/60 dark:bg-[#020203]/80 backdrop-blur-md transition-opacity" @click="$emit('close')"></div>
+    <!-- ── Overlay ──────────────────────────────────────────────────
+         Block scroll container — modal never cropped on short screens
+    ─────────────────────────────────────────────────────────────── -->
+    <div
+        class="fixed inset-0 z-[100] bg-abyss-950/60 backdrop-blur-sm overflow-y-auto
+               flex items-start justify-center pt-16 px-6 pb-10"
+        @click.self="$emit('close')"
+    >
+        <!-- ── Modal shell ──────────────────────────────────────
+             L1 layer: platinum-100 / abyss-700
+             border-2 border-platinum-300 = stamped boundary
+        ─────────────────────────────────────────────────────── -->
+        <div class="modal-shell animate-modal font-poppins">
 
-        <div class="relative w-full max-w-lg bg-white dark:bg-[#0d0d12] border border-slate-200 dark:border-white/10 rounded-[3rem] shadow-2xl dark:shadow-[0_50px_100px_-20px_rgba(0,0,0,1)] overflow-hidden animate-in zoom-in duration-500 custom-font-poppins">
-            
-            <div class="px-10 py-8 border-b border-slate-200 dark:border-white/5 flex items-center justify-between bg-slate-50/50 dark:bg-white/[0.01]">
-                <div class="space-y-1">
-                    <h3 class="text-xl font-[900] text-black dark:text-white uppercase tracking-tighter italic">
-                        Add <span class="text-purple-600 dark:text-purple-500">New User</span>
-                    </h3>
-                    <p class="text-[10px] font-bold text-slate-500 dark:text-gray-500 uppercase tracking-widest leading-none italic">Setup educator or moderator access</p>
+            <!-- Header -->
+            <header class="modal-header">
+                <div class="flex items-center gap-4">
+                    <div class="ds-icon-badge ds-icon-badge--lavender">
+                        <UserPlusIcon class="w-4 h-4" />
+                    </div>
+                    <div>
+                        <p class="section-eyebrow">User Management</p>
+                        <h2 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                            Add <span class="brand-gradient-text">New User</span>
+                        </h2>
+                    </div>
                 </div>
-                <button @click="$emit('close')" class="p-2 text-slate-400 dark:text-gray-600 hover:text-black dark:hover:text-white transition-colors">
-                    <XIcon class="w-5 h-5" />
+                <button @click="$emit('close')" class="close-btn" aria-label="Close">
+                    <XIcon class="w-4 h-4" />
                 </button>
-            </div>
+            </header>
 
-            <form @submit.prevent="handleSubmit" class="p-10 space-y-6">
-                <div class="space-y-2 group">
-                    <label class="text-[10px] font-[900] uppercase tracking-widest text-slate-500 dark:text-gray-600 ml-1 group-focus-within:text-purple-600 transition-colors italic">Full Name *</label>
-                    <input v-model.trim="form.name" type="text" required placeholder="Ex: John Doe"
-                        class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-black dark:text-white text-xs font-bold outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all shadow-sm placeholder:text-slate-400"
-                        :class="{ 'border-red-500/50 bg-red-500/5': errors.name }" />
-                    <p v-if="errors.name" class="text-[9px] font-[900] uppercase text-red-500 ml-1 italic">{{ errors.name }}</p>
+            <!-- Form -->
+            <form @submit.prevent="handleSubmit" class="modal-body space-y-5">
+
+                <!-- Full name -->
+                <div class="field-group">
+                    <label class="field-label">
+                        Full Name <span class="text-red-400">*</span>
+                    </label>
+                    <input
+                        v-model.trim="form.name"
+                        type="text"
+                        required
+                        placeholder="e.g. John Dela Cruz"
+                        class="input-field placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
+                        :class="errors.name ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-900/10' : ''"
+                    />
+                    <p v-if="errors.name" class="font-mplusrounded text-xs text-red-500 mt-1">
+                        {{ errors.name }}
+                    </p>
                 </div>
 
-                <div class="space-y-2 group">
-                    <label class="text-[10px] font-[900] uppercase tracking-widest text-slate-500 dark:text-gray-600 ml-1 group-focus-within:text-purple-600 transition-colors italic">Email Address *</label>
-                    <input v-model.trim="form.email" type="email" required placeholder="john.doe@school.edu"
-                        class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 text-black dark:text-white text-xs font-bold outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all shadow-sm placeholder:text-slate-400"
-                        :class="{ 'border-red-500/50 bg-red-500/5': errors.email }" />
-                    <p v-if="errors.email" class="text-[9px] font-[900] uppercase text-red-500 ml-1 italic">{{ errors.email }}</p>
+                <!-- Email -->
+                <div class="field-group">
+                    <label class="field-label">
+                        Email Address <span class="text-red-400">*</span>
+                    </label>
+                    <input
+                        v-model.trim="form.email"
+                        type="email"
+                        required
+                        placeholder="john.delacruz@school.edu"
+                        class="input-field placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
+                        :class="errors.email ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-900/10' : ''"
+                    />
+                    <p v-if="errors.email" class="font-mplusrounded text-xs text-red-500 mt-1">
+                        {{ errors.email }}
+                    </p>
                 </div>
 
-                <div class="space-y-2 group">
-                    <label class="text-[10px] font-[900] uppercase tracking-widest text-slate-500 dark:text-gray-600 ml-1 group-focus-within:text-purple-600 transition-colors italic">Access Level *</label>
-                    <div class="relative">
-                        <select v-model="form.role" required
-                            class="w-full px-6 py-4 rounded-2xl bg-slate-50 dark:bg-[#0d0d12] border border-slate-200 dark:border-white/10 text-black dark:text-white text-xs font-bold outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 appearance-none transition-all cursor-pointer">
+                <!-- Access level -->
+                <div class="field-group">
+                    <label class="field-label">
+                        Access Level <span class="text-red-400">*</span>
+                    </label>
+                    <div class="ds-select-wrap">
+                        <select v-model="form.role" required class="ds-select">
                             <option value="educator">Educator / Facilitator</option>
                             <option value="moderator">Moderator</option>
                         </select>
-                        <div class="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 dark:text-gray-600">
-                            <ChevronDownIcon class="w-4 h-4" />
-                        </div>
+                        <ChevronDownIcon class="ds-select-icon" />
                     </div>
                 </div>
 
-                <div class="p-6 bg-purple-600/5 border border-purple-500/10 rounded-[2rem] flex gap-4 items-start">
-                    <div class="p-2 rounded-xl bg-purple-500/20 text-purple-600 dark:text-purple-400">
-                        <InfoIcon class="w-4 h-4" />
+                <!-- Info notice — L2 inset -->
+                <div class="info-notice">
+                    <div class="ds-icon-badge ds-icon-badge--lavender !p-1.5 shrink-0">
+                        <InfoIcon class="w-3.5 h-3.5" />
                     </div>
-                    <div class="space-y-1">
-                        <h4 class="text-[10px] font-[900] text-black dark:text-white uppercase tracking-widest italic">Next Step</h4>
-                        <p class="text-[10px] text-slate-500 dark:text-gray-500 leading-relaxed font-medium">A welcome email with a secure temporary password will be sent automatically.</p>
+                    <div class="space-y-0.5">
+                        <p class="font-semibold text-sm text-abyss-800 dark:text-platinum-100">Next Step</p>
+                        <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500 leading-relaxed">
+                            A welcome email with a secure temporary password will be sent automatically.
+                        </p>
                     </div>
                 </div>
 
-                <div class="flex gap-4 pt-4">
-                    <button type="button" @click="$emit('close')" 
-                        class="px-8 py-4 text-[10px] font-[900] uppercase tracking-widest text-slate-500 dark:text-gray-500 hover:text-black dark:hover:text-white transition-all bg-slate-100 dark:bg-white/5 rounded-2xl border border-slate-200 dark:border-transparent hover:border-purple-500/30 italic">
-                        Cancel
-                    </button>
-                    <button type="submit" :disabled="isLoading"
-                        class="flex-1 py-4 bg-gradient-to-r from-purple-600 to-fuchsia-600 text-white text-[10px] font-[900] uppercase tracking-widest rounded-2xl shadow-xl shadow-purple-500/30 hover:scale-[1.02] active:scale-[0.98] transition-all duration-500 disabled:opacity-50 disabled:grayscale flex items-center justify-center gap-3 italic">
-                        <span v-if="!isLoading">Create Account</span>
-                        <div v-else class="flex items-center gap-2">
-                            <div class="animate-spin h-3 w-3 border-2 border-white/30 border-t-white rounded-full"></div>
-                            Processing...
-                        </div>
-                    </button>
-                </div>
             </form>
+
+            <!-- Footer -->
+            <footer class="modal-footer">
+                <button
+                    type="button"
+                    @click="$emit('close')"
+                    class="btn-secondary btn-3d--secondary justify-center flex-1 max-w-[160px]"
+                >
+                    Cancel
+                </button>
+                <button
+                    type="submit"
+                    @click="handleSubmit"
+                    :disabled="isLoading"
+                    class="btn-primary btn-3d justify-center flex-1 max-w-[240px] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <span v-if="!isLoading">Create Account</span>
+                    <div v-else class="flex items-center gap-2">
+                        <div class="spinner !w-4 !h-4 !border-2 !border-white/30 !border-t-white"></div>
+                        Processing…
+                    </div>
+                </button>
+            </footer>
+
         </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
-import { X as XIcon, Info as InfoIcon, ChevronDown as ChevronDownIcon } from 'lucide-vue-next';
+import {
+    X as XIcon,
+    Info as InfoIcon,
+    ChevronDown as ChevronDownIcon,
+    UserPlus as UserPlusIcon
+} from 'lucide-vue-next';
 import { useToast } from '@/utils/useToast';
 import api from '@/utils/api';
 
@@ -112,18 +167,132 @@ const handleSubmit = async () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,700;1,900&display=swap');
+@reference "@/style.css";
 
-.custom-font-poppins {
-    font-family: 'Poppins', sans-serif !important;
+/* ═══════════════════════════════════════════════════════════
+   MODAL SHELL  —  L1: platinum-100 / abyss-700
+═══════════════════════════════════════════════════════════ */
+.modal-shell {
+    @apply relative w-full max-w-lg flex flex-col;
+    @apply bg-platinum-100 dark:bg-abyss-700;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply rounded-2xl overflow-hidden;
 }
 
-input, select {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* ── Header  (L2 — richer than shell) ────────────────────── */
+.modal-header {
+    @apply flex items-center justify-between shrink-0;
+    @apply px-7 py-5;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-b-2 border-platinum-300 dark:border-abyss-500;
 }
 
-@keyframes zoomIn {
-    from { opacity: 0; transform: scale(0.95); }
-    to { opacity: 1; transform: scale(1); }
+/* ── Body ─────────────────────────────────────────────────── */
+.modal-body {
+    @apply px-7 py-6;
+}
+
+/* ── Footer  (L2 — mirrors header) ───────────────────────── */
+.modal-footer {
+    @apply flex items-center justify-end gap-3 shrink-0;
+    @apply px-7 py-5;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-t-2 border-platinum-300 dark:border-abyss-500;
+}
+
+/* ── Close button ─────────────────────────────────────────── */
+.close-btn {
+    @apply p-2 rounded-xl shrink-0 transition-all duration-150;
+    @apply bg-platinum-300 dark:bg-abyss-500;
+    @apply border-2 border-platinum-300 dark:border-abyss-400;
+    @apply text-platinum-600 dark:text-platinum-400;
+    @apply hover:bg-red-50 dark:hover:bg-red-900/20;
+    @apply hover:border-red-200 dark:hover:border-red-800/40;
+    @apply hover:text-red-500 dark:hover:text-red-400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FIELD GROUP
+═══════════════════════════════════════════════════════════ */
+.field-group {
+    @apply space-y-1.5;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SELECT  —  L2 inset: platinum-200 / abyss-600
+═══════════════════════════════════════════════════════════ */
+.ds-select-wrap {
+    @apply relative;
+}
+
+.ds-select {
+    @apply w-full appearance-none cursor-pointer transition-all duration-150;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-platinum-300 dark:border-abyss-500;
+    @apply hover:border-calm-lavender-300 dark:hover:border-calm-lavender-700;
+    @apply text-abyss-800 dark:text-platinum-200;
+    @apply font-medium text-sm;
+    @apply rounded-xl px-4 py-3 pr-10;
+    @apply focus:outline-none focus:ring-2 focus:ring-calm-lavender-400/40 focus:border-calm-lavender-400;
+}
+
+.ds-select-icon {
+    @apply absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none;
+    @apply w-4 h-4 text-platinum-500 dark:text-platinum-400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ICON BADGE
+═══════════════════════════════════════════════════════════ */
+.ds-icon-badge {
+    @apply p-2.5 rounded-xl border-2 flex items-center justify-center shrink-0;
+}
+
+.ds-icon-badge--lavender {
+    @apply bg-calm-lavender-50 dark:bg-calm-lavender-900/20;
+    @apply border-calm-lavender-200 dark:border-calm-lavender-800/40;
+    @apply text-calm-lavender-600 dark:text-calm-lavender-400;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INFO NOTICE  —  L2 inset: platinum-200 / abyss-600
+═══════════════════════════════════════════════════════════ */
+.info-notice {
+    @apply flex items-start gap-3 p-4 rounded-xl;
+    @apply bg-platinum-200 dark:bg-abyss-600;
+    @apply border-2 border-calm-lavender-200 dark:border-calm-lavender-800/40;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FLAT-3D BUTTON MODIFIERS
+═══════════════════════════════════════════════════════════ */
+.btn-3d {
+    @apply border-b-4 border-black/10 active:border-b active:translate-y-px;
+}
+
+.btn-3d--secondary {
+    @apply border-b-4 border-platinum-400 dark:border-abyss-400
+           active:border-b active:translate-y-px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL ENTRY ANIMATION
+═══════════════════════════════════════════════════════════ */
+.animate-modal {
+    animation: modalEntry 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalEntry {
+    from { opacity: 0; transform: scale(0.97) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ── Select option colors ────────────────────────────────── */
+select option {
+    @apply bg-platinum-50 text-abyss-800;
+}
+
+.dark select option {
+    @apply bg-abyss-600 text-platinum-100;
 }
 </style>
