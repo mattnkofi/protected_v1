@@ -4,51 +4,287 @@ const mlAnalysisService = require('./MLAnalysisService');
 const personalizationService = require('./PersonalizationService');
 
 const ASSESSMENT_TITLE = 'Behavioral Pattern & Risk Check';
+const ASSESSMENT_DESCRIPTION = '34-item risk screening across possible victim indicators, risk indicators, violator tendencies, and general behavioral indicators.';
 
 const QUESTIONNAIRE = [
     {
-        id: 'safety_1',
-        question: 'In stressful situations, how often do you feel unsafe with people close to you?',
+        id: 'pv_1',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you feel unsafe around a specific person or situation?',
         options: ['Never', 'Rarely', 'Sometimes', 'Often']
     },
     {
-        id: 'safety_2',
-        question: 'How often do you feel pressured to do things you are uncomfortable with?',
+        id: 'pv_2',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you worry about upsetting someone close to you?',
         options: ['Never', 'Rarely', 'Sometimes', 'Often']
     },
     {
-        id: 'emotion_1',
-        question: 'How frequently have you felt anxious, overwhelmed, or unable to focus recently?',
+        id: 'pv_3',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you feel watched, monitored, or tracked by someone?',
         options: ['Never', 'Rarely', 'Sometimes', 'Often']
     },
     {
-        id: 'emotion_2',
-        question: 'When upset, how often do you withdraw from support systems (family, friends, mentors)?',
+        id: 'pv_4',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you avoid asking for help because you fear the consequences?',
         options: ['Never', 'Rarely', 'Sometimes', 'Often']
     },
     {
-        id: 'behavior_1',
-        question: 'How often do conflicts around you escalate into shouting, intimidation, or threats?',
+        id: 'pv_5',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you keep problems secret to avoid conflict?',
         options: ['Never', 'Rarely', 'Sometimes', 'Often']
     },
     {
-        id: 'behavior_2',
-        question: 'How often do you feel controlled (for example: monitored messages, restricted movements, or decisions)?',
+        id: 'pv_6',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you feel isolated from your support network?',
         options: ['Never', 'Rarely', 'Sometimes', 'Often']
     },
     {
-        id: 'support_1',
-        question: 'If you needed immediate help for safety concerns, how confident are you in knowing where to go?',
-        options: ['Very confident', 'Somewhat confident', 'Not sure', 'Not confident']
+        id: 'pv_7',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you find it hard to leave a tense situation when you want to?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
     },
     {
-        id: 'support_2',
-        question: 'How often do you avoid reporting harmful situations because of fear of consequences?',
+        id: 'pv_8',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you feel your choices are dismissed by someone close to you?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'pv_9',
+        dimension: 'possible_victim_indicators',
+        dimensionLabel: 'Possible Victim Indicators',
+        question: 'How often do you feel anxious when calls or messages come from a specific person?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_1',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often do conflicts around you escalate into threats or intimidation?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_2',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often do arguments involve blocking exits, breaking items, or other unsafe escalation?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_3',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often does jealousy get used as a reason to monitor or restrict another person?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_4',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often do alcohol or drugs seem to contribute to harmful behavior around you?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_5',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often does harmful behavior repeat after apologies or promises to stop?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_6',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often do threats or insults increase when someone sets a boundary?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_7',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often does someone pressure you for passwords, location access, or private accounts?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_8',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often are you blamed for another person\'s harmful or controlling behavior?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'ri_9',
+        dimension: 'risk_indicators',
+        dimensionLabel: 'Risk Indicators',
+        question: 'How often have you changed routines to avoid triggering conflict?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_1',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone check your phone, messages, or accounts without permission?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_2',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone restrict who you can talk to or spend time with?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_3',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone use guilt, fear, or pressure to make you comply?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_4',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone control your clothing, movement, or personal decisions?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_5',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone threaten to leave, expose, or harm something to get compliance?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_6',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone ignore consent or push for physical contact after you say no?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_7',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone isolate you from friends, family, or support services?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'vt_8',
+        dimension: 'violator_tendencies',
+        dimensionLabel: 'Violator Tendencies',
+        question: 'How often does someone minimize harm after they hurt, insult, or control you?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_1',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often have you been withdrawing from other people lately?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_2',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often are you struggling to sleep, focus, or concentrate?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_3',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often do you notice mood swings or sudden irritability?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_4',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often do you feel hyperaware, on edge, or easily startled?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_5',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often has your participation in school, work, or activities dropped recently?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_6',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often do you avoid people or places connected with stressful experiences?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_7',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often do you feel fearful or panicked without a clear reason?',
+        options: ['Never', 'Rarely', 'Sometimes', 'Often']
+    },
+    {
+        id: 'gb_8',
+        dimension: 'general_behavioral_indicators',
+        dimensionLabel: 'General Behavioral Indicators',
+        question: 'How often do you feel emotionally numb, shut down, or exhausted?',
         options: ['Never', 'Rarely', 'Sometimes', 'Often']
     }
 ];
 
 class RiskAssessmentService {
+    _questionnaireNeedsSync(quiz) {
+        if (!quiz) return true;
+
+        const currentQuestions = Array.isArray(quiz.questions_data) ? quiz.questions_data : [];
+        if (currentQuestions.length !== QUESTIONNAIRE.length) return true;
+
+        return QUESTIONNAIRE.some((question, index) => {
+            const current = currentQuestions[index] || {};
+            return current.id !== question.id || current.dimension !== question.dimension;
+        });
+    }
+
+    _buildQuestionnaireSections(questions = []) {
+        const sections = [];
+        const sectionMap = new Map();
+
+        questions.forEach((question) => {
+            const label = question.dimensionLabel || 'General';
+            if (!sectionMap.has(label)) {
+                const section = {
+                    key: question.dimension || label.toLowerCase().replace(/\s+/g, '_'),
+                    label,
+                    count: 0,
+                    questions: []
+                };
+                sectionMap.set(label, section);
+                sections.push(section);
+            }
+
+            const section = sectionMap.get(label);
+            section.questions.push(question);
+            section.count += 1;
+        });
+
+        return sections;
+    }
+
     _extractTopBehaviors(analysisResults = [], limit = 3) {
         if (!Array.isArray(analysisResults)) return [];
 
@@ -98,7 +334,17 @@ class RiskAssessmentService {
             order: [['id', 'ASC']]
         });
 
-        if (quiz) return quiz;
+        if (quiz) {
+            if (this._questionnaireNeedsSync(quiz)) {
+                quiz.questions_data = QUESTIONNAIRE;
+                quiz.description = ASSESSMENT_DESCRIPTION;
+                quiz.time_limit = 300;
+                quiz.points_per_question = 0;
+                await quiz.save();
+            }
+
+            return quiz;
+        }
 
         const [owner, module] = await Promise.all([
             this._resolveSystemOwner(),
@@ -112,10 +358,10 @@ class RiskAssessmentService {
         quiz = await Quiz.create({
             module_id: module.id,
             title: ASSESSMENT_TITLE,
-            description: 'Dedicated behavioral-pattern questionnaire for early support and risk screening.',
+            description: ASSESSMENT_DESCRIPTION,
             quiz_type: 'time_attack',
             questions_data: QUESTIONNAIRE,
-            time_limit: 120,
+            time_limit: 300,
             points_per_question: 0,
             created_by: owner.id
         });
@@ -158,12 +404,14 @@ class RiskAssessmentService {
 
     async getQuestionnaire() {
         const quiz = await this.ensureAssessmentQuiz();
+        const questions = Array.isArray(quiz.questions_data) ? quiz.questions_data : QUESTIONNAIRE;
 
         return {
             id: quiz.id,
             title: quiz.title,
             description: quiz.description,
-            questions: Array.isArray(quiz.questions_data) ? quiz.questions_data : QUESTIONNAIRE
+            questions,
+            sections: this._buildQuestionnaireSections(questions)
         };
     }
 

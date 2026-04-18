@@ -192,7 +192,7 @@
                 <div class="mb-5 rounded-xl border p-4 bg-white/75 dark:bg-abyss-900/35 border-platinum-200 dark:border-abyss-700">
                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
                         <h4 class="text-sm font-semibold text-abyss-800 dark:text-platinum-100">
-                            Behavioral Pattern & Risk Check (ML Analysis)
+                            Behavioral Pattern & Risk Check (34-item Risk Screening)
                         </h4>
                         <router-link
                             :to="{ name: 'user.behavior-assessment' }"
@@ -234,7 +234,7 @@
                     </div>
 
                     <div v-else class="text-sm text-platinum-600 dark:text-platinum-400">
-                        No dedicated behavioral assessment has been analyzed yet. Complete the Behavioral Pattern & Risk Check to populate this section.
+                        No dedicated behavioral assessment has been analyzed yet. Complete the 34-item Behavioral Pattern & Risk Check to populate this section.
                     </div>
                 </div>
 

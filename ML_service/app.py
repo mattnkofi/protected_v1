@@ -30,31 +30,31 @@ except Exception as e:
 # --------------------------
 
 TOPIC_MAPPING = {
-    2: "Control & Manipulation",
-    3: "Control & Manipulation",
-    4: "Neglect & Emotional Withdrawal",
-    6: "Control & Manipulation",
-    8: "Verbal & Emotional Abuse",
-    1: "Neglect & Emotional Withdrawal",
-    5: "Verbal & Emotional Abuse"
+    2: "Coercive Control",
+    3: "Coercive Control",
+    4: "Neglect",
+    6: "Coercive Control",
+    8: "Verbal/Emotional Abuse",
+    1: "Neglect",
+    5: "Verbal/Emotional Abuse"
 }
 
 CATEGORIES_INFO = {
-    "Control & Manipulation": {
-        "risk": "High",
-        "behaviors": ["monitoring phone", "controlling messages", "checking location", "forcing compliance"]
-    },
-    "Verbal & Emotional Abuse": {
-        "risk": "High",
-        "behaviors": ["yelling", "shouting", "insulting", "blaming", "mocking", "humiliating"]
-    },
-    "Neglect & Emotional Withdrawal": {
+    "Coercive Control": {
         "risk": "Moderate",
-        "behaviors": ["ignoring", "withdrawing affection", "isolating", "silent treatment"]
+        "behaviors": ["monitoring phone", "controlling messages", "checking location", "forcing compliance", "restricting contact"]
     },
-    "Physical Abuse": {
+    "Verbal/Emotional Abuse": {
+        "risk": "Moderate",
+        "behaviors": ["yelling", "shouting", "insulting", "blaming", "mocking", "humiliating", "intimidating"]
+    },
+    "Neglect": {
+        "risk": "Low",
+        "behaviors": ["ignoring", "withdrawing affection", "isolating", "silent treatment", "withholding support"]
+    },
+    "Physical Aggression": {
         "risk": "Severe",
-        "behaviors": ["hitting", "pushing", "slapping", "throwing objects", "punching"]
+        "behaviors": ["hitting", "pushing", "slapping", "throwing objects", "punching", "kicking"]
     },
     "Support & Affection": {
         "risk": "Low",
@@ -75,27 +75,30 @@ CATEGORIES_INFO = {
 }
 
 KEYWORD_TO_CATEGORY = {
-    "ignore": "Neglect & Emotional Withdrawal",
-    "shout": "Verbal & Emotional Abuse",
-    "yell": "Verbal & Emotional Abuse",
-    "insult": "Verbal & Emotional Abuse",
-    "blame": "Verbal & Emotional Abuse",
-    "mock": "Verbal & Emotional Abuse",
-    "humiliate": "Verbal & Emotional Abuse",
-    "threat": "Control & Manipulation",
-    "control": "Control & Manipulation",
-    "monitor": "Control & Manipulation",
-    "check": "Control & Manipulation",
-    "password": "Control & Manipulation",
-    "guilt": "Control & Manipulation",
-    "isolate": "Neglect & Emotional Withdrawal",
-    "prevent": "Neglect & Emotional Withdrawal",
-    "limit": "Neglect & Emotional Withdrawal",
-    "hit": "Physical Abuse",
-    "push": "Physical Abuse",
-    "slap": "Physical Abuse",
-    "throw": "Physical Abuse",
-    "punch": "Physical Abuse",
+    "ignore": "Neglect",
+    "shout": "Verbal/Emotional Abuse",
+    "yell": "Verbal/Emotional Abuse",
+    "insult": "Verbal/Emotional Abuse",
+    "blame": "Verbal/Emotional Abuse",
+    "mock": "Verbal/Emotional Abuse",
+    "humiliate": "Verbal/Emotional Abuse",
+    "threat": "Coercive Control",
+    "control": "Coercive Control",
+    "monitor": "Coercive Control",
+    "check": "Coercive Control",
+    "password": "Coercive Control",
+    "guilt": "Coercive Control",
+    "restrict": "Coercive Control",
+    "isolate": "Neglect",
+    "prevent": "Neglect",
+    "limit": "Neglect",
+    "withhold": "Neglect",
+    "hit": "Physical Aggression",
+    "push": "Physical Aggression",
+    "slap": "Physical Aggression",
+    "throw": "Physical Aggression",
+    "punch": "Physical Aggression",
+    "kick": "Physical Aggression",
     "hug": "Support & Affection",
     "kiss": "Support & Affection",
     "compliment": "Support & Affection",
@@ -107,19 +110,34 @@ KEYWORD_TO_CATEGORY = {
     "space": "Trust & Respect"
 }
 
+CATEGORY_PRIORITY = [
+    "Physical Aggression",
+    "Coercive Control",
+    "Verbal/Emotional Abuse",
+    "Neglect",
+    "Support & Affection",
+    "Healthy Communication",
+    "Trust & Respect"
+]
+
 # --------------------------
 # 3. Detection Logic
 # --------------------------
 
 def manual_fallback_check(user_input):
     user_input_lower = user_input.lower()
-    detected = set()
+    detected = []
     for keyword, category in KEYWORD_TO_CATEGORY.items():
         if keyword in user_input_lower:
-            detected.add(category)
+            detected.append(category)
     if not detected:
         return "Neutral / Unclassified"
-    return list(detected)[0]
+
+    for category in CATEGORY_PRIORITY:
+        if category in detected:
+            return category
+
+    return detected[0]
 
 
 def hybrid_detect(user_input):
@@ -154,6 +172,8 @@ def analyze_answers(answers):
     results = []
     category_counts = {}
     risk_levels_seen = set()
+    moderate_count = 0
+    high_or_severe_count = 0
 
     for answer_text in answers:
         if not answer_text or not isinstance(answer_text, str) or answer_text.strip() == "":
@@ -176,6 +196,10 @@ def analyze_answers(answers):
         })
         category_counts[category] = category_counts.get(category, 0) + 1
         risk_levels_seen.add(risk)
+        if risk == "Moderate":
+            moderate_count += 1
+        if risk in ("High", "Severe"):
+            high_or_severe_count += 1
 
     # Determine overall risk level (highest found)
     risk_priority = {"Severe": 4, "High": 3, "Moderate": 2, "Low": 1}
@@ -189,8 +213,8 @@ def analyze_answers(answers):
     if category_counts:
         dominant_category = max(category_counts, key=category_counts.get)
 
-    # Count concerning answers (non-low risk)
-    concerning_count = sum(1 for r in results if r["risk_level"] in ("High", "Severe", "Moderate"))
+    # Count only repeated moderate signals or any high/severe signal as concerning.
+    concerning_count = high_or_severe_count + max(0, moderate_count - 1)
 
     summary = {
         "total_answers_analyzed": len(answers),
@@ -198,7 +222,7 @@ def analyze_answers(answers):
         "dominant_category": dominant_category,
         "category_breakdown": category_counts,
         "concerning_answers_count": concerning_count,
-        "flags_detected": concerning_count > 0
+        "flags_detected": high_or_severe_count > 0 or moderate_count >= 2
     }
 
     return results, summary

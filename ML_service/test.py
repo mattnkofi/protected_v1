@@ -21,33 +21,33 @@ except Exception as e:
 # [NEW] This maps the AI's "Topic Numbers" to your specific Categories.
 # Based on your check_topics.py results:
 TOPIC_MAPPING = {
-    2: "Control & Manipulation",          # AI detected: uses_manipulates_threats
-    3: "Control & Manipulation",          # AI detected: pressures_into_rules
-    4: "Neglect & Emotional Withdrawal",  # AI detected: isolates_from_family
-    6: "Control & Manipulation",          # AI detected: hides_evidence_hobbies
-    8: "Verbal & Emotional Abuse",        # AI detected: exaggerates_minor_fear
-    1: "Neglect & Emotional Withdrawal",  # AI detected: avoids_expressing
-    5: "Verbal & Emotional Abuse"         # AI detected: fears_unsafe_expressing
-    # Note: Physical Abuse is handled by the Manual Fallback below because the AI missed it.
+    2: "Coercive Control",                # AI detected: uses_manipulates_threats
+    3: "Coercive Control",                # AI detected: pressures_into_rules
+    4: "Neglect",                         # AI detected: isolates_from_family
+    6: "Coercive Control",                # AI detected: hides_evidence_hobbies
+    8: "Verbal/Emotional Abuse",          # AI detected: exaggerates_minor_fear
+    1: "Neglect",                         # AI detected: avoids_expressing
+    5: "Verbal/Emotional Abuse"           # AI detected: fears_unsafe_expressing
+    # Note: Physical Aggression is handled by the Manual Fallback below because the AI missed it.
 }
 
 # [EXISTING] Your Risk & Behavior Database
 CATEGORIES_INFO = {
-    "Control & Manipulation": {
-        "risk": "High",
-        "behaviors": ["monitoring phone", "controlling messages", "checking location", "forcing compliance"]
-    },
-    "Verbal & Emotional Abuse": {
-        "risk": "High",
-        "behaviors": ["yelling", "shouting", "insulting", "blaming", "mocking", "humiliating"]
-    },
-    "Neglect & Emotional Withdrawal": {
+    "Coercive Control": {
         "risk": "Moderate",
-        "behaviors": ["ignoring", "withdrawing affection", "isolating", "silent treatment"]
+        "behaviors": ["monitoring phone", "controlling messages", "checking location", "forcing compliance", "restricting contact"]
     },
-    "Physical Abuse": {
+    "Verbal/Emotional Abuse": {
+        "risk": "Moderate",
+        "behaviors": ["yelling", "shouting", "insulting", "blaming", "mocking", "humiliating", "intimidating"]
+    },
+    "Neglect": {
+        "risk": "Low",
+        "behaviors": ["ignoring", "withdrawing affection", "isolating", "silent treatment", "withholding support"]
+    },
+    "Physical Aggression": {
         "risk": "Severe",
-        "behaviors": ["hitting", "pushing", "slapping", "throwing objects", "punching"]
+        "behaviors": ["hitting", "pushing", "slapping", "throwing objects", "punching", "kicking"]
     },
     "Support & Affection": {
         "risk": "Low",
@@ -70,27 +70,30 @@ CATEGORIES_INFO = {
 
 # [EXISTING] Your Keywords (Used as Backup if AI is unsure)
 KEYWORD_TO_CATEGORY = {
-    "ignore": "Neglect & Emotional Withdrawal",
-    "shout": "Verbal & Emotional Abuse",
-    "yell": "Verbal & Emotional Abuse",
-    "insult": "Verbal & Emotional Abuse",
-    "blame": "Verbal & Emotional Abuse",
-    "mock": "Verbal & Emotional Abuse",
-    "humiliate": "Verbal & Emotional Abuse",
-    "threat": "Control & Manipulation",
-    "control": "Control & Manipulation",
-    "monitor": "Control & Manipulation",
-    "check": "Control & Manipulation",
-    "password": "Control & Manipulation",
-    "guilt": "Control & Manipulation",
-    "isolate": "Neglect & Emotional Withdrawal",
-    "prevent": "Neglect & Emotional Withdrawal",
-    "limit": "Neglect & Emotional Withdrawal",
-    "hit": "Physical Abuse",
-    "push": "Physical Abuse",
-    "slap": "Physical Abuse",
-    "throw": "Physical Abuse",
-    "punch": "Physical Abuse",
+    "ignore": "Neglect",
+    "shout": "Verbal/Emotional Abuse",
+    "yell": "Verbal/Emotional Abuse",
+    "insult": "Verbal/Emotional Abuse",
+    "blame": "Verbal/Emotional Abuse",
+    "mock": "Verbal/Emotional Abuse",
+    "humiliate": "Verbal/Emotional Abuse",
+    "threat": "Coercive Control",
+    "control": "Coercive Control",
+    "monitor": "Coercive Control",
+    "check": "Coercive Control",
+    "password": "Coercive Control",
+    "guilt": "Coercive Control",
+    "restrict": "Coercive Control",
+    "isolate": "Neglect",
+    "prevent": "Neglect",
+    "limit": "Neglect",
+    "withhold": "Neglect",
+    "hit": "Physical Aggression",
+    "push": "Physical Aggression",
+    "slap": "Physical Aggression",
+    "throw": "Physical Aggression",
+    "punch": "Physical Aggression",
+    "kick": "Physical Aggression",
     "hug": "Support & Affection",
     "kiss": "Support & Affection",
     "compliment": "Support & Affection",
@@ -102,6 +105,16 @@ KEYWORD_TO_CATEGORY = {
     "space": "Trust & Respect"
 }
 
+CATEGORY_PRIORITY = [
+    "Physical Aggression",
+    "Coercive Control",
+    "Verbal/Emotional Abuse",
+    "Neglect",
+    "Support & Affection",
+    "Healthy Communication",
+    "Trust & Respect"
+]
+
 # --------------------------
 # 3. DETECTION LOGIC
 # --------------------------
@@ -109,17 +122,20 @@ KEYWORD_TO_CATEGORY = {
 def manual_fallback_check(user_input):
     """Your original function, used only if AI fails."""
     user_input_lower = user_input.lower()
-    detected = set()
+    detected = []
 
     for keyword, category in KEYWORD_TO_CATEGORY.items():
         if keyword in user_input_lower:
-            detected.add(category)
+            detected.append(category)
 
     if not detected:
         return "Neutral / Unclassified"
-    
-    # Return the first detected category
-    return list(detected)[0]
+
+    for category in CATEGORY_PRIORITY:
+        if category in detected:
+            return category
+
+    return detected[0]
 
 def hybrid_detect(user_input):
     """Main function: Asks AI first, then checks Keywords."""
