@@ -119,6 +119,19 @@
                     </div>
                 </nav>
 
+<router-link 
+    :to="{ name: 'user.behavioral-assessment' }" 
+    class="menu-item group"
+    active-class="active-link"
+>
+    <div class="flex items-center gap-4">
+        <div class="p-2 rounded-lg bg-platinum-100 dark:bg-abyss-700 group-hover:bg-calm-lavender-100 dark:group-hover:bg-calm-lavender-900/30 transition-colors">
+            <component :is="'ActivityIcon'" class="w-4 h-4" />
+        </div>
+        <span v-if="isFull" class="menu-text">Behavioral AI</span>
+    </div>
+</router-link>
+
                 <!-- Profile trigger -->
                 <div class="mt-auto p-4 relative border-t border-platinum-200 dark:border-abyss-600 container-bg">
                     <div ref="profileTriggerRef" @click="profileMenuOpen = !profileMenuOpen"
@@ -173,7 +186,7 @@
                     </button>
                     <button @click="isLogoutModalOpen = true; profileMenuOpen = false"
                         class="menu-item text-red-600 border-none hover:bg-red-50 dark:hover:bg-red-500/5">
-                        <LogOut class="h-4 w-4" /> Logout
+                        <LogOut class="h-4 w-4" /> Sign Out
                     </button>
                 </div>
             </Transition>
@@ -195,7 +208,7 @@ import ConfirmLogoutModal from '@/components/ui/ConfirmLogoutModal.vue'
 import {
     ChevronLeft, ChevronRight, Library, Gift, Package,
     MoreVertical, User as UserIcon, Settings, LogOut,
-    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, Trophy
+    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, Trophy, ActivityIcon
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -214,7 +227,6 @@ const navItems = [
     { name: 'Leaderboards', action: () => isLeaderboardOpen.value = true, isActive: () => isLeaderboardOpen.value, icon: Trophy, color: 'text-yellow-500', fill: 'fill-yellow-500/20' },
     { name: 'Classrooms', route: 'classrooms.index', icon: School, color: 'text-blue-500', fill: 'fill-blue-500/20' },
     { name: 'Modules', route: 'user.modules', icon: Library, color: 'text-emerald-500', fill: 'fill-emerald-500/20' },
-    { name: 'Risk Check', route: 'user.behavior-assessment', icon: ShieldCheckIcon, color: 'text-red-500', fill: 'fill-red-500/20' },
     { name: 'My Inventory', route: 'user.my-inventory', icon: Package, color: 'text-neon-pink-500', fill: 'fill-neon-pink-500/20' },
     { name: 'Rewards Shop', route: 'user.rewards-shop', icon: Gift, color: 'text-orange-500', fill: 'fill-orange-500/20' }
 ]

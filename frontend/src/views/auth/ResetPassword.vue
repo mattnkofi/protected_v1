@@ -34,17 +34,17 @@
 
           <div class="mb-8 text-center sm:text-left mt-[-1rem] md:mt-0">
             <h1 class="form-title mb-1">
-              Reset Access
+              Reset Your Password
             </h1>
             <p class="form-subtitle">
-              Establish a strong protocol to regain entry.
+              Create a new password to regain access to your account.
             </p>
           </div>
 
           <form @submit.prevent="submit" class="space-y-4">
 
             <div class="space-y-1.5">
-              <label class="block field-label">Verified Identity</label>
+              <label class="block field-label">Your Email Address</label>
               <div class="relative">
                 <input v-model.trim="email" type="email" readonly
                   class="w-full px-4 py-2.5 rounded-lg border border-platinum-200 dark:border-abyss-800 bg-platinum-50 dark:bg-abyss-950 text-platinum-500 dark:text-abyss-600 cursor-not-allowed outline-none font-medium italic" />
@@ -75,7 +75,7 @@
               </div>
 
               <div class="space-y-1.5">
-                <label for="confirm" class="block field-label">Repeat Password</label>
+                <label for="confirm" class="block field-label">Confirm Password</label>
                 <input id="confirm" v-model="password_confirmation" type="password" placeholder="••••••••" required
                   class="input-field" />
               </div>
@@ -89,7 +89,7 @@
                                        hover:bg-calm-lavender-700 focus:ring-4 focus:ring-calm-lavender-500/30
                                        disabled:opacity-60 disabled:cursor-not-allowed
                                        transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                <span v-if="!loading" class="relative z-10 drop-shadow-xl">Finalize Protocol</span>
+                <span v-if="!loading" class="relative z-10 drop-shadow-xl">Reset Password</span>
                 <div v-else class="w-6 h-6 border-3 border-white/30 border-t-white rounded-full animate-spin"></div>
               </button>
             </div>
@@ -99,7 +99,7 @@
           <div class="mt-4 pt-4 border-t border-platinum-200 dark:border-abyss-800 text-center">
             <router-link :to="{ name: 'login' }"
               class="text-xs font-medium text-slate-500 hover:text-calm-lavender-600 transition-colors">
-              Cancel and return to login
+              Back to Login
             </router-link>
           </div>
 

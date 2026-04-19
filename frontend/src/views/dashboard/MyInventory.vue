@@ -76,13 +76,13 @@
                     <div class="mt-auto pt-2.5 border-t-2 border-platinum-200 dark:border-abyss-500
                                 flex items-center justify-between gap-1">
                         <div>
-                            <p class="font-mplusrounded text-[10px] text-platinum-500">Unlocked</p>
+                            <p class="font-poppins text-[10px] text-platinum-500">Unlocked</p>
                             <p class="text-xs font-medium text-abyss-700 dark:text-platinum-300">
                                 {{ formatDate(item.claimed_at) }}
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="font-mplusrounded text-[10px] text-platinum-500">XP Value</p>
+                            <p class="font-poppins text-[10px] text-platinum-500">XP Value</p>
                             <p class="text-xs font-semibold text-calm-lavender-600 dark:text-calm-lavender-400">
                                 {{ item.reward?.xp_cost?.toLocaleString() || 0 }}
                             </p>
@@ -186,7 +186,7 @@ onMounted(loadInventory);
 }
 
 .stat-pill-label {
-    @apply font-mplusrounded text-xs text-platinum-500 uppercase tracking-wide;
+    @apply font-poppins text-xs text-platinum-500 uppercase tracking-wide;
 }
 
 .stat-pill-value {

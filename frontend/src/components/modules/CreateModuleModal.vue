@@ -20,7 +20,7 @@
                     </div>
                     <div>
                         <p class="section-eyebrow">Module Registry</p>
-                        <h2 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                        <h2 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
                             Create a <span class="brand-gradient-text">New Module</span>
                         </h2>
                     </div>
@@ -429,7 +429,7 @@ const handleSubmit = async () => {
     error.value = null;
     try {
         const files = { moduleFile: moduleFile.value, thumbnail: thumbnail.value };
-        await moduleStore.createModule(form, files);
+        await moduleStore.createModule({ ...form}, files);
         emit('saved');
     } catch (err) {
         error.value = err.response?.data?.message || 'Setup failed';
@@ -490,7 +490,7 @@ const handleSubmit = async () => {
 .section-eyebrow {
     @apply text-xs font-bold uppercase tracking-widest;
     @apply text-calm-lavender-500 dark:text-calm-lavender-400;
-    @apply font-mplusrounded;
+    @apply font-poppins;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -505,7 +505,7 @@ const handleSubmit = async () => {
 .form-section-label {
     @apply block text-xs font-bold uppercase tracking-widest mb-1;
     @apply text-abyss-500 dark:text-abyss-300;
-    @apply font-mplusrounded;
+    @apply font-poppins;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -521,7 +521,7 @@ const handleSubmit = async () => {
 
 .field-subtext {
     @apply text-xs font-medium text-abyss-500 dark:text-abyss-300;
-    @apply font-mplusrounded;
+    @apply font-poppins;
 }
 
 /* ═══════════════════════════════════════════════════════════

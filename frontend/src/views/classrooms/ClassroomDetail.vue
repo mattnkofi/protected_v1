@@ -1,10 +1,10 @@
 <template>
-  <div class="page-wrapper animate-in">      
-    
+  <div class="page-wrapper animate-in">
+
     <button @click="handleBack" class="back-btn group w-fit">
-        <ArrowLeftIcon class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
-        <span>Back to Library</span>
-      </button>
+      <ArrowLeftIcon class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform" />
+      <span>Back to Library</span>
+    </button>
     <div class="max-w-[1600px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
 
       <!-- Sidebar -->
@@ -41,10 +41,8 @@
             </div>
           </div>
 
-          <button @click="isFacilitator ? (showCreateModal = true) : null"
-            class="btn-primary w-full justify-center"
-            :disabled="!isFacilitator">
-            {{ isFacilitator ? 'Add Module' : 'Classroom Access' }}
+          <button @click="showManageModal = true" class="btn-primary w-full justify-center">
+            {{ isFacilitator ? 'Manage Class' : 'Change Class' }}
           </button>
         </div>
 
@@ -85,7 +83,8 @@
 
           <!-- Modules Tab -->
           <div v-if="activeTab === 'Modules'" class="animate-in grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            <div v-for="module in classroom?.modules" :key="module.id" @click="$router.push(`/modules/${module.id}`)"
+            <div v-for="module in classroom?.modules" :key="module.id"
+  @click="router.push({ name: isFacilitator ? 'facilitator.modules.detail' : 'user.module.detail', params: { id: module.id } })"
               class="module-card group cursor-pointer">
               <div
                 class="p-2.5 bg-calm-lavender-50 dark:bg-calm-lavender-900/20 border border-calm-lavender-100 dark:border-calm-lavender-800/30 rounded-xl w-fit mb-4 group-hover:bg-calm-lavender-100 dark:group-hover:bg-calm-lavender-800/40 transition-colors">
@@ -102,12 +101,12 @@
               </div>
             </div>
 
-            <div v-if="isFacilitator"
-              @click="showCreateModal = true"
-              class="border-2 border-dashed border-slate-200 dark:border-abyss-500 rounded-2xl flex flex-col items-center justify-center gap-2 opacity-50 hover:opacity-80 hover:border-calm-lavender-300 dark:hover:border-calm-lavender-700 transition-all cursor-pointer min-h-[130px]">
-              <PlusIcon class="w-5 h-5 text-platinum-500" />
-              <span class="text-xs font-medium text-platinum-500">New Module</span>
-            </div>
+<div v-if="isFacilitator"
+  @click="showCreateModuleModal = true"
+  class="border-2 border-dashed border-slate-200 dark:border-abyss-500 rounded-2xl flex flex-col items-center justify-center gap-2 opacity-50 hover:opacity-80 hover:border-calm-lavender-300 dark:hover:border-calm-lavender-700 transition-all cursor-pointer min-h-[130px]">
+  <PlusIcon class="w-5 h-5 text-platinum-500" />
+  <span class="text-xs font-medium text-platinum-500">New Module</span>
+</div>
           </div>
 
           <!-- Feed Tab -->
@@ -282,14 +281,87 @@
       </div>
     </Transition>
 
-    <Teleport to="body">
-      <CreateModuleModal
-        v-if="showCreateModal"
-        :defaultClassroomId="Number(route.params.id)"
-        @saved="handleModuleCreated"
-        @cancel="showCreateModal = false"
-      />
-    </Teleport>
+    <Transition name="modal">
+      <div v-if="showManageModal" class="modal-overlay" @click.self="showManageModal = false">
+        <div class="modal-panel">
+          <h3 class="modal-title">{{ isFacilitator ? 'Manage Class' : 'Change Class' }}</h3>
+
+          <!-- Facilitator view -->
+          <div v-if="isFacilitator" class="space-y-3">
+            <!-- Editable name -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-platinum-500">Class Name</label>
+              <input v-model="editClassroomForm.name" class="input-field" placeholder="Classroom name..." />
+            </div>
+
+            <!-- Editable description -->
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-platinum-500">Description</label>
+              <textarea v-model="editClassroomForm.description" class="input-field resize-none" rows="2" />
+            </div>
+
+            <!-- Read-only info -->
+            <div class="info-row">
+              <span class="info-label">Join Code</span>
+              <span
+                class="font-mono text-sm font-semibold text-calm-lavender-600 dark:text-calm-lavender-400 tracking-widest">
+                {{ classroom?.join_code }}
+              </span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Members</span>
+              <span class="text-sm font-semibold text-slate-700 dark:text-platinum-200">
+                {{ classroom?.students?.length || 0 }}
+              </span>
+            </div>
+
+            <!-- Danger zone -->
+            <div class="pt-2 border-t border-slate-100 dark:border-abyss-600">
+              <button @click="confirmDeleteClassroom"
+                class="text-xs text-red-500 hover:text-red-600 font-medium flex items-center gap-1">
+                <TrashIcon class="w-3.5 h-3.5" /> Delete Classroom
+              </button>
+            </div>
+          </div>
+
+          <!-- Player view -->
+          <div v-else>
+            <p class="text-sm text-platinum-500 mb-4">Enter a new class code to switch classrooms.</p>
+            <input v-model="joinCode" placeholder="Enter class code..." class="input-field" />
+          </div>
+
+          <div class="flex gap-2 mt-5">
+            <button @click="showManageModal = false" class="btn-secondary flex-1">Cancel</button>
+            <button v-if="isFacilitator" @click="saveClassroomChanges" class="btn-primary flex-1 justify-center">
+              Save Changes
+            </button>
+            <button v-else @click="joinNewClass" class="btn-primary flex-1 justify-center">
+              Join Class
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+
+<CreateModuleModal
+  v-if="showCreateModuleModal"
+  :default-classroom-id="Number(route.params.id)"
+  @saved="handleModuleSaved"
+  @cancel="showCreateModuleModal = false"
+/>
+
+<ConfirmModal
+  :is-open="showDeleteClassroomModal"
+  variant="danger"
+  title="Delete Classroom?"
+  :message="`'${classroom?.name}' and all its data will be permanently removed.`"
+  warning-text="This will also remove all modules and announcements linked to this classroom."
+  confirm-label="Delete Classroom"
+  loading-label="Deleting…"
+  :loading="isDeletingClassroom"
+  @confirm="executeDeleteClassroom"
+  @cancel="showDeleteClassroomModal = false"
+/>
   </div>
 </template>
 
@@ -297,7 +369,6 @@
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import CreateModuleModal from '@/components/modules/CreateModuleModal.vue';
 import {
   School as SchoolIcon,
   BookOpen as BookOpenIcon,
@@ -311,6 +382,8 @@ import {
   Calendar as CalendarIcon
 } from 'lucide-vue-next';
 import api from '@/utils/api';
+import CreateModuleModal from '@/components/modules/CreateModuleModal.vue';
+import ConfirmModal from '@/components/ui/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -318,7 +391,6 @@ const auth = useAuthStore();
 const classroom = ref(null);
 const progressData = ref([]);
 const activeTab = ref('Modules');
-const showCreateModal = ref(false);
 
 const announcements = ref([]);
 const newAnnouncement = ref({ title: '', content: '', priority: 'normal' });
@@ -329,19 +401,36 @@ const editForm = ref({ id: null, title: '', content: '', priority: 'normal' });
 const isUpdatingAnnouncement = ref(false);
 const isDeletingAnnouncement = ref(false);
 const announcementToDelete = ref(null);
+const showManageModal = ref(false);
+const editClassroomForm = ref({ name: '', description: '' });
+const showCreateModuleModal = ref(false);
+const showDeleteClassroomModal = ref(false);
+const isDeletingClassroom = ref(false);
 
-const isFacilitator = computed(() => {
-  const role = auth.user?.role;
-  const canManageByRole = ['admin', 'educator', 'moderator', 'facilitator'].includes(role);
-  const isClassOwner = Number(classroom.value?.created_by) === Number(auth.user?.id);
-  return canManageByRole || isClassOwner;
-});
+const isFacilitator = computed(() =>
+  ['facilitator', 'educator', 'moderator', 'admin'].includes(auth.user?.role)
+);
 
 const availableTabs = computed(() => {
   const tabs = ['Modules', 'Feed', 'People'];
   if (isFacilitator.value) tabs.push('Progress');
   return tabs;
 });
+
+
+const joinCode = ref('');
+
+const joinNewClass = async () => {
+  if (!joinCode.value) return;
+  try {
+    await api.post('/api/v1/classrooms/join', { join_code: joinCode.value });
+    showManageModal.value = false;
+    joinCode.value = '';
+    fetchClassroomDetails();
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 const getAnnouncementClass = (priority) => {
   const classes = {
@@ -460,12 +549,50 @@ watch(activeTab, (newTab) => {
 });
 
 const handleBack = () => {
-router.push({ name: isFacilitator.value ? 'facilitator.classrooms' : 'classrooms.index' });
+  router.push({ name: isFacilitator.value ? 'facilitator.classrooms' : 'classrooms.index' });
 };
 
-const handleModuleCreated = async () => {
-  showCreateModal.value = false;
-  await fetchClassroomDetails();
+const handleModuleSaved = async () => {
+  showCreateModuleModal.value = false;
+  await fetchClassroomDetails(); // refresh modules list in the classroom
+};
+
+// Populate form when modal opens
+watch(showManageModal, (open) => {
+  if (open && isFacilitator.value) {
+    editClassroomForm.value = {
+      name: classroom.value?.name || '',
+      description: classroom.value?.description || ''
+    };
+  }
+});
+
+const saveClassroomChanges = async () => {
+  try {
+    const classId = route.params.id;
+    await api.put(`/api/v1/classrooms/${classId}`, editClassroomForm.value);
+    showManageModal.value = false;
+    fetchClassroomDetails(); // refresh
+  } catch (err) { console.error(err); }
+};
+
+const confirmDeleteClassroom = () => {
+  showManageModal.value = false; // close manage modal first
+  showDeleteClassroomModal.value = true;
+};
+
+const executeDeleteClassroom = async () => {
+  isDeletingClassroom.value = true;
+  try {
+    const classId = route.params.id;
+    await api.delete(`/api/v1/classrooms/${classId}`);
+    showDeleteClassroomModal.value = false;
+    router.push({ name: 'facilitator.classrooms' });
+  } catch (err) {
+    console.error(err);
+  } finally {
+    isDeletingClassroom.value = false;
+  }
 };
 
 onMounted(() => {

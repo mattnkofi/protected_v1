@@ -35,7 +35,7 @@ export const facilitatorPages = [
     },
     {
         path: 'modules/:id',
-        name: 'facilitator.module.detail',
+        name: 'facilitator.modules.detail',
         component: () => import('@/views/ModuleDetail.vue'),
         meta: { title: 'Learning Module' }
     },
@@ -49,6 +49,24 @@ export const facilitatorPages = [
         path: 'rewards',
         name: 'facilitator.rewards',
         component: () => import('@/views/facilitator/RewardsManager.vue'),
-        meta: { title: 'Rewards Manager' }
-    }
+        meta: { title: 'Rewards Manager',requiresAuth: true, role: 'facilitator' }
+    },
+    {
+        path: 'ml-analytics',
+        name: 'facilitator.ml-analytics',
+        component: () => import('@/views/facilitator/MLAnalytics.vue'),
+        meta: { title: 'ML Analytics Dashboard' }
+    },
+    {
+        path: 'hgdg',
+        name: 'facilitator.hgdg',
+        component: () => import('@/views/hgdg/HGDGPage.vue'),
+        meta: { title: 'HGDG Assessment Dashboard' }
+    },
+    {
+        path: 'hgdg/assessment/:id',
+        name: 'facilitator.hgdg.assessment',
+        component: () => import('@/components/hgdg/HGDGAssessment.vue'),
+        meta: { title: 'HGDG Assessment' }
+    },
 ];

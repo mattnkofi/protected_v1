@@ -70,7 +70,7 @@ defineProps({
 defineEmits(['view']);
 
 const formatCategory = (category) => {
-    const map = { 'gad': 'Culture', 'sexual_health': 'Health', 'vawc': 'Safety', 'general': 'Standard' };
+    const map = { 'gad': 'Institutional', 'sexual_health': 'Health', 'vawc': 'Safety', 'general': 'Standard' };
     return map[category] || 'General';
 };
 </script>

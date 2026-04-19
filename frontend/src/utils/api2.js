@@ -4,7 +4,6 @@ import axios from "axios";
 // ====== Config ======
 const API_ORIGIN = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, "") || "http://localhost:3000";
 const TOKEN_KEY = "jwt";
-const REFRESH_TOKEN_KEY = "refresh_jwt";
 
 // ====== Axios base instance ======
 const api = axios.create({
@@ -17,43 +16,25 @@ const api = axios.create({
     },
 });
 
-// ====== Access Token Helpers (tab-scoped sessionStorage) ======
+// ====== Access Token Helpers (LocalStorage is okay for short-lived tokens) ======
 export function getAuthToken() {
     try {
-        return sessionStorage.getItem(TOKEN_KEY) || null;
+        return localStorage.getItem(TOKEN_KEY) || null;
     } catch { return null; }
 }
 
 export function setAuthToken(token) {
     try {
-        sessionStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(TOKEN_KEY, token);
     } catch { }
     api.defaults.headers.common.Authorization = `Bearer ${token}`;
 }
 
 export function clearAuthToken() {
     try {
-        sessionStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(TOKEN_KEY);
     } catch { }
     delete api.defaults.headers.common.Authorization;
-}
-
-export function getRefreshToken() {
-    try {
-        return sessionStorage.getItem(REFRESH_TOKEN_KEY) || null;
-    } catch { return null; }
-}
-
-export function setRefreshToken(token) {
-    try {
-        sessionStorage.setItem(REFRESH_TOKEN_KEY, token);
-    } catch { }
-}
-
-export function clearRefreshToken() {
-    try {
-        sessionStorage.removeItem(REFRESH_TOKEN_KEY);
-    } catch { }
 }
 
 // Re-init access token on boot
@@ -106,17 +87,11 @@ api.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                const refreshToken = getRefreshToken();
-                const refreshRequest = refreshToken
-                    ? axios.post(`${API_ORIGIN}/api/v1/auth/refresh`, { refresh_token: refreshToken }, { withCredentials: true })
-                    : axios.post(`${API_ORIGIN}/api/v1/auth/refresh`, {}, { withCredentials: true });
-
-                const { data } = await refreshRequest;
-
+                // We send an empty body; the browser automatically attaches the HttpOnly cookie
+                const { data } = await axios.post(`${API_ORIGIN}/api/v1/auth/refresh`, {}, { withCredentials: true });
+                
                 const newAccessToken = data?.token;
-                const newRefreshToken = data?.refreshToken || data?.refresh_token || null;
                 setAuthToken(newAccessToken);
-                if (newRefreshToken) setRefreshToken(newRefreshToken);
                 onTokenRefreshed(newAccessToken);
                 isRefreshing = false;
 
@@ -143,17 +118,11 @@ api.interceptors.response.use(
 export async function logoutEverywhere() {
     try { await api.post("/api/v1/auth/logout-all"); } catch { }
     clearAuthToken();
-    clearRefreshToken();
 }
 
 export async function logout() {
-    const refreshToken = getRefreshToken();
-
-    try {
-        await api.post("/api/v1/auth/logout", refreshToken ? { refresh_token: refreshToken } : {});
-    } catch { }
+    try { await api.post("/api/v1/auth/logout"); } catch { }
     clearAuthToken();
-    clearRefreshToken();
 }
 
 export default api;

@@ -11,20 +11,20 @@
                 </button>
 
                 <nav
-                    class="hidden sm:flex items-center space-x-3 text-sm font-black uppercase tracking-widest italic">
+                    class="hidden sm:flex items-center space-x-3 text-sm font-black uppercase tracking-widest">
                     <router-link :to="{ name: 'admin.dashboard' }"
-                        class="text-slate-400 hover:text-purple-600 dark:hover:text-fuchsia-500 transition-colors">
+                        class="text-slate-400 hover:text-purple-600 dark:hover:text-fuchsia-500 transition-colors font-bold font-poppins">
                         HOME
                     </router-link>
                     <ChevronRightIcon class="h-3.5 w-3.5 text-slate-300 dark:text-slate-700" />
-                    <span class="text-purple-600 dark:text-fuchsia-400">
+                    <span class="text-purple-600 dark:text-fuchsia-400 font-bold">
                         {{ currentPageTitle }}
                     </span>
                 </nav>
             </div>
 
             <div class="flex items-center gap-3">
-                <NotificationBell />
+                <NotificationBell :filterTypes="['system', 'classroom']"/>
             </div>
         </div>
     </header>

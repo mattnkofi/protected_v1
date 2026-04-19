@@ -84,7 +84,7 @@
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { setAuthToken, setRefreshToken } from '@/utils/api';
+import { setAuthToken } from '@/utils/api';
 import { useToast } from '@/utils/useToast';
 import api from '@/utils/api';
 
@@ -107,16 +107,11 @@ onMounted(async () => {
   try {
     const { data } = await api.post('/api/v1/auth/google/exchange', { code });
     setAuthToken(data.token);
-    if (data.refreshToken || data.refresh_token) {
-      setRefreshToken(data.refreshToken || data.refresh_token);
-    }
     auth.user = data.user;
     toast.success(`Identity Verified. Welcome!`);
     router.replace({ name: 'user.dashboard' });
   } catch (err) {
-    const msg = err.response?.data?.message || "Google synchronization failed.";
-    const details = err.response?.data?.details;
-    error.value = details ? `${msg} (${details})` : msg;
+    error.value = err.response?.data?.message || "Google synchronization failed.";
   }
 });
 </script>

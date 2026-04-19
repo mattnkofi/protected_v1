@@ -22,7 +22,7 @@
                     </div>
                     <div>
                         <p class="section-eyebrow">Quiz Builder</p>
-                        <h2 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                        <h2 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
                             Create a <span class="brand-gradient-text">Quiz Game</span>
                         </h2>
                     </div>
@@ -176,14 +176,10 @@
 
             <!-- ── FOOTER ─────────────────────────────────────── -->
             <footer class="modal-footer">
-                <p v-if="saveError" class="mr-auto text-sm font-medium text-red-600 dark:text-red-400">
-                    {{ saveError }}
-                </p>
                 <button
                     type="button"
                     @click="$emit('close')"
                     class="btn-secondary btn-3d--secondary justify-center"
-                    :disabled="isSaving"
                 >
                     Cancel
                 </button>
@@ -191,10 +187,9 @@
                     type="button"
                     @click="handleSave"
                     class="btn-primary btn-3d justify-center"
-                    :disabled="isSaving"
                 >
                     <ZapIcon class="w-4 h-4" />
-                    {{ isSaving ? 'Publishing...' : 'Publish Quiz' }}
+                    Publish Quiz
                 </button>
             </footer>
 
@@ -203,7 +198,7 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
 import { useQuizStore } from '@/stores/quiz';
 import {
     X as XIcon,
@@ -215,8 +210,6 @@ import {
 const props = defineProps(['isOpen', 'moduleId']);
 const emit = defineEmits(['close', 'saved']);
 const quizStore = useQuizStore();
-const isSaving = ref(false);
-const saveError = ref('');
 
 const form = reactive({
     module_id: props.moduleId,
@@ -233,20 +226,9 @@ const addQuestion = () => {
 const removeQuestion = (index) => form.questions_data.splice(index, 1);
 
 const handleSave = async () => {
-    if (isSaving.value) return;
-
-    saveError.value = '';
-    isSaving.value = true;
-
-    try {
-        await quizStore.createQuiz({ ...form, module_id: props.moduleId });
-        emit('saved');
-        emit('close');
-    } catch (error) {
-        saveError.value = error?.response?.data?.message || 'Failed to create quiz. Please try again.';
-    } finally {
-        isSaving.value = false;
-    }
+    await quizStore.createQuiz({ ...form, module_id: props.moduleId });
+    emit('saved');
+    emit('close');
 };
 </script>
 

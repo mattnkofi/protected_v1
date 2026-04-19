@@ -16,7 +16,7 @@
 
                     <!-- Copy -->
                     <div class="text-center space-y-2.5 mb-6">
-                        <h3 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                        <h3 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
                             {{ title }}
                         </h3>
                         <p class="font-poppins text-base text-platinum-700 dark:text-platinum-400 leading-relaxed px-2">

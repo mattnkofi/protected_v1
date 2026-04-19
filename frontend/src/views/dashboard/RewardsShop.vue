@@ -77,7 +77,7 @@
                     <div class="mt-auto pt-2.5 border-t-2 border-platinum-200 dark:border-abyss-500
                                 flex items-center justify-between gap-2">
                         <div>
-                            <p class="font-mplusrounded text-[10px] text-platinum-500">XP Cost</p>
+                            <p class="font-poppins text-[10px] text-platinum-500">XP Cost</p>
                             <p class="text-xs font-semibold leading-none"
                                :class="canAfford(item)
                                    ? 'text-calm-lavender-600 dark:text-calm-lavender-400'
@@ -198,7 +198,7 @@ onMounted(loadRewards);
 }
 
 .stat-pill-label {
-    @apply font-mplusrounded text-xs text-platinum-500 uppercase tracking-wide;
+    @apply font-poppins text-xs text-platinum-500 uppercase tracking-wide;
 }
 
 .stat-pill-value {

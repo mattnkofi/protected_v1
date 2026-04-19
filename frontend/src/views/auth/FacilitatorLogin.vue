@@ -127,7 +127,7 @@
               Switch to
               <router-link :to="{ name: 'login' }"
                 class="text-calm-lavender-600 dark:text-calm-lavender-400 font-semibold hover:text-calm-lavender-700 transition-colors ml-1">
-                Student Login
+               Login Page
               </router-link>
             </p>
           </div>

@@ -15,7 +15,7 @@
             <!-- Header ───────────────────────────────────────── -->
             <div class="shrink-0 mb-7">
                 <p class="section-eyebrow mb-2">New Classroom</p>
-                <h2 class="font-madimione text-3xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                <h2 class="font-poppins font-bold text-3xl text-abyss-800 dark:text-platinum-100 leading-tight">
                     Create a <span class="brand-gradient-text">Classroom</span>
                 </h2>
                 <p class="field-subtext mt-1.5">

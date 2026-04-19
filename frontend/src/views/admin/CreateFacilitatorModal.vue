@@ -21,7 +21,7 @@
                     </div>
                     <div>
                         <p class="section-eyebrow">User Management</p>
-                        <h2 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                        <h2 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
                             Add <span class="brand-gradient-text">New User</span>
                         </h2>
                     </div>
@@ -47,7 +47,7 @@
                         class="input-field placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
                         :class="errors.name ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-900/10' : ''"
                     />
-                    <p v-if="errors.name" class="font-mplusrounded text-xs text-red-500 mt-1">
+                    <p v-if="errors.name" class="font-poppins text-xs text-red-500 mt-1">
                         {{ errors.name }}
                     </p>
                 </div>
@@ -65,7 +65,7 @@
                         class="input-field placeholder:text-platinum-700 dark:placeholder:text-platinum-400"
                         :class="errors.email ? 'border-red-400 dark:border-red-700 bg-red-50 dark:bg-red-900/10' : ''"
                     />
-                    <p v-if="errors.email" class="font-mplusrounded text-xs text-red-500 mt-1">
+                    <p v-if="errors.email" class="font-poppins text-xs text-red-500 mt-1">
                         {{ errors.email }}
                     </p>
                 </div>
@@ -91,7 +91,7 @@
                     </div>
                     <div class="space-y-0.5">
                         <p class="font-semibold text-sm text-abyss-800 dark:text-platinum-100">Next Step</p>
-                        <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500 leading-relaxed">
+                        <p class="font-poppins text-xs text-platinum-600 dark:text-platinum-500 leading-relaxed">
                             A welcome email with a secure temporary password will be sent automatically.
                         </p>
                     </div>

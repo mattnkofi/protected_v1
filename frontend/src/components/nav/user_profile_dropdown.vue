@@ -69,7 +69,7 @@
                                 class="p-2 rounded-lg bg-red-500/5 border border-red-500/10 group-hover/m:bg-red-500/20 transition-colors">
                                 <LogOut class="w-3.5 h-3.5" />
                             </div>
-                            <span class="flex-1 text-left">Logout</span>
+                            <span class="flex-1 text-left">Sign Out</span>
                         </button>
                     </div>
                 </div>

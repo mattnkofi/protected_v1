@@ -37,7 +37,7 @@
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-safety-teal-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-safety-teal-500"></span>
                                 </span>
-                                <span class="font-mplusrounded text-xs
+                                <span class="font-poppins text-xs
                                              text-platinum-500 dark:text-platinum-200">Always Online</span>
                             </div>
                         </div>
@@ -100,7 +100,7 @@
                         </div>
                         <h4 class="font-bold text-base
                                    text-abyss-800 dark:text-platinum-200 mb-2">Welcome to Lumina</h4>
-                        <p class="font-mplusrounded text-sm
+                        <p class="font-poppins text-sm
                                   text-platinum-600 dark:text-platinum-300
                                   px-6 leading-relaxed max-w-[85%] mx-auto">
                             I'm your intelligent assistant. Ask me anything about GAD, VAWC, Sex Ed, or any other topic!
@@ -140,12 +140,12 @@
                                 </div>
                                 <!-- Timestamp + model badge -->
                                 <div class="flex items-center gap-2 mt-1.5 ml-1">
-                                    <span class="font-mplusrounded text-xs
+                                    <span class="font-poppins text-xs
                                                  text-platinum-500 dark:text-platinum-400">
                                         {{ formatTime(msg.timestamp) }}
                                     </span>
                                     <span v-if="msg.model"
-                                          class="font-mplusrounded text-xs px-1.5 py-0.5 rounded-lg uppercase tracking-wide
+                                          class="font-poppins text-xs px-1.5 py-0.5 rounded-lg uppercase tracking-wide
                                                  bg-platinum-200 dark:bg-abyss-600
                                                  border border-platinum-300 dark:border-abyss-500
                                                  text-platinum-600 dark:text-platinum-300">
@@ -227,7 +227,7 @@
                             <span
                                 v-if="userInput.length > 0"
                                 class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none
-                                       font-mplusrounded text-xs
+                                       font-poppins text-xs
                                        text-platinum-500 dark:text-platinum-400"
                             >
                                 {{ userInput.length }}/500
@@ -254,7 +254,7 @@
                     <!-- Footer note -->
                     <div class="flex justify-center items-center gap-1.5 mt-3">
                         <Lock class="w-3 h-3 text-platinum-500 dark:text-platinum-400" />
-                        <p class="font-mplusrounded text-xs text-platinum-500 dark:text-platinum-400">
+                        <p class="font-poppins text-xs text-platinum-500 dark:text-platinum-400">
                             Secure &amp; Encrypted · Powered by Gemini AI
                         </p>
                     </div>

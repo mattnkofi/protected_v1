@@ -8,7 +8,7 @@
             <header class="page-header">
                 <div class="space-y-2">
                     <p class="section-eyebrow">Student Dashboard</p>
-                    <h1 class="font-madimione text-3xl md:text-4xl text-abyss-900 dark:text-platinum-50 leading-tight">
+                    <h1 class="font-poppins font-bold text-3xl md:text-4xl text-abyss-900 dark:text-platinum-50 leading-tight">
                         {{ currentGreeting }},
                         <span class="text-calm-lavender-600 dark:text-calm-lavender-400">{{ userFirstName }}</span> 👋
                     </h1>
@@ -26,7 +26,7 @@
                         </div>
                         <div class="flex flex-col leading-none">
                             <span
-                                class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-400 mb-0.5 uppercase tracking-wide">Level</span>
+                                class="font-poppins text-xs text-platinum-600 dark:text-platinum-400 mb-0.5 uppercase tracking-wide">Level</span>
                             <span class="text-xl font-bold text-abyss-800 dark:text-platinum-100">
                                 {{ auth.user?.gamification?.level || 1 }}
                             </span>
@@ -39,7 +39,7 @@
                         </div>
                         <div class="flex flex-col leading-none">
                             <span
-                                class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-400 mb-0.5 uppercase tracking-wide">Streak</span>
+                                class="font-poppins text-xs text-platinum-600 dark:text-platinum-400 mb-0.5 uppercase tracking-wide">Streak</span>
                             <span class="text-xl font-bold text-abyss-800 dark:text-platinum-100">
                                 {{ auth.user?.gamification?.streak || 0 }}
                             </span>
@@ -60,7 +60,7 @@
                                 text-amber-600 dark:text-amber-400">
                         <BellRingIcon class="w-5 h-5" />
                     </div>
-                    <h2 class="font-madimione text-xl text-abyss-800 dark:text-platinum-100">
+                    <h2 class="font-poppins font-bold text-xl text-abyss-800 dark:text-platinum-100">
                         Latest <span class="text-amber-600 dark:text-amber-400">Updates</span>
                     </h2>
                 </div>
@@ -128,7 +128,7 @@
                 </div>
                 <div class="flex-1">
                     <span
-                        class="font-mplusrounded text-xs text-calm-lavender-600 dark:text-calm-lavender-400 uppercase tracking-widest mb-1.5 block">
+                        class="font-poppins text-xs text-calm-lavender-600 dark:text-calm-lavender-400 uppercase tracking-widest mb-1.5 block">
                         Daily Fact
                     </span>
                     <p class="text-base font-medium text-abyss-700 dark:text-platinum-100 leading-relaxed italic">
@@ -136,130 +136,6 @@
                     </p>
                 </div>
             </div>
-
-            <!-- Personalized Guidance and Early Alerts -->
-            <section :class="['rounded-2xl border-2 p-6',
-                personalizedGuidance.alertLevel === 'high'
-                    ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-700/40'
-                    : personalizedGuidance.alertLevel === 'moderate'
-                        ? 'bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-700/40'
-                        : 'bg-safety-teal-50 dark:bg-safety-teal-900/20 border-safety-teal-200 dark:border-safety-teal-700/40'
-            ]">
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
-                    <div class="flex items-center gap-3">
-                        <div :class="['p-2.5 rounded-xl border',
-                            personalizedGuidance.alertLevel === 'high'
-                                ? 'bg-red-100 text-red-600 border-red-200 dark:bg-red-900/30 dark:text-red-300 dark:border-red-700/40'
-                                : personalizedGuidance.alertLevel === 'moderate'
-                                    ? 'bg-amber-100 text-amber-600 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-700/40'
-                                    : 'bg-safety-teal-100 text-safety-teal-600 border-safety-teal-200 dark:bg-safety-teal-900/30 dark:text-safety-teal-300 dark:border-safety-teal-700/40'
-                        ]">
-                            <ShieldCheckIcon class="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h2 class="font-madimione text-xl text-abyss-800 dark:text-platinum-100">Personalized Guidance</h2>
-                            <p class="text-sm text-platinum-600 dark:text-platinum-400">
-                                Early-support recommendations based on your learning behavior and stress pattern.
-                            </p>
-                        </div>
-                    </div>
-                    <span :class="['inline-flex px-3 py-1 rounded-lg border text-xs font-semibold uppercase tracking-wider w-fit',
-                        personalizedGuidance.alertLevel === 'high'
-                            ? 'text-red-600 border-red-300 bg-white/70 dark:text-red-300 dark:border-red-700/60 dark:bg-red-900/20'
-                            : personalizedGuidance.alertLevel === 'moderate'
-                                ? 'text-amber-700 border-amber-300 bg-white/70 dark:text-amber-300 dark:border-amber-700/60 dark:bg-amber-900/20'
-                                : 'text-safety-teal-700 border-safety-teal-300 bg-white/70 dark:text-safety-teal-300 dark:border-safety-teal-700/60 dark:bg-safety-teal-900/20'
-                    ]">
-                        {{ personalizedGuidance.alertLevel }} alert
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
-                    <div class="rounded-xl border p-3 bg-white/70 dark:bg-abyss-900/30 border-platinum-200 dark:border-abyss-700">
-                        <p class="text-[11px] uppercase tracking-wider text-platinum-500 dark:text-platinum-500">Latest ML Risk</p>
-                        <p class="text-lg font-bold text-abyss-800 dark:text-platinum-100">{{ personalizedGuidance.stressSummary.latestRiskLevel }}</p>
-                    </div>
-                    <div class="rounded-xl border p-3 bg-white/70 dark:bg-abyss-900/30 border-platinum-200 dark:border-abyss-700">
-                        <p class="text-[11px] uppercase tracking-wider text-platinum-500 dark:text-platinum-500">Recent Flags</p>
-                        <p class="text-lg font-bold text-abyss-800 dark:text-platinum-100">{{ personalizedGuidance.stressSummary.flaggedInRecentWindow }}</p>
-                    </div>
-                    <div class="rounded-xl border p-3 bg-white/70 dark:bg-abyss-900/30 border-platinum-200 dark:border-abyss-700">
-                        <p class="text-[11px] uppercase tracking-wider text-platinum-500 dark:text-platinum-500">Attempts (24h)</p>
-                        <p class="text-lg font-bold text-abyss-800 dark:text-platinum-100">{{ personalizedGuidance.stressSummary.attemptsLast24h }}</p>
-                    </div>
-                </div>
-
-                <div class="mb-5 rounded-xl border p-4 bg-white/75 dark:bg-abyss-900/35 border-platinum-200 dark:border-abyss-700">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                        <h4 class="text-sm font-semibold text-abyss-800 dark:text-platinum-100">
-                            Behavioral Pattern & Risk Check (34-item Risk Screening)
-                        </h4>
-                        <router-link
-                            :to="{ name: 'user.behavior-assessment' }"
-                            class="text-xs font-semibold text-calm-lavender-600 dark:text-calm-lavender-400 hover:underline"
-                        >
-                            Open Assessment
-                        </router-link>
-                    </div>
-
-                    <div v-if="personalizedGuidance.latestAssessmentAnalysis" class="space-y-3">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
-                            <div class="rounded-lg border p-2.5 bg-platinum-100 dark:bg-abyss-800 border-platinum-200 dark:border-abyss-600">
-                                <p class="text-[10px] uppercase tracking-wider text-platinum-500 dark:text-platinum-500">Risk</p>
-                                <p class="text-sm font-bold text-abyss-800 dark:text-platinum-100">{{ personalizedGuidance.latestAssessmentAnalysis.overallRiskLevel }}</p>
-                            </div>
-                            <div class="rounded-lg border p-2.5 bg-platinum-100 dark:bg-abyss-800 border-platinum-200 dark:border-abyss-600">
-                                <p class="text-[10px] uppercase tracking-wider text-platinum-500 dark:text-platinum-500">Dominant Category</p>
-                                <p class="text-sm font-bold text-abyss-800 dark:text-platinum-100">{{ personalizedGuidance.latestAssessmentAnalysis.dominantCategory }}</p>
-                            </div>
-                            <div class="rounded-lg border p-2.5 bg-platinum-100 dark:bg-abyss-800 border-platinum-200 dark:border-abyss-600">
-                                <p class="text-[10px] uppercase tracking-wider text-platinum-500 dark:text-platinum-500">Concerning Answers</p>
-                                <p class="text-sm font-bold text-abyss-800 dark:text-platinum-100">{{ personalizedGuidance.latestAssessmentAnalysis.concerningAnswersCount }}</p>
-                            </div>
-                            <div class="rounded-lg border p-2.5 bg-platinum-100 dark:bg-abyss-800 border-platinum-200 dark:border-abyss-600">
-                                <p class="text-[10px] uppercase tracking-wider text-platinum-500 dark:text-platinum-500">Flags</p>
-                                <p class="text-sm font-bold text-abyss-800 dark:text-platinum-100">{{ personalizedGuidance.latestAssessmentAnalysis.flagsDetected ? 'Detected' : 'None' }}</p>
-                            </div>
-                        </div>
-
-                        <div v-if="personalizedGuidance.latestAssessmentAnalysis.topBehaviors?.length" class="flex flex-wrap gap-2">
-                            <span
-                                v-for="behavior in personalizedGuidance.latestAssessmentAnalysis.topBehaviors"
-                                :key="behavior.label"
-                                class="px-2.5 py-1 rounded-md border text-[11px] font-medium bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700/50 text-red-700 dark:text-red-300"
-                            >
-                                {{ behavior.label }} ({{ behavior.count }})
-                            </span>
-                        </div>
-                    </div>
-
-                    <div v-else class="text-sm text-platinum-600 dark:text-platinum-400">
-                        No dedicated behavioral assessment has been analyzed yet. Complete the 34-item Behavioral Pattern & Risk Check to populate this section.
-                    </div>
-                </div>
-
-                <div class="space-y-3">
-                    <article
-                        v-for="rec in personalizedGuidance.recommendations.slice(0, 3)"
-                        :key="rec.id"
-                        class="rounded-xl border p-4 bg-white/70 dark:bg-abyss-900/35 border-platinum-200 dark:border-abyss-700"
-                    >
-                        <div class="flex items-center justify-between gap-2 mb-1.5">
-                            <h4 class="font-semibold text-abyss-800 dark:text-platinum-100">{{ rec.title }}</h4>
-                            <span :class="['text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-md border',
-                                rec.severity === 'high'
-                                    ? 'text-red-600 border-red-200 bg-red-50 dark:text-red-300 dark:border-red-700 dark:bg-red-900/20'
-                                    : rec.severity === 'moderate'
-                                        ? 'text-amber-700 border-amber-200 bg-amber-50 dark:text-amber-300 dark:border-amber-700 dark:bg-amber-900/20'
-                                        : 'text-safety-teal-700 border-safety-teal-200 bg-safety-teal-50 dark:text-safety-teal-300 dark:border-safety-teal-700 dark:bg-safety-teal-900/20'
-                            ]">
-                                {{ rec.severity }}
-                            </span>
-                        </div>
-                        <p class="text-sm text-platinum-700 dark:text-platinum-300 leading-relaxed">{{ rec.message }}</p>
-                    </article>
-                </div>
-            </section>
 
             <!-- ════════════════════════════════════════
                  QUICK ACTIONS
@@ -291,14 +167,14 @@
                         <div class="flex items-center gap-3 mb-6">
                             <div class="h-6 w-1.5 bg-calm-lavender-600 dark:bg-calm-lavender-500 rounded-full shrink-0">
                             </div>
-                            <h3 class="font-madimione text-xl text-abyss-800 dark:text-platinum-100">Your Progress</h3>
+                            <h3 class="font-poppins font-bold text-xl text-abyss-800 dark:text-platinum-100">Your Progress</h3>
                         </div>
 
                         <div class="space-y-5">
                             <div class="flex flex-col md:flex-row md:justify-between md:items-end gap-3">
                                 <div>
                                     <p
-                                        class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-400 uppercase tracking-widest mb-1">
+                                        class="font-poppins text-xs text-platinum-600 dark:text-platinum-400 uppercase tracking-widest mb-1">
                                         Total Experience
                                     </p>
                                     <p class="text-5xl font-bold text-abyss-900 dark:text-platinum-50 tracking-tight">
@@ -309,7 +185,7 @@
                                 </div>
                                 <div class="text-left md:text-right">
                                     <p
-                                        class="font-mplusrounded text-xs text-calm-lavender-600 dark:text-calm-lavender-400 uppercase tracking-widest mb-1">
+                                        class="font-poppins text-xs text-calm-lavender-600 dark:text-calm-lavender-400 uppercase tracking-widest mb-1">
                                         Level {{ auth.user?.gamification?.level || 1 }}
                                     </p>
                                     <p class="text-2xl font-bold text-platinum-500 dark:text-platinum-500">
@@ -341,7 +217,7 @@
                             </div>
                             <p class="text-3xl font-bold text-abyss-900 dark:text-platinum-50 mb-1">{{ stat.val }}</p>
                             <p
-                                class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-400 uppercase tracking-wide">
+                                class="font-poppins text-xs text-platinum-600 dark:text-platinum-400 uppercase tracking-wide">
                                 {{ stat.label }}
                             </p>
                             <p class="text-sm font-medium text-platinum-500 dark:text-platinum-500 mt-0.5">{{ stat.sub
@@ -360,7 +236,7 @@
                                         text-amber-500 dark:text-amber-400">
                                 <TrophyIcon class="h-5 w-5" />
                             </div>
-                            <h3 class="font-madimione text-xl text-abyss-800 dark:text-platinum-100">
+                            <h3 class="font-poppins font-bold text-xl text-abyss-800 dark:text-platinum-100">
                                 Top <span class="text-amber-600 dark:text-amber-400">Learners</span>
                             </h3>
                         </div>
@@ -396,7 +272,7 @@
                     <section class="space-y-5">
                         <div class="flex items-center gap-3">
                             <div class="h-6 w-1.5 bg-neon-pink-500 rounded-full shrink-0"></div>
-                            <h3 class="font-madimione text-xl text-abyss-800 dark:text-platinum-100">
+                            <h3 class="font-poppins font-bold text-xl text-abyss-800 dark:text-platinum-100">
                                 Featured Learning
                             </h3>
                         </div>
@@ -435,7 +311,7 @@
                                         {{ video.description }}
                                     </p>
                                     <span
-                                        class="font-mplusrounded text-xs text-calm-lavender-600 dark:text-calm-lavender-400 uppercase tracking-widest group-hover:underline">
+                                        class="font-poppins text-xs text-calm-lavender-600 dark:text-calm-lavender-400 uppercase tracking-widest group-hover:underline">
                                         Watch Now →
                                     </span>
                                 </div>
@@ -477,16 +353,6 @@ const isLeaderboardOpen = ref(false)
 const announcements = ref([])
 const userBadgesCount = ref(0)
 const now = ref(new Date())
-const personalizedGuidance = ref({
-    alertLevel: 'low',
-    stressSummary: {
-        latestRiskLevel: 'Low',
-        flaggedInRecentWindow: 0,
-        attemptsLast24h: 0
-    },
-    latestAssessmentAnalysis: null,
-    recommendations: []
-})
 let refreshTimer = null
 
 // Only show non-expired, active announcements — re-evaluated every minute via `now`
@@ -595,7 +461,6 @@ const userQuickActions = [
     { name: 'user.modules', icon: BookOpenIcon, label: 'Modules', bg: 'bg-calm-lavender-600 dark:bg-calm-lavender-700' },
     { name: 'user.rewards-shop', icon: LibraryIcon, label: 'Rewards', bg: 'bg-neon-pink-600 dark:bg-neon-pink-700' },
     { name: 'classrooms.index', icon: GraduationCapIcon, label: 'Classes', bg: 'bg-safety-teal-600 dark:bg-safety-teal-700' },
-    { name: 'user.behavior-assessment', icon: ShieldCheckIcon, label: 'Risk Check', bg: 'bg-red-600 dark:bg-red-700' },
     { name: 'profile', icon: UserIcon, label: 'Profile', bg: 'bg-abyss-600 dark:bg-abyss-700' }
 ]
 
@@ -641,45 +506,14 @@ const fetchAnalytics = async () => {
     } catch (error) {
         console.error('Failed to fetch announcements:', error)
     }
-    const [lbRes, badgeRes, guidanceRes, latestAssessmentRes] = await Promise.allSettled([
-        api.get('/api/v1/quizzes/gamification/leaderboard'),
-        api.get('/api/v1/badges/my-inventory'),
-        api.get('/api/v1/notifications/personalized-guidance'),
-        api.get('/api/v1/ml-analysis/assessment/latest')
-    ])
-
-    if (lbRes.status === 'fulfilled') {
-        leaderboard.value = lbRes.value.data.learners || []
-    } else {
-        console.error('Leaderboard fetch error:', lbRes.reason)
-    }
-
-    if (badgeRes.status === 'fulfilled') {
-        userBadgesCount.value = badgeRes.value.data?.inventory?.length || 0
-    } else {
-        console.error('Badge inventory fetch error:', badgeRes.reason)
-    }
-
-    const guidance = guidanceRes.status === 'fulfilled'
-        ? (guidanceRes.value.data?.guidance || personalizedGuidance.value)
-        : personalizedGuidance.value
-
-    if (guidanceRes.status !== 'fulfilled') {
-        console.error('Personalized guidance fetch error:', guidanceRes.reason)
-    }
-
-    const latestAssessmentAnalysis = latestAssessmentRes.status === 'fulfilled'
-        ? (latestAssessmentRes.value.data?.analysis || null)
-        : null
-
-    if (latestAssessmentRes.status !== 'fulfilled') {
-        console.error('Latest assessment fetch error:', latestAssessmentRes.reason)
-    }
-
-    personalizedGuidance.value = {
-        ...guidance,
-        latestAssessmentAnalysis: latestAssessmentAnalysis || guidance.latestAssessmentAnalysis || null
-    }
+    try {
+        const [lbRes, badgeRes] = await Promise.all([
+            api.get('/api/v1/quizzes/gamification/leaderboard'),
+            api.get('/api/v1/badges/my-inventory')
+        ])
+        leaderboard.value = lbRes.data.learners || []
+        userBadgesCount.value = badgeRes.data?.inventory?.length || 0
+    } catch (error) { console.error('Analytics fetch error:', error) }
 }
 
 onMounted(() => {
@@ -876,7 +710,7 @@ onUnmounted(() => {
 .ann-meta-footer {
     @apply flex flex-col gap-1 pt-3;
     @apply border-t border-amber-200 dark:border-amber-500/20;
-    @apply font-mplusrounded text-xs text-platinum-500 dark:text-platinum-500;
+    @apply font-poppins text-xs text-platinum-500 dark:text-platinum-500;
 }
 
 .ann-expiry {

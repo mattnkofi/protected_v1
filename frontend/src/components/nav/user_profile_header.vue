@@ -27,7 +27,7 @@
 
             <!-- Right: notification bell + profile dropdown -->
             <div class="flex items-center gap-3">
-                <NotificationBell />
+                <NotificationBell :filterTypes="['achievement', 'quiz', 'module', 'reward', 'classroom', 'reminder']"/>
                 <ProfileDropdown />
             </div>
         </div>

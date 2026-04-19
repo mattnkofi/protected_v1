@@ -17,7 +17,7 @@
             <div class="flex items-center gap-3 flex-wrap shrink-0">
                 <!-- Bulk action bar (shown when students are selected) -->
                 <div v-if="selectedStudents.length > 0" class="flex items-center gap-2">
-                    <span class="font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">
+                    <span class="font-poppins text-sm text-platinum-600 dark:text-platinum-400">
                         {{ selectedStudents.length }} selected
                     </span>
                     <button
@@ -226,7 +226,7 @@
                                                    group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
                                             {{ student.name }}
                                         </p>
-                                        <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500 truncate">
+                                        <p class="font-poppins text-xs text-platinum-600 dark:text-platinum-500 truncate">
                                             {{ student.email }}
                                         </p>
                                     </div>
@@ -312,7 +312,7 @@
                             <div :class="['ds-icon-badge mb-4', getStatusIconBadgeClass()]">
                                 <component :is="getStatusModalIcon()" class="h-7 w-7" />
                             </div>
-                            <h3 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100">
+                            <h3 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100">
                                 {{ getStatusModalTitle() }}
                             </h3>
                             <p class="font-poppins text-base text-platinum-700 dark:text-platinum-400 mt-2 max-w-xs">
@@ -371,7 +371,7 @@
                             <div class="ds-icon-badge ds-icon-badge--orange mb-4">
                                 <PauseCircleIcon class="h-7 w-7" />
                             </div>
-                            <h3 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100">
+                            <h3 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100">
                                 Suspend Account
                             </h3>
                             <p class="font-poppins text-base text-platinum-700 dark:text-platinum-400 mt-2">
@@ -437,7 +437,7 @@
                             <div class="ds-icon-badge ds-icon-badge--lavender mb-4">
                                 <ZapIcon class="h-7 w-7" />
                             </div>
-                            <h3 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100">
+                            <h3 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100">
                                 Bulk Actions
                             </h3>
                             <p class="font-poppins text-base text-platinum-700 dark:text-platinum-400 mt-2">
@@ -523,7 +523,7 @@
             >
                 <!-- Dropdown header -->
                 <div class="px-4 py-2.5 border-b-2 border-platinum-200 dark:border-abyss-600">
-                    <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500 font-medium">
+                    <p class="font-poppins text-xs text-platinum-600 dark:text-platinum-500 font-medium">
                         Account Actions
                     </p>
                 </div>
@@ -540,7 +540,7 @@
                         </div>
                         <div>
                             <p class="font-semibold text-sm text-safety-teal-700 dark:text-safety-teal-400">Reactivate</p>
-                            <p class="font-mplusrounded text-xs text-safety-teal-600/70 dark:text-safety-teal-500/70">Restore account access</p>
+                            <p class="font-poppins text-xs text-safety-teal-600/70 dark:text-safety-teal-500/70">Restore account access</p>
                         </div>
                     </button>
 
@@ -555,7 +555,7 @@
                         </div>
                         <div>
                             <p class="font-semibold text-sm text-abyss-700 dark:text-platinum-300">Deactivate</p>
-                            <p class="font-mplusrounded text-xs text-platinum-500">Disable account temporarily</p>
+                            <p class="font-poppins text-xs text-platinum-500">Disable account temporarily</p>
                         </div>
                     </button>
 
@@ -570,7 +570,7 @@
                         </div>
                         <div>
                             <p class="font-semibold text-sm text-vawc-orange-700 dark:text-vawc-orange-400">Suspend</p>
-                            <p class="font-mplusrounded text-xs text-vawc-orange-600/70 dark:text-vawc-orange-500/70">Temporary restriction</p>
+                            <p class="font-poppins text-xs text-vawc-orange-600/70 dark:text-vawc-orange-500/70">Temporary restriction</p>
                         </div>
                     </button>
 
@@ -585,7 +585,7 @@
                         </div>
                         <div>
                             <p class="font-semibold text-sm text-red-700 dark:text-red-400">Ban Account</p>
-                            <p class="font-mplusrounded text-xs text-red-600/70 dark:text-red-500/70">Permanent restriction</p>
+                            <p class="font-poppins text-xs text-red-600/70 dark:text-red-500/70">Permanent restriction</p>
                         </div>
                     </button>
                 </div>
@@ -978,7 +978,7 @@ onUnmounted(() => {
 }
 
 .stat-tile__label {
-    @apply text-xs font-medium uppercase tracking-wide;
+    @apply text-xs font-bold uppercase tracking-wide;
     @apply text-platinum-600 dark:text-platinum-500;
 }
 

@@ -293,11 +293,11 @@ onMounted(async () => {
 }
 
 .page-title {
-    @apply font-madimione text-2xl text-slate-800 dark:text-platinum-100 leading-tight;
+    @apply font-poppins text-2xl text-slate-800 dark:text-platinum-100 leading-tight;
 }
 
 .page-subtitle {
-    @apply font-mplusrounded text-sm text-platinum-600 dark:text-platinum-500 mt-0.5;
+    @apply font-poppins text-sm text-platinum-600 dark:text-platinum-500 mt-0.5;
 }
 
 .back-btn {

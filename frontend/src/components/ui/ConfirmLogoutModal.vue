@@ -6,32 +6,32 @@
                 <div class="absolute inset-0 bg-[#020203]/95 backdrop-blur-md" @click="closeModal"></div>
 
                 <div
-                    class="relative bg-[#0d0d12] border border-white/10 rounded-[2.5rem] p-10 max-w-sm w-full shadow-[0_30px_70px_rgba(0,0,0,1)] overflow-hidden text-center flex flex-col items-center">
+                    class="relative bg-[#0d0d12] border border-white/10 rounded-[3rem] p-12 max-w-sm w-full shadow-[0_30px_70px_rgba(0,0,0,1)] overflow-hidden text-center flex flex-col items-center">
                     <div
-                        class="absolute -top-10 -right-10 w-40 h-40 bg-red-600/10 rounded-full blur-3xl pointer-events-none">
+                        class="absolute -top-12 -right-12 w-48 h-48 bg-red-600/15 rounded-full blur-3xl pointer-events-none animate-pulse">
                     </div>
 
-                    <div class="relative z-10 space-y-8 w-full flex flex-col items-center">
+                    <div class="relative z-10 space-y-10 w-full flex flex-col items-center">
                         <div
-                            class="w-20 h-20 bg-red-500/10 border border-red-500/20 rounded-[1.8rem] flex items-center justify-center text-red-500 shadow-lg">
-                            <LogOutIcon class="w-10 h-10" />
+                            class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-800 rounded-[2.5rem] flex items-center justify-center text-white shadow-[0_20px_40px_rgba(239,68,68,0.4),inset_0_2px_8px_rgba(255,255,255,0.3)] transition-transform hover:rotate-12 duration-700">
+                            <LogOutIcon class="w-12 h-12" />
                         </div>
 
-                        <div class="space-y-3">
-                            <h3 class="text-2xl font-black uppercase tracking-tighter italic text-white">Log Out?</h3>
-                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest leading-relaxed">
-                                Are you sure you want to sign out of your account?
+                        <div class="space-y-4">
+                            <h3 class="text-3xl font-black uppercase tracking-tighter text-white leading-none">Sign Out?</h3>
+                            <p class="text-sm font-medium text-gray-400 leading-relaxed text-center max-w-xs">
+                                Your session will be ended. You'll need to sign back in to continue.
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-2 gap-4 w-full">
+                        <div class="grid grid-cols-2 gap-5 w-full">
                             <button @click="closeModal" :disabled="isLoading"
-                                class="px-6 py-4 bg-white/5 border border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:bg-white/10 hover:text-white transition-all active:scale-95 outline-none disabled:opacity-50">
+                                class="px-6 py-5 bg-white/5 border border-white/5 rounded-2xl text-sm font-black uppercase tracking-widest text-gray-400 hover:bg-white/10 hover:text-white transition-all active:scale-95 outline-none disabled:opacity-50">
                                 Cancel
                             </button>
                             <button @click="handleConfirm" :disabled="isLoading"
-                                class="px-6 py-4 bg-gradient-to-r from-red-600 to-pink-700 text-white rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-red-900/20 hover:scale-105 active:scale-95 transition-all outline-none disabled:opacity-50 flex items-center justify-center">
-                                <span v-if="!isLoading">Log Out</span>
+                                class="px-6 py-5 bg-gradient-to-br from-red-600 to-red-800 text-white rounded-2xl text-sm font-black uppercase tracking-widest shadow-[0_15px_30px_rgba(220,38,38,0.4)] hover:scale-105 active:scale-95 transition-all outline-none disabled:opacity-50 flex items-center justify-center">
+                                <span v-if="!isLoading">Sign Out</span>
                                 <div v-else
                                     class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin">
                                 </div>

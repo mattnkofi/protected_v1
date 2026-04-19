@@ -20,7 +20,10 @@
         </button>
       </div>
     </div>
-
+<button v-if="canEdit" @click="goToStats" class="btn-secondary">
+  <BarChart2Icon class="w-3.5 h-3.5 text-calm-lavender-500" />
+  <span>View Stats</span>
+</button>
     <!-- Loading -->
     <div v-if="loading" class="flex flex-col items-center justify-center py-24 gap-3">
       <div class="spinner"></div>
@@ -53,7 +56,7 @@
                 <span v-if="module.is_featured" class="badge badge-muted">Featured</span>
               </div>
 
-              <h1 class="font-madimione text-2xl md:text-3xl text-slate-800 dark:text-platinum-100 leading-snug">
+              <h1 class="font-poppins text-2xl md:text-3xl text-slate-800 dark:text-platinum-100 leading-snug">
                 {{ module.title }}
               </h1>
 
@@ -214,7 +217,7 @@ const isPlayer = computed(() => authStore.user?.role === 'player');
 const toggleSidebar = () => { sidebarOpen.value = !sidebarOpen.value; };
 
 const formatCategory = (c) => {
-  const map = { 'gad': 'Culture', 'sexual_health': 'Health', 'vawc': 'Safety', 'general': 'Standard' };
+  const map = { 'gad': 'Institutional', 'sexual_health': 'Health', 'vawc': 'Safety', 'general': 'Standard' };
   return map[c] || c?.toUpperCase() || 'Other';
 };
 
@@ -226,17 +229,34 @@ const refreshQuizzes = async () => {
 };
 
 const handleBack = () => {
-router.push({ name: isPlayer.value ? 'user.modules' : 'facilitator.modules' });
+    // If the user navigated here from within the app (classroom page, module list, etc.)
+    // go back to exactly where they came from — preserves classroom → module → back flow
+    if (window.history.state?.back) {
+        router.back();
+        return;
+    }
+
+    // Fallback for direct links / new tabs — send to the correct list page by role
+    const role = authStore.user?.role;
+    if (role === 'player') {
+        router.push({ name: 'user.modules' });
+    } else if (role === 'admin') {
+        router.push({ name: 'admin.modules' });
+    } else if (['educator', 'moderator'].includes(role)) {
+        router.push({ name: 'facilitator.modules' });
+    } else {
+        // Unknown role — safest fallback is home
+        router.push({ name: 'home' });
+    }
 };
-// @TODO Fix Navigation
 
 const handleQuizClick = (id) => {
-  if (!id) {
-    toast.error('Quiz ID is missing. Please refresh and try again.');
-    return;
-  }
   if (isPlayer.value) router.push({ name: 'quiz.player', params: { id } });
   else toast.info("Facilitator view: Preview only.");
+};
+
+const goToStats = () => {
+  router.push({ name: 'facilitator.module-stats', params: { id: route.params.id } });
 };
 
 const editModule = () => { showEditModal.value = true; };
@@ -327,7 +347,7 @@ onMounted(async () => {
 }
 
 .loading-text {
-  @apply font-mplusrounded text-sm text-platinum-500;
+  @apply font-poppins text-sm text-platinum-500;
 }
 
 .animate-in {

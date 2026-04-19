@@ -70,7 +70,7 @@
           </form>
 
           <div class="mt-8 pt-6 text-center link-lavender">
-            <router-link :to="{ name: 'login' }"
+            <router-link :to="{ name: route.meta?.isFacilitator ? 'facilitator.login' : 'login' }"
               class="inline-flex items-center justify-center gap-2 return-button-text">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -88,7 +88,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useAuthStore } from "@stores/auth";
 import { useToast } from '@/utils/useToast';
 
@@ -96,6 +96,7 @@ import { useToast } from '@/utils/useToast';
 import hero from '@/assets/bgimage.jpg';
 
 const router = useRouter();
+const route = useRoute();
 const authStore = useAuthStore();
 const toast = useToast();
 

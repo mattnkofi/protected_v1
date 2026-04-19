@@ -40,7 +40,7 @@ export const useModuleStore = defineStore('module', () => {
     });
 
     // ===== Actions =====
-    
+
     /**
      * Fetch modules with filters
      */
@@ -133,15 +133,19 @@ export const useModuleStore = defineStore('module', () => {
             // Kung may files, gagamit tayo ng FormData at ang POST /api/modules (Multipart)
             if (files && (files.moduleFile || files.thumbnail)) {
                 const formData = new FormData();
-                
+
                 // 1. Files
                 if (files.moduleFile) formData.append('module_file', files.moduleFile);
                 if (files.thumbnail) formData.append('thumbnail', files.thumbnail);
 
                 // 2. Text Data fields
                 Object.keys(data).forEach(key => {
-                    if (data[key] !== null && data[key] !== undefined) {
-                        formData.append(key, data[key]);
+                    const value = data[key];
+                    if (value === null || value === undefined) return;
+                    if (typeof value === 'boolean') {
+                        formData.append(key, value ? '1' : '0');
+                    } else {
+                        formData.append(key, value);
                     }
                 });
 
@@ -270,7 +274,7 @@ export const useModuleStore = defineStore('module', () => {
     async function togglePublish(id) {
         try {
             const response = await api.patch(`/api/modules/${id}/publish`);
-            
+
             const module = modules.value.find(m => m.id === id);
             if (module) {
                 module.is_published = response.data.is_published;
@@ -322,6 +326,43 @@ export const useModuleStore = defineStore('module', () => {
         pagination.value.page = 1;
     }
 
+
+    async function deleteModule(id) {
+        try {
+            await api.delete(`/api/modules/${id}`);
+            modules.value = modules.value.filter(m => m.id !== id);
+            toast.success('Module deleted successfully');
+            return true;
+        } catch (err) {
+            toast.error('Failed to delete module');
+            throw err;
+        }
+    }
+
+    async function markComplete(moduleId) {
+        try {
+            const { data } = await api.post(`/api/modules/${moduleId}/complete`);
+            // Update local stats or module state if needed
+            return data;
+        } catch (err) {
+            console.error('Error marking module complete:', err);
+            throw err;
+        }
+    }
+
+    async function togglePublish(id, status) {
+        try {
+            const { data } = await api.patch(`/api/modules/${id}/publish`, { is_published: status });
+            const index = modules.value.findIndex(m => m.id === id);
+            if (index !== -1) modules.value[index].is_published = status;
+            toast.success(status ? 'Module published' : 'Module hidden');
+            return data;
+        } catch (err) {
+            toast.error('Failed to update module status');
+            throw err;
+        }
+    }
+
     return {
         // State
         modules,
@@ -352,6 +393,10 @@ export const useModuleStore = defineStore('module', () => {
         togglePublish,
         setFilters,
         loadNextPage,
-        resetFilters
+        resetFilters,
+
+        deleteModule,
+        markComplete,
+        togglePublish
     };
 });

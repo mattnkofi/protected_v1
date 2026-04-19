@@ -133,7 +133,7 @@
                                                    group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
                                             {{ facilitator.name }}
                                         </p>
-                                        <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500 truncate">
+                                        <p class="font-poppins text-xs text-platinum-600 dark:text-platinum-500 truncate">
                                             {{ facilitator.email }}
                                         </p>
                                     </div>
@@ -155,7 +155,7 @@
                                     </span>
                                     <span
                                         v-if="facilitator.requires_password_change"
-                                        class="font-mplusrounded text-xs text-vawc-orange-600 dark:text-vawc-orange-400"
+                                        class="font-poppins text-xs text-vawc-orange-600 dark:text-vawc-orange-400"
                                     >
                                         Pending setup
                                     </span>
@@ -164,7 +164,7 @@
 
                             <!-- Last active -->
                             <td class="td-cell">
-                                <span class="font-mplusrounded text-sm text-platinum-600 dark:text-platinum-500">
+                                <span class="font-poppins text-sm text-platinum-600 dark:text-platinum-500">
                                     {{ facilitator.last_login_at ? formatDate(facilitator.last_login_at) : 'Never logged in' }}
                                 </span>
                             </td>

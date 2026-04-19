@@ -66,30 +66,34 @@
 
         <Teleport to="body">
             <Transition name="fade">
-                <div v-if="showModal" class="fixed inset-0 z-[300] flex items-center justify-center p-6 bg-black/60 backdrop-blur-xl custom-font-poppins">
-                    <div class="absolute inset-0" @click="showModal = false"></div>
+                <div v-if="showModal" class="fixed inset-0 z-[300] flex items-center justify-center p-4 overflow-hidden custom-font-poppins">
+                    <div class="absolute inset-0 bg-[#020203]/95 backdrop-blur-md" @click="showModal = false"></div>
                     
-                    <div class="relative bg-white dark:bg-[#0f0f18] border border-slate-200 dark:border-white/10 rounded-[4rem] p-12 max-w-sm w-full text-center shadow-[0_60px_150px_rgba(0,0,0,0.5)] flex flex-col items-center animate-vessel overflow-hidden">
-                        <div class="absolute -top-16 -right-16 w-48 h-48 bg-red-600/15 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative bg-[#0d0d12] border border-white/10 rounded-[3rem] p-12 max-w-sm w-full shadow-[0_30px_70px_rgba(0,0,0,1)] overflow-hidden text-center flex flex-col items-center">
+                        <div class="absolute -top-12 -right-12 w-48 h-48 bg-red-600/15 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
 
-                        <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-800 rounded-[2.5rem] flex items-center justify-center text-white shadow-[0_20px_40px_rgba(239,68,68,0.4),inset_0_2px_8px_rgba(255,255,255,0.3)] mb-10 transition-transform hover:rotate-12 duration-700">
-                            <LogOutIcon class="w-12 h-12" />
-                        </div>
-                        
-                        <div class="space-y-4 mb-12">
-                            <h3 class="text-4xl font-[900] uppercase tracking-tighter text-black dark:text-white leading-none italic">Terminate?</h3>
-                            <p class="text-[15px] font-medium text-black/60 dark:text-slate-400 leading-relaxed italic uppercase tracking-widest text-center">End admin session?</p>
-                        </div>
+                        <div class="relative z-10 space-y-10 w-full flex flex-col items-center">
+                            <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-800 rounded-[2.5rem] flex items-center justify-center text-white shadow-[0_20px_40px_rgba(239,68,68,0.4),inset_0_2px_8px_rgba(255,255,255,0.3)] transition-transform hover:rotate-12 duration-700">
+                                <LogOutIcon class="w-12 h-12" />
+                            </div>
+                            
+                            <div class="space-y-4">
+                                <h3 class="text-3xl font-black uppercase tracking-tighter text-white leading-none">Sign Out?</h3>
+                                <p class="text-sm font-medium text-gray-400 leading-relaxed text-center max-w-xs">
+                                    Your admin session will be ended. You'll need to sign back in to continue.
+                                </p>
+                            </div>
 
-                        <div class="grid grid-cols-2 gap-5 w-full">
-                            <button @click="showModal = false" 
-                                class="px-6 py-5 bg-slate-100 dark:bg-white/5 rounded-[1.5rem] text-[12px] font-black uppercase tracking-widest text-black/50 hover:text-black dark:hover:text-white transition-all shadow-inner border border-transparent hover:border-slate-300 dark:hover:border-white/10">
-                                Cancel
-                            </button>
-                            <button @click="confirmLogout" 
-                                class="px-6 py-5 bg-gradient-to-br from-red-600 to-red-800 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-widest shadow-[0_15px_30px_rgba(220,38,38,0.4)] hover:scale-105 active:scale-95 transition-all">
-                                Confirm
-                            </button>
+                            <div class="grid grid-cols-2 gap-5 w-full">
+                                <button @click="showModal = false" 
+                                    class="px-6 py-5 bg-white/5 border border-white/5 rounded-2xl text-sm font-black uppercase tracking-widest text-gray-400 hover:bg-white/10 hover:text-white transition-all active:scale-95 outline-none">
+                                    Cancel
+                                </button>
+                                <button @click="confirmLogout" 
+                                    class="px-6 py-5 bg-gradient-to-br from-red-600 to-red-800 text-white rounded-2xl text-sm font-black uppercase tracking-widest shadow-[0_15px_30px_rgba(220,38,38,0.4)] hover:scale-105 active:scale-95 transition-all outline-none flex items-center justify-center">
+                                    Sign Out
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

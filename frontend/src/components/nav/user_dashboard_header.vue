@@ -12,9 +12,9 @@
           <MenuIcon class="h-5 w-5" />
         </button>
 
-        <nav class="hidden sm:flex items-center space-x-3 text-sm font-black uppercase tracking-widest italic">
+        <nav class="hidden sm:flex items-center space-x-3 text-sm font-black uppercase tracking-widest">
           <!-- @TODO Fix Navigation -->
-          <router-link :to="{ name: 'user.dashboard' }" class="text-slate-400 hover:text-purple-600 transition-colors">
+          <router-link :to="{ name: 'user.dashboard' }" class="text-slate-400 hover:text-purple-600 transition-colors font-poppins">
             Home
           </router-link>
           <ChevronRightIcon class="h-3.5 w-3.5 text-slate-300 dark:text-slate-700" />
@@ -26,7 +26,7 @@
 
       <!-- Right: notification bell always visible; profile dropdown only on mobile (sidebar handles it on desktop) -->
       <div class="flex items-center gap-3">
-        <NotificationBell />
+        <NotificationBell :filterTypes="['achievement', 'quiz', 'module', 'reward', 'classroom', 'reminder']"/>
         <!-- Profile dropdown shown only when sidebar is hidden (mobile breakpoint) -->
         <div class="lg:hidden">
           <ProfileDropdown />

@@ -130,11 +130,11 @@ onMounted(async () => {
 }
 
 .page-title {
-    @apply font-madimione text-3xl text-slate-800 dark:text-platinum-100 leading-tight;
+    @apply font-poppins text-3xl text-slate-800 dark:text-platinum-100 leading-tight;
 }
 
 .page-subtitle {
-    @apply font-mplusrounded text-sm text-platinum-600 dark:text-platinum-500;
+    @apply font-poppins text-sm text-platinum-600 dark:text-platinum-500;
 }
 
 .section-eyebrow {
@@ -178,7 +178,7 @@ onMounted(async () => {
 }
 
 .loading-text {
-    @apply font-mplusrounded text-sm text-platinum-500;
+    @apply font-poppins text-sm text-platinum-500;
 }
 
 .animate-in {

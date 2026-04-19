@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen bg-[#020203] font-['Poppins'] text-white antialiased relative">
-    
+
     <AIChatbot />
 
     <router-view v-slot="{ Component }">
@@ -24,20 +24,30 @@ const authStore = useAuthStore();
 // Gamitin ang storeToRefs para ma-detect ng Vue kapag nag-login/logout ka
 const { isLoggedIn } = storeToRefs(authStore);
 
+import { useToast } from '@/utils/useToast';
+
+const toast = useToast();
+const loginWithGoogle = async () => {
+  toast.error("Failed to connect to Google. Please try again.");
+}
+
 onMounted(async () => {
-    // I-restore ang session kapag ni-refresh ang page
-    if (!authStore.user) {
-        await authStore.restoreSession();
-    }
+  // I-restore ang session kapag ni-refresh ang page
+  if (!authStore.user) {
+    await authStore.restoreSession();
+  }
 });
 </script>
 
 <style>
 /* Siguraduhin na ang transition ay hindi nakaka-block sa UI */
-.page-enter-active, .page-leave-active {
+.page-enter-active,
+.page-leave-active {
   transition: opacity 0.2s ease;
 }
-.page-enter-from, .page-leave-to {
+
+.page-enter-from,
+.page-leave-to {
   opacity: 0;
 }
 </style>

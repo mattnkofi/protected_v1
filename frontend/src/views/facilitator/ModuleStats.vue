@@ -2,7 +2,7 @@
   <div class="p-8 space-y-8 min-h-screen bg-slate-50 dark:bg-[#020203] text-black dark:text-white custom-font-poppins transition-colors duration-500">
     <div class="flex items-center justify-between border-b border-slate-200 dark:border-white/5 pb-8">
       <div>
-        <button @click="$router.back()" class="flex items-center gap-2 mb-4 group text-black/50 dark:text-gray-500 hover:text-purple-600 dark:hover:text-white transition-colors">
+        <button @click="$router.push({ name: 'facilitator.modules.detail', params: { id: $route.params.id } })" class="flex items-center gap-2 mb-4 group text-black/50 dark:text-gray-500 hover:text-purple-600 dark:hover:text-white transition-colors">
           <ArrowLeftIcon size="16" class="group-hover:-translate-x-1 transition-transform" />
           <span class="text-[10px] font-black uppercase tracking-[0.2em]">Return to Hub</span>
         </button>
@@ -139,7 +139,7 @@ const fetchStats = async () => {
   loading.value = true;
   error.value = null;
   try {
-    const { data } = await api.get(`/api/v1/modules/facilitator/module-stats/${route.params.id}`);
+    const { data } = await api.get(`/api/modules/${route.params.id}/engagement`);
     if (data.success) {
       stats.value = {
         viewers: data.viewers || [],

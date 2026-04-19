@@ -145,11 +145,11 @@ const enterClassroom = (id) => {
 }
 
 .page-title {
-    @apply font-madimione text-3xl text-slate-800 dark:text-platinum-100 leading-tight;
+    @apply font-poppins text-3xl text-slate-800 dark:text-platinum-100 leading-tight;
 }
 
 .page-subtitle {
-    @apply font-mplusrounded text-sm text-platinum-600 dark:text-platinum-500;
+    @apply font-poppins text-sm text-platinum-600 dark:text-platinum-500;
 }
 
 .section-eyebrow {
@@ -190,7 +190,7 @@ const enterClassroom = (id) => {
 }
 
 .loading-text {
-    @apply font-mplusrounded text-sm text-platinum-500;
+    @apply font-poppins text-sm text-platinum-500;
 }
 
 .empty-state {
@@ -206,7 +206,7 @@ const enterClassroom = (id) => {
 }
 
 .empty-state-desc {
-    @apply font-mplusrounded text-sm text-platinum-500 dark:text-platinum-600 mt-1.5 max-w-xs mx-auto;
+    @apply font-poppins text-sm text-platinum-500 dark:text-platinum-600 mt-1.5 max-w-xs mx-auto;
 }
 
 .animate-in {

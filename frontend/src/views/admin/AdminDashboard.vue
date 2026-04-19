@@ -642,7 +642,7 @@ onMounted(() => {
 }
 
 .stat-tile__label {
-    @apply text-xs font-medium uppercase tracking-wide;
+    @apply text-xs font-bold uppercase tracking-wide;
     @apply text-platinum-600 dark:text-platinum-500;
 }
 
@@ -683,7 +683,7 @@ onMounted(() => {
 
 .chart-empty {
     @apply flex items-center justify-center h-full;
-    @apply font-mplusrounded text-sm font-normal text-platinum-600 dark:text-platinum-400;
+    @apply font-poppins text-sm font-normal text-platinum-600 dark:text-platinum-400;
 }
 
 /* ═══════════════════════════════════════════════════════════

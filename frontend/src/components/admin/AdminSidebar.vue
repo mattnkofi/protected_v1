@@ -149,24 +149,14 @@
                         <SettingsIcon class="h-4 w-4 text-calm-lavender-600" /> Settings
                     </button>
                     <button @click="isLogoutModalOpen = true; isUserMenuOpen = false"
-                        class="menu-item text-red-600 border-none hover:bg-red-50 dark:hover:bg-red-500/5">
+                        class="menu-item text-red-600 border-none hover:bg-red-50 dark:hover:bg-red-500/5 font-bold">
                         <LogOutIcon class="h-4 w-4" /> Sign Out
                     </button>
                 </div>
             </Transition>
         </Teleport>
 
-        <ConfirmModal
-            :is-open="isLogoutModalOpen"
-            variant="warning"
-            title="Sign out?"
-            message="Your admin session will be ended. You'll need to sign back in to continue."
-            confirm-label="Sign Out"
-            cancel-label="Cancel"
-            :loading="isLoggingOut"
-            @confirm="handleLogout"
-            @cancel="isLogoutModalOpen = false"
-        />
+        <ConfirmLogoutModal :is-open="isLogoutModalOpen" @close="isLogoutModalOpen = false" @confirm="handleLogout" />
     </div>
 </template>
 
@@ -176,7 +166,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 import { useAuthStore } from '@/stores/auth'
 import { useSidebarStore } from '@/stores/stores'
-import ConfirmModal from '@/components/ui/ConfirmModal.vue'
+import ConfirmLogoutModal from '@/components/ui/ConfirmLogoutModal.vue'
 import {
     ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon,
     Users as UsersIcon, BookOpen as BookOpenIcon, GraduationCap as GraduationCapIcon,

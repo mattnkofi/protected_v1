@@ -45,10 +45,10 @@
                                     <FileBarChart2Icon class="h-5 w-5" />
                                 </div>
                                 <div>
-                                    <h2 class="font-madimione text-xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                                    <h2 class="font-poppins text-xl text-abyss-800 dark:text-platinum-100 leading-tight">
                                         {{ title }}
                                     </h2>
-                                    <p class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-400 mt-0.5">
+                                    <p class="font-poppins text-xs text-platinum-600 dark:text-platinum-400 mt-0.5">
                                         {{ description }}
                                     </p>
                                 </div>
@@ -89,7 +89,7 @@
                                                    text-abyss-800 dark:text-platinum-200">
                                             {{ previewFilename }}
                                         </p>
-                                        <p class="font-mplusrounded text-xs
+                                        <p class="font-poppins text-xs
                                                    text-platinum-500 dark:text-platinum-500">
                                             PDF Document · A4
                                         </p>
@@ -119,7 +119,7 @@
                                         border-calm-lavender-200 dark:border-calm-lavender-800/30
                                         text-calm-lavender-700 dark:text-calm-lavender-400">
                                 <InfoIcon class="h-4 w-4 shrink-0 mt-0.5" />
-                                <p class="font-mplusrounded text-xs leading-relaxed">{{ note }}</p>
+                                <p class="font-poppins text-xs leading-relaxed">{{ note }}</p>
                             </div>
 
                         </div>
@@ -131,7 +131,7 @@
 
                             <!-- Status hint -->
                             <p
-                                class="font-mplusrounded text-xs flex-1 min-w-0 truncate"
+                                class="font-poppins text-xs flex-1 min-w-0 truncate"
                                 :class="{
                                     'text-red-500 dark:text-red-400':              downloadStatus === 'error',
                                     'text-safety-teal-600 dark:text-safety-teal-400': downloadStatus === 'success',

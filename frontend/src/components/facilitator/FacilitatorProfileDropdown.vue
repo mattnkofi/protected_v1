@@ -64,24 +64,22 @@
                     <div class="relative bg-white dark:bg-[#0f0f18] border border-slate-200 dark:border-white/10 rounded-[4rem] p-12 max-w-sm w-full text-center shadow-[0_60px_150px_rgba(0,0,0,0.5)] flex flex-col items-center animate-vessel overflow-hidden">
                         <div class="absolute -top-16 -right-16 w-48 h-48 bg-red-600/15 rounded-full blur-3xl animate-pulse"></div>
 
-                        <div class="w-24 h-24 bg-gradient-to-br from-red-500 to-red-800 rounded-[2.5rem] flex items-center justify-center text-white shadow-[0_20px_40px_rgba(239,68,68,0.4),inset_0_2px_8px_rgba(255,255,255,0.3)] mb-10 transition-transform hover:rotate-12 duration-700">
+                        <div class="w-24 h-24 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border border-red-200 dark:border-red-800/30 rounded-3xl flex items-center justify-center mb-6 text-red-500 shadow-lg">
                             <LogOutIcon class="w-12 h-12" />
                         </div>
                         
                         <div class="space-y-4 mb-12">
-                            <h3 class="text-4xl font-[900] uppercase tracking-tighter text-black dark:text-white leading-none italic">Terminate?</h3>
-                            <p class="text-[15px] font-medium text-black/60 dark:text-slate-400 leading-relaxed italic uppercase tracking-widest text-center">Disconnect current system link?</p>
+                            <h3 class="text-2xl font-black text-black dark:text-white font-poppins">Sign Out?</h3>
+                            <p class="text-slate-500 dark:text-slate-400 text-sm font-medium font-poppins leading-relaxed">Are you sure you want to sign out of your account?</p>
                         </div>
 
                         <div class="grid grid-cols-2 gap-5 w-full">
                             <button @click="showModal = false" 
-                                class="px-6 py-5 bg-slate-100 dark:bg-white/5 rounded-[1.5rem] text-[12px] font-black uppercase tracking-widest text-black/50 hover:text-black dark:hover:text-white transition-all shadow-inner border border-transparent hover:border-slate-300 dark:hover:border-white/10">
-                                Cancel
-                            </button>
+                                class="px-6 py-5 bg-slate-100 dark:bg-white/5 rounded-[1.5rem] text-slate-600 dark:text-slate-300 font-bold text-sm font-poppins transition-all hover:bg-slate-200 dark:hover:bg-white/10 hover:text-black dark:hover:text-white"
+                            >No</button>
                             <button @click="confirmLogout" 
-                                class="px-6 py-5 bg-gradient-to-br from-red-600 to-red-800 text-white rounded-[1.5rem] text-[12px] font-black uppercase tracking-widest shadow-[0_15px_30px_rgba(220,38,38,0.4)] hover:scale-105 active:scale-95 transition-all">
-                                Confirm
-                            </button>
+                                class="px-6 py-5 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-[1.5rem] font-bold text-sm font-poppins shadow-lg hover:shadow-xl transition-all"
+                            >Sign Out</button>
                         </div>
                     </div>
                 </div>

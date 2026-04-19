@@ -166,7 +166,7 @@
                     </button>
                     <button @click="isLogoutModalOpen = true; profileMenuOpen = false"
                         class="menu-item text-red-600 border-none hover:bg-red-50 dark:hover:bg-red-500/5">
-                        <LogOut class="h-4 w-4" /> Logout
+                        <LogOut class="h-4 w-4" /> Sign Out
                     </button>
                 </div>
             </Transition>
@@ -188,7 +188,8 @@ import ConfirmLogoutModal from '@/components/ui/ConfirmLogoutModal.vue'
 import {
     ChevronLeft, ChevronRight, BookOpen, Gift, LineChart,
     MoreVertical, User as UserIcon, Settings, LogOut,
-    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, Trophy
+    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, Trophy,
+    FileCheck
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -210,7 +211,8 @@ const navItems = [
     { name: 'Modules',      route: 'facilitator.modules',    icon: BookOpen,        color: 'text-emerald-500',       fill: 'fill-emerald-500/20' },
     { name: 'Rewards',      route: 'facilitator.rewards',    icon: Gift,            color: 'text-orange-500',        fill: 'fill-orange-500/20', badge: 'Manage' },
     { divider: true, label: 'Performance' },
-    { name: 'Analytics',    route: 'facilitator.analytics',  icon: LineChart,       color: 'text-neon-pink-500',     fill: 'fill-neon-pink-500/20' },
+    { name: 'Analytics',    route: 'facilitator.ml-analytics',  icon: LineChart,       color: 'text-neon-pink-500',     fill: 'fill-neon-pink-500/20' },
+    { name: 'HGDG Assessment', route: 'facilitator.hgdg',       icon: FileCheck,       color: 'text-purple-500',        fill: 'fill-purple-500/20' },
 ]
 
 const isItemActive = (item) => item.isActive ? item.isActive() : route.name === item.route

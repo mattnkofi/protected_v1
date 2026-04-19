@@ -74,20 +74,20 @@
                         <div class="flex items-center gap-4">
                             <div class="flex items-center gap-1.5">
                                 <UserIcon class="h-3.5 w-3.5 text-platinum-500" />
-                                <span class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500">
+                                <span class="font-poppins text-xs text-platinum-600 dark:text-platinum-500">
                                     {{ announcement.author?.name || 'Admin' }}
                                 </span>
                             </div>
                             <div class="flex items-center gap-1.5">
                                 <CalendarIcon class="h-3.5 w-3.5 text-platinum-500" />
-                                <span class="font-mplusrounded text-xs text-platinum-600 dark:text-platinum-500">
+                                <span class="font-poppins text-xs text-platinum-600 dark:text-platinum-500">
                                     {{ formatDate(announcement.createdAt) }}
                                 </span>
                             </div>
                             <!-- Expiry badge -->
                             <div v-if="announcement.expires_at" class="flex items-center gap-1.5">
                                 <ClockIcon class="h-3.5 w-3.5" :class="isExpired(announcement.expires_at) ? 'text-red-400' : 'text-vawc-orange-400'" />
-                                <span class="font-mplusrounded text-xs" :class="isExpired(announcement.expires_at) ? 'text-red-500 dark:text-red-400' : 'text-vawc-orange-500 dark:text-vawc-orange-400'">
+                                <span class="font-poppins text-xs" :class="isExpired(announcement.expires_at) ? 'text-red-500 dark:text-red-400' : 'text-vawc-orange-500 dark:text-vawc-orange-400'">
                                     {{ isExpired(announcement.expires_at) ? 'Expired' : 'Expires' }} {{ formatDate(announcement.expires_at) }}
                                 </span>
                             </div>
@@ -135,7 +135,7 @@
                                 </div>
                                 <div>
                                     <p class="section-eyebrow">Announcements</p>
-                                    <h2 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                                    <h2 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
                                         {{ isEditing ? 'Edit' : 'New' }} Announcement
                                     </h2>
                                 </div>
@@ -199,7 +199,7 @@
                             <div class="space-y-1.5">
                                 <label class="field-label">
                                     Expires At
-                                    <span class="font-mplusrounded text-xs text-platinum-500 dark:text-platinum-400 font-normal ml-1">(optional — leave blank to never expire)</span>
+                                    <span class="font-poppins text-xs text-platinum-500 dark:text-platinum-400 font-normal ml-1">(optional — leave blank to never expire)</span>
                                 </label>
                                 <div class="grid grid-cols-2 gap-3">
                                     <input
@@ -218,14 +218,14 @@
                                     />
                                 </div>
                                 <div class="flex items-center justify-between">
-                                    <p v-if="form.expires_at" class="font-mplusrounded text-xs text-calm-lavender-600 dark:text-calm-lavender-400">
+                                    <p v-if="form.expires_at" class="font-poppins text-xs text-calm-lavender-600 dark:text-calm-lavender-400">
                                         Will hide from users after {{ formatDate(form.expires_at) }}
                                     </p>
                                     <button
                                         v-if="expiryDate"
                                         type="button"
                                         @click="clearExpiry"
-                                        class="font-mplusrounded text-xs text-platinum-500 dark:text-platinum-400 hover:text-red-500 dark:hover:text-red-400 transition-colors ml-auto"
+                                        class="font-poppins text-xs text-platinum-500 dark:text-platinum-400 hover:text-red-500 dark:hover:text-red-400 transition-colors ml-auto"
                                     >
                                         Clear expiry
                                     </button>

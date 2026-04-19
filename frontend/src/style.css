@@ -3,70 +3,10 @@
 /* ================================== */
 /* 1. FONT FACE DECLARATIONS */
 /* ================================== */
-/* Consolidating and ensuring correct weight mapping */
-/* Note: Using Google Fonts as primary source for reliability */
+/* Using Google Fonts for Poppins */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
 
-/* font-thin	100	Poppins-Thin.ttf
-font-extralight	200	Poppins-ExtraLight.ttf
-font-light	300	Poppins-Light.ttf
-font-normal	400	Poppins-Regular.ttf
-font-medium	500	Poppins-Medium.ttf
-font-semibold	600	Poppins-SemiBold.ttf
-font-bold	700	Poppins-Bold.ttf
-font-extrabold	800	Poppins-ExtraBold.ttf
-font-black	900	Poppins-Black.ttf */
-
-@font-face {
-  font-family: "Courgette";
-  src: url("./assets/fonts/Courgette-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  size-adjust: 115%;
-}
-
-@font-face {
-  font-family: "Dosis";
-  src: url("./assets/fonts/Dosis-VariableFont_wght.ttf") format("truetype");
-  font-weight: 200, 300, 400, 500, 600, 700, 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "MadimiOne";
-  src: url("./assets/fonts/MadimiOne-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-  size-adjust: 115%;
-}
-
-@font-face {
-  font-family: "MPLUSRounded1c";
-  src: url("./assets/fonts/MPLUSRounded1c-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "MPLUSRounded1c";
-  src: url("./assets/fonts/MPLUSRounded1c-Medium.ttf") format("truetype");
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "MPLUSRounded1c";
-  src: url("./assets/fonts/MPLUSRounded1c-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
+/* Local font files for Poppins */
 @font-face {
   font-family: "Poppins";
   src: url("./assets/fonts/Poppins-Light.ttf") format("truetype");
@@ -108,11 +48,7 @@ font-black	900	Poppins-Black.ttf */
 @theme {
   /* --- CUSTOM FONT FAMILIES --- */
   --font-poppins: "Poppins", sans-serif;
-  --font-mplusrounded: "MPLUSRounded1c", sans-serif;
-  --font-courgette: "Courgette", sans-serif;
-  --font-dosis: "Dosis", sans-serif;
   --font-sans: "Poppins", ui-sans-serif, system-ui, sans-serif;
-  --font-madimione: "MadimiOne", sans-serif;
 
   /* --- BRAND COLORS --- */
 
@@ -370,17 +306,17 @@ font-black	900	Poppins-Black.ttf */
   }
 
   .field-subtext {
-    @apply font-mplusrounded text-xs/4 font-normal text-platinum-600 dark:text-platinum-400;
+    @apply font-poppins text-xs/4 font-normal text-platinum-600 dark:text-platinum-400;
   }
 
   .field-subtext-error {
-    @apply font-mplusrounded text-xs/2 text-red-500;
+    @apply font-poppins text-xs/2 text-red-500;
   }
 
   .input-field {
     @apply w-full px-4 py-2 bg-transparent;
     @apply border rounded-md border-calm-lavender-500/50 dark:border-calm-lavender-900/50;
-    @apply font-mplusrounded text-base font-normal;
+    @apply font-poppins text-base font-normal;
     @apply text-abyss-900 dark:text-platinum-50 placeholder-platinum-400 dark:placeholder-abyss-400;
     @apply focus:outline-none focus:ring-2 focus:ring-calm-lavender-500/50 focus:border-calm-lavender-500;
     @apply transition-all duration-200;
@@ -391,26 +327,26 @@ font-black	900	Poppins-Black.ttf */
   }
 
   .body-subtext {
-    @apply font-mplusrounded text-sm font-normal text-platinum-600 dark:text-platinum-400;
+    @apply font-poppins text-sm font-normal text-platinum-600 dark:text-platinum-400;
   }
 
   .divider-label {
     @apply text-platinum-500 dark:text-platinum-400;
-    @apply font-mplusrounded text-xs font-normal;
+    @apply font-poppins text-xs font-normal;
     @apply uppercase tracking-wider px-3;
   }
 
   .display-title {
-    @apply font-courgette text-3xl font-normal;
+    @apply font-poppins text-3xl font-normal;
   }
 
   .form-title {
-    @apply font-madimione text-4xl font-normal tracking-normal;
+    @apply font-poppins text-4xl font-bold tracking-normal;
     @apply text-abyss-700 dark:text-platinum-200;
   }
 
   .form-subtitle {
-    @apply font-mplusrounded text-base font-normal;
+    @apply font-poppins text-base font-bold;
     @apply bg-gradient-to-r from-calm-lavender-800 to-neon-pink-600;
     @apply text-transparent bg-clip-text;
   }
@@ -440,7 +376,7 @@ font-black	900	Poppins-Black.ttf */
   }
 
   .return-button-text {
-    @apply font-mplusrounded font-medium text-sm;
+    @apply font-poppins font-medium text-sm;
   }
 
   .main-button-text {
@@ -485,11 +421,11 @@ font-black	900	Poppins-Black.ttf */
 
   /* --- Typography --- */
   .page-title {
-    @apply font-madimione text-3xl text-slate-800 dark:text-platinum-100 leading-tight;
+    @apply font-poppins text-3xl font-bold text-slate-800 dark:text-platinum-100 leading-tight;
   }
 
   .page-subtitle {
-    @apply font-mplusrounded text-sm text-platinum-600 dark:text-platinum-500;
+    @apply font-poppins text-sm text-platinum-600 dark:text-platinum-500;
   }
 
   .section-eyebrow {
@@ -651,7 +587,7 @@ font-black	900	Poppins-Black.ttf */
   }
 
   .loading-text {
-    @apply font-mplusrounded text-sm text-platinum-500;
+    @apply font-poppins text-sm text-platinum-500;
   }
 
   /* --- Empty States --- */
@@ -668,7 +604,7 @@ font-black	900	Poppins-Black.ttf */
   }
 
   .empty-state-desc {
-    @apply font-mplusrounded text-sm text-platinum-500 dark:text-platinum-600 mt-1.5 max-w-xs mx-auto;
+    @apply font-poppins text-sm text-platinum-500 dark:text-platinum-600 mt-1.5 max-w-xs mx-auto;
   }
 
   /* --- Progress Bar --- */

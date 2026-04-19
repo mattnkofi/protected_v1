@@ -2,8 +2,7 @@
     <div
         class="min-h-screen w-full flex items-center justify-center container-bg-dark transition-colors duration-500 font-sans p-0 sm:p-6">
 
-        <div
-            class="w-full max-w-4xl flex flex-col md:flex-row overflow-hidden sm:rounded-2xl">
+        <div class="w-full max-w-4xl flex flex-col md:flex-row overflow-hidden sm:rounded-2xl">
 
             <div class="relative w-full md:w-1/2 h-48 md:h-auto flex items-center justify-center bg-cover bg-center overflow-hidden"
                 :style="{ backgroundImage: `url(${hero})` }">
@@ -28,7 +27,8 @@
                 </div>
             </div>
 
-            <div class="w-full md:w-1/2 p-6 sm:p-10 relative z-20 border-t-0 border-r-0 border-b-0 rounded-none mt-6 sm:mt-0 sm:border-t-2 sm:border-b-2 sm:border-r-2 sm:border-calm-lavender-300 sm:dark:border-calm-lavender-800/50 sm:rounded-r-2xl container-bg-dark">
+            <div
+                class="w-full md:w-1/2 p-6 sm:p-10 relative z-20 border-t-0 border-r-0 border-b-0 rounded-none mt-6 sm:mt-0 sm:border-t-2 sm:border-b-2 sm:border-r-2 sm:border-calm-lavender-300 sm:dark:border-calm-lavender-800/50 sm:rounded-r-2xl container-bg-dark">
                 <div class="w-full max-w-sm mx-auto">
 
                     <div class="mb-10 text-center sm:text-left mt-[-1rem] md:mt-0">
@@ -47,25 +47,21 @@
                                 Email Address
                             </label>
                             <input id="email" v-model.trim="form.email" type="email" placeholder="you@example.com"
-                                required class="input-field"
-                                :class="{ 'input-field-error': errors.email }" />
+                                required class="input-field" :class="{ 'input-field-error': errors.email }" />
                             <p v-if="errors.email" class="field-subtext-error">{{ errors.email }}</p>
                         </div>
 
                         <div class="space-y-1.5 mb-10">
                             <div class="flex items-center justify-between">
-                                <label for="password"
-                                    class="block field-label">
+                                <label for="password" class="block field-label">
                                     Password
                                 </label>
-                                <router-link :to="{ name: 'forgotPassword' }"
-                                    class="field-label link-lavender">
+                                <router-link :to="{ name: 'forgotPassword' }" class="field-label link-lavender">
                                     Forgot password?
                                 </router-link>
                             </div>
                             <input id="password" v-model="form.password" type="password" placeholder="••••••••" required
-                                class="input-field"
-                                :class="{ 'input-field-error': errors.password }" />
+                                class="input-field" :class="{ 'input-field-error': errors.password }" />
                             <p v-if="errors.password" class="field-subtext-error">{{ errors.password }}</p>
                         </div>
 
@@ -92,14 +88,14 @@
                             <div class="w-full border-t border-platinum-300 dark:border-abyss-600"></div>
                         </div>
                         <div class="relative flex justify-center">
-                            <span
-                                class="container-bg-dark divider-label">
+                            <span class="container-bg-dark divider-label">
                                 Or continue with
                             </span>
                         </div>
                     </div>
 
-                    <button @click="loginWithGoogle" :disabled="isLoading || isGoogleLoading" class="button-gray-pink-hover">
+                    <button @click="loginWithGoogle" :disabled="isLoading || isGoogleLoading"
+                        class="button-gray-pink-hover">
                         <div v-if="!isGoogleLoading" class="flex items-center gap-3">
                             <svg class="w-5 h-5" viewBox="0 0 24 24">
                                 <path fill="#4285F4"
@@ -127,8 +123,7 @@
 
                     <p class="mt-8 text-center body-subtext">
                         Don't have an account?
-                        <router-link :to="{ name: 'signup' }"
-                            class="link-pink">
+                        <router-link :to="{ name: 'signup' }" class="link-pink">
                             Create an account
                         </router-link>
                     </p>
@@ -190,8 +185,21 @@ const handleLogin = async () => {
             password: form.value.password,
         })
 
-        toast.success("Welcome back!");
-        router.push(route.query.redirect || { name: 'user.dashboard' });
+        if (route.query.redirect) {
+            router.push(route.query.redirect);
+        } else {
+            // 2. Otherwise, go to the dashboard based on their actual role
+            const role = authStore.user?.role;
+            const dashboardMap = {
+                admin: 'admin.dashboard',
+                educator: 'facilitator.dashboard',
+                moderator: 'facilitator.dashboard',
+                player: 'user.dashboard'
+            };
+
+            const targetName = dashboardMap[role] || 'home';
+            router.push({ name: targetName });
+        }
 
     } catch (error) {
         const unverified = error?.unverified;

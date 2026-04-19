@@ -135,12 +135,12 @@ onMounted(async () => {
 
 /* Page title: 3xl → 4xl */
 .page-title {
-  @apply font-madimione text-4xl text-slate-800 dark:text-platinum-100 leading-tight tracking-wide;
+  @apply font-poppins text-4xl text-slate-800 dark:text-platinum-100 leading-tight tracking-wide;
 }
 
 /* Subtitle: sm → base */
 .page-subtitle {
-  @apply font-mplusrounded text-base text-platinum-600 dark:text-platinum-500;
+  @apply font-poppins text-base text-platinum-600 dark:text-platinum-500;
 }
 
 /* Stat pill label: [10px] → xs */
@@ -165,7 +165,7 @@ onMounted(async () => {
 
 /* Featured card subtext: field-subtext override → sm */
 .featured-category {
-  @apply font-mplusrounded text-sm text-platinum-500 dark:text-platinum-600;
+  @apply font-poppins text-sm text-platinum-500 dark:text-platinum-600;
 }
 
 /* Button text: sm → base */

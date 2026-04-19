@@ -12,9 +12,9 @@
           <MenuIcon class="h-5 w-5" />
         </button>
 
-        <nav class="hidden sm:flex items-center space-x-3 text-sm font-black uppercase tracking-widest italic">
+        <nav class="hidden sm:flex items-center space-x-3 text-sm font-black uppercase tracking-widest">
           <router-link :to="{ name: 'facilitator.dashboard' }"
-            class="text-slate-400 hover:text-purple-600 transition-colors"
+            class="text-slate-400 hover:text-purple-600 transition-colors font-poppins"
           >
             Home
           </router-link>
@@ -27,7 +27,7 @@
 
       <!-- Right Side Actions -->
       <div class="flex items-center gap-3">
-        <NotificationBell />
+        <NotificationBell :filterTypes="['classroom', 'quiz', 'system']"/>
       </div>
     </div>
 
@@ -37,20 +37,20 @@
       >
         <div class="bg-white dark:bg-[#0d0d12] border border-slate-200 dark:border-white/10 p-10 rounded-[2.5rem] max-w-sm w-full shadow-2xl animate-vessel relative overflow-hidden text-center">
           
-          <div class="w-16 h-16 bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-2xl flex items-center justify-center mb-6 mx-auto text-red-500 shadow-inner">
-            <LogOutIcon class="h-7 w-7" />
+          <div class="w-24 h-24 bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border border-red-200 dark:border-red-800/30 rounded-3xl flex items-center justify-center mb-6 mx-auto text-red-500 shadow-lg">
+            <LogOutIcon class="h-10 w-10" />
           </div>
           
-          <h3 class="text-xl font-[900] text-black dark:text-white mb-2 uppercase italic tracking-tighter">Close?</h3>
-          <p class="text-slate-500 dark:text-slate-400 mb-10 text-xs font-bold uppercase tracking-widest italic leading-relaxed">Disconnecting from active system link...</p>
+          <h3 class="text-2xl font-black text-black dark:text-white mb-3 font-poppins">Sign Out?</h3>
+          <p class="text-slate-500 dark:text-slate-400 mb-10 text-sm font-medium font-poppins leading-relaxed">Are you sure you want to sign out of your account?</p>
           
           <div class="flex gap-3">
             <button @click="showLogoutModal = false"
-              class="flex-1 py-4 bg-slate-100 dark:bg-white/5 text-slate-400 rounded-2xl font-black text-xs tracking-widest transition-all italic hover:text-black dark:hover:text-white"
-            >Cancel</button>
+              class="flex-1 py-4 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 rounded-2xl font-bold text-sm font-poppins transition-all hover:bg-slate-200 dark:hover:bg-white/10 hover:text-black dark:hover:text-white"
+            >No</button>
             <button @click="handleLogout"
-              class="btn-3d-red flex-1 py-4 text-white rounded-2xl font-black text-xs tracking-widest transition-all uppercase"
-            >Confirm</button>
+              class="flex-1 py-4 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-2xl font-bold text-sm font-poppins transition-all shadow-lg hover:shadow-xl"
+            >Sign Out</button>
           </div>
         </div>
       </div>

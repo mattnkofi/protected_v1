@@ -3,11 +3,11 @@ import { usePermissionStore } from "@/stores/permission"
 
 export const permissionGuard = async (to, from, next) => {
     // Skip if no permission-related meta
-   /* if (
+    if (
         !to.meta.requiresPermission &&
         !to.meta.requiresAdmin &&
         !to.meta.requiresMember
-    )*/ {
+    ) {
         return next()
     }
 

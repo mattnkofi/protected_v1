@@ -20,7 +20,7 @@
                     </div>
                     <div>
                         <p class="section-eyebrow">Module Registry</p>
-                        <h2 class="font-madimione text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
+                        <h2 class="font-poppins text-2xl text-abyss-800 dark:text-platinum-100 leading-tight">
                             Edit <span class="brand-gradient-text">Module</span>
                         </h2>
                     </div>

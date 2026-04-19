@@ -12,6 +12,12 @@ export const learnerPages = [
         meta: { title: 'Dashboard' }
     },
     {
+        path: 'behavioral-assessment',
+        name: 'user.behavioral-assessment',
+        component: () => import('@/views/dashboard/BehavioralAssessment.vue'),
+        meta: { title: 'Behavioral Assessment' }
+    },
+    {
         path: 'classrooms',
         name: 'classrooms.index',
         component: () => import('@/views/classrooms/ClassroomDashboard.vue'),
@@ -29,12 +35,12 @@ export const learnerPages = [
         component: () => import('@/views/Modules.vue'),
         meta: { title: 'Learning Modules' }
     },
-    {
-        path: 'modules/:id',
-        name: 'user.module.detail',
-        component: () => import('@/views/ModuleDetail.vue'),
-        meta: { title: 'Learning Module' }
-    },
+{
+    path: 'modules/:id',
+    name: 'user.module.detail',
+    component: () => import('@/views/ModuleDetail.vue'),
+    meta: { title: 'Learning Module' }
+},
     // {
     //     path: 'learning-paths/:id',
     //     name: 'user.learning-path',
@@ -58,5 +64,5 @@ export const learnerPages = [
         name: 'user.my-inventory',
         component: () => import('@/views/dashboard/MyInventory.vue'),
         meta: { title: 'My Inventory' }
-    }
+    },
 ];
