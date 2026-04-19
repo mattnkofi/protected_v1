@@ -111,7 +111,7 @@
                             <div class="flex items-center gap-4">
                                 <input 
                                     type="range"
-                                    v-model.number="scores[crit.id] || 0"
+                                    v-model.number="scores[crit.id]"
                                     :max="crit.max_points"
                                     min="0"
                                     step="1"
