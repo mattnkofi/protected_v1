@@ -194,7 +194,7 @@ import ConfirmLogoutModal from '@/components/ui/ConfirmLogoutModal.vue'
 import {
     ChevronLeft, ChevronRight, Library, Gift, Package,
     MoreVertical, User as UserIcon, Settings, LogOut,
-    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, Trophy, ActivityIcon
+    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, ShieldAlert, Trophy, ActivityIcon
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -214,6 +214,7 @@ const navItems = [
     { name: 'Classrooms', route: 'classrooms.index', icon: School, color: 'text-blue-500', fill: 'fill-blue-500/20' },
     { name: 'Modules', route: 'user.modules', icon: Library, color: 'text-emerald-500', fill: 'fill-emerald-500/20' },
     { name: 'Behavioral AI', route: 'user.behavioral-assessment', icon: ActivityIcon, color: 'text-rose-500', fill: 'fill-rose-500/20' },
+    { name: 'Purple Desk', route: 'user.purple-desk', icon: ShieldAlert, color: 'text-amber-500', fill: 'fill-amber-500/20' },
     { name: 'My Inventory', route: 'user.my-inventory', icon: Package, color: 'text-neon-pink-500', fill: 'fill-neon-pink-500/20' },
     { name: 'Rewards Shop', route: 'user.rewards-shop', icon: Gift, color: 'text-orange-500', fill: 'fill-orange-500/20' }
 ]

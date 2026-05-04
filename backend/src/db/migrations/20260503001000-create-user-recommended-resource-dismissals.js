@@ -13,39 +13,30 @@ module.exports = {
 			.filter(Boolean)
 			.map((t) => String(t).toLowerCase());
 
-		if (!tables.includes('purple_desk_reports')) {
-			await queryInterface.createTable('purple_desk_reports', {
+		if (!tables.includes('user_recommended_resource_dismissals')) {
+			await queryInterface.createTable('user_recommended_resource_dismissals', {
 				id: {
 					type: Sequelize.INTEGER,
 					primaryKey: true,
 					autoIncrement: true
 				},
-				tracking_code: {
-					type: Sequelize.STRING(20),
-					allowNull: false,
-					unique: true
-				},
-				campus_id: {
+				user_id: {
 					type: Sequelize.INTEGER,
-					allowNull: true,
+					allowNull: false,
 					references: {
-						model: 'campuses',
+						model: 'users',
 						key: 'id'
 					},
-					onDelete: 'SET NULL'
+					onDelete: 'CASCADE'
 				},
-				category: {
-					type: Sequelize.STRING(100),
-					allowNull: true
-				},
-				encrypted_payload: {
-					type: Sequelize.TEXT,
+				item_key: {
+					type: Sequelize.STRING(255),
 					allowNull: false
 				},
-				status: {
-					type: Sequelize.ENUM('submitted', 'in_review', 'resolved'),
+				dismissed_at: {
+					type: Sequelize.DATE,
 					allowNull: false,
-					defaultValue: 'submitted'
+					defaultValue: Sequelize.NOW
 				},
 				created_at: {
 					type: Sequelize.DATE,
@@ -60,14 +51,12 @@ module.exports = {
 			});
 		}
 
-		await queryInterface.addIndex('purple_desk_reports', ['tracking_code'], {
-			name: 'idx_purple_desk_reports_tracking_code'
+		await queryInterface.addIndex('user_recommended_resource_dismissals', ['user_id', 'item_key'], {
+			name: 'uniq_user_recommended_resource_dismissals_user_key',
+			unique: true
 		});
-		await queryInterface.addIndex('purple_desk_reports', ['campus_id'], {
-			name: 'idx_purple_desk_reports_campus_id'
-		});
-		await queryInterface.addIndex('purple_desk_reports', ['status'], {
-			name: 'idx_purple_desk_reports_status'
+		await queryInterface.addIndex('user_recommended_resource_dismissals', ['user_id'], {
+			name: 'idx_user_recommended_resource_dismissals_user_id'
 		});
 	},
 
@@ -82,8 +71,8 @@ module.exports = {
 			.filter(Boolean)
 			.map((t) => String(t).toLowerCase());
 
-		if (tables.includes('purple_desk_reports')) {
-			await queryInterface.dropTable('purple_desk_reports');
+		if (tables.includes('user_recommended_resource_dismissals')) {
+			await queryInterface.dropTable('user_recommended_resource_dismissals');
 		}
 	}
 };

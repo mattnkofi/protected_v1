@@ -4,6 +4,7 @@ import router from "@router";
 import { createPinia } from "pinia";
 import "./style.css";
 import "leaflet/dist/leaflet.css";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 // import '@fullcalendar/daygrid/index.css'
 // import '@fullcalendar/timegrid/index.css'

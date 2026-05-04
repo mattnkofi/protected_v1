@@ -3,6 +3,15 @@ const { Quiz, Module, QuizAttempt, UserGamification } = require('../model');
 const gamificationService = require('./GamificationService'); // Import ang automated EXP/Title logic
 
 class QuizService {
+    shuffleQuestions(questions) {
+        if (!Array.isArray(questions)) return [];
+        const copy = [...questions];
+        for (let i = copy.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
     /**
      * Creates a new gamified quiz linked to a specific module
      */
@@ -80,7 +89,10 @@ class QuizService {
             }]
         });
         if (!quiz) throw new Error('Quiz not found');
-        return quiz;
+        const quizJson = quiz.toJSON();
+        quizJson.questions_data = this.shuffleQuestions(quizJson.questions_data);
+        quizJson.questions_randomized = true;
+        return quizJson;
     }
 }
 

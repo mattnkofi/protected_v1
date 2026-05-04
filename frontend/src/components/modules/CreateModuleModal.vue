@@ -42,10 +42,13 @@
                                 class="custom-select-trigger"
                                 :class="{ 'custom-select-open': openDropdown === 'classroom' }"
                             >
-                                <span class="font-mplusrounded text-base">
-                                    {{ form.classroom_id === null
-                                        ? '🌍 Public Access (All Students)'
-                                        : ('🔒 ' + (classroomStore.classrooms.find(c => c.id === form.classroom_id)?.name || '')) }}
+                                <span class="font-mplusrounded text-base flex items-center gap-2">
+                                    <i :class="['fa-solid', form.classroom_id === null ? 'fa-earth-asia' : 'fa-lock']"></i>
+                                    <span>
+                                        {{ form.classroom_id === null
+                                            ? 'Public Access (All Students)'
+                                            : (classroomStore.classrooms.find(c => c.id === form.classroom_id)?.name || '') }}
+                                    </span>
                                 </span>
                                 <ChevronDownIcon class="custom-select-chevron" :class="{ 'rotate-180': openDropdown === 'classroom' }" />
                             </button>
@@ -55,14 +58,16 @@
                                         class="custom-select-option"
                                         :class="{ 'custom-select-option-active': form.classroom_id === null }"
                                         @click="form.classroom_id = null; openDropdown = null">
-                                        🌍 Public Access (All Students)
+                                        <i class="fa-solid fa-earth-asia"></i>
+                                        Public Access (All Students)
                                     </button>
                                     <button type="button"
                                         v-for="cls in classroomStore.classrooms" :key="cls.id"
                                         class="custom-select-option"
                                         :class="{ 'custom-select-option-active': form.classroom_id === cls.id }"
                                         @click="form.classroom_id = cls.id; openDropdown = null">
-                                        🔒 {{ cls.name }}
+                                        <i class="fa-solid fa-lock"></i>
+                                        {{ cls.name }}
                                     </button>
                                 </div>
                             </Teleport>
@@ -76,7 +81,7 @@
                             v-model="form.title"
                             type="text"
                             required
-                            placeholder="e.g. Introduction to GAD Awareness"
+                            placeholder="e.g. Introduction to WGAD Awareness"
                             class="input-field placeholder:text-platinum-500 dark:placeholder:text-abyss-400"
                         />
                     </div>

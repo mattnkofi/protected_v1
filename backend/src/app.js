@@ -16,6 +16,9 @@ const notificationRoutes = require('./router/NotificationRoutes');
 const adminRoutes = require('./router/AdminRoutes');
 const chatbotRoutes = require('./router/ChatbotRoutes');
 const mlAnalysisRoutes = require('./router/MLAnalysisRoutes');
+const gadRoutes = require('./router/GADRoutes');
+const purpleDeskRoutes = require('./router/PurpleDeskRoutes');
+const resourceRoutes = require('./router/ResourceRoutes');
 
 const app = express();
 
@@ -63,6 +66,9 @@ app.use('/api/v1/notifications', notificationRoutes);
 app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/chatbot', chatbotRoutes);
 app.use('/api/v1/ml-analysis', mlAnalysisRoutes);
+app.use('/api/v1/gad', gadRoutes);
+app.use('/api/v1/purple-desk', purpleDeskRoutes);
+app.use('/api/v1/resources', resourceRoutes);
 
 // 404 Handler
 app.use((req, res) => {

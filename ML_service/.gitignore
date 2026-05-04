@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+
+# Model / generated artifacts (exclude from git)
+vawc_bertopic_model
+*.pkl
+*.joblib
+*.pt
+*.onnx
+
+# Common generated outputs
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+*.html
+*.ipynb

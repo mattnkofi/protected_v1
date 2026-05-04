@@ -206,6 +206,66 @@
             </span>
           </div>
         </div>
+
+        <div v-if="studentRecommendation" class="mt-5 rounded-2xl border border-safety-teal-200/80 dark:border-safety-teal-700/50 bg-white/80 dark:bg-abyss-800/50 p-4 space-y-4">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p class="section-eyebrow text-safety-teal-600 dark:text-safety-teal-300">Student Recommendation</p>
+              <p class="mt-1 text-sm text-slate-700 dark:text-platinum-200">
+                {{ studentRecommendation.summary }}
+              </p>
+            </div>
+            <span class="badge" :class="studentRecommendation.seminarRecommended ? 'badge-orange' : 'badge-muted'">
+              {{ studentRecommendation.seminarRecommended ? 'Seminar recommended' : 'Monitor and self-check' }}
+            </span>
+          </div>
+
+          <div class="rounded-xl border border-slate-200/80 dark:border-abyss-600 bg-slate-50/70 dark:bg-abyss-900/40 p-4">
+            <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500">Why this appeared</p>
+            <p class="mt-2 text-sm leading-relaxed text-slate-700 dark:text-platinum-200">
+              {{ studentRecommendation.recommendationText }}
+            </p>
+            <div v-if="studentRecommendation.reasonParts?.length" class="mt-3 flex flex-wrap gap-2">
+              <span
+                v-for="(reason, index) in studentRecommendation.reasonParts"
+                :key="index"
+                class="inline-flex items-center rounded-full border border-slate-200 dark:border-abyss-600 bg-white dark:bg-abyss-800 px-3 py-1 text-xs text-slate-600 dark:text-platinum-200"
+              >
+                {{ reason }}
+              </span>
+            </div>
+          </div>
+
+          <div class="grid gap-4 md:grid-cols-2">
+            <div class="rounded-xl border border-slate-200/80 dark:border-abyss-600 bg-slate-50/70 dark:bg-abyss-900/40 p-4">
+              <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500">Risk Breakdown</p>
+              <div class="mt-3 space-y-2">
+                <div v-for="item in studentRiskBreakdown" :key="item.level" class="space-y-1">
+                  <div class="flex items-center justify-between text-xs text-slate-600 dark:text-platinum-300">
+                    <span>{{ item.level }}</span>
+                    <span>{{ item.count }}</span>
+                  </div>
+                  <div class="h-2 rounded-full bg-slate-200 dark:bg-abyss-700 overflow-hidden">
+                    <div
+                      class="h-full rounded-full bg-safety-teal-500 transition-all duration-300"
+                      :style="{ width: `${riskBarWidth(item.count)}%` }"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="rounded-xl border border-slate-200/80 dark:border-abyss-600 bg-slate-50/70 dark:bg-abyss-900/40 p-4">
+              <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500">Quick Note</p>
+              <p class="mt-2 text-sm leading-relaxed text-slate-700 dark:text-platinum-200">
+                {{ studentRecommendation.note }}
+              </p>
+              <p class="mt-3 text-sm leading-relaxed text-slate-700 dark:text-platinum-200">
+                If the pattern is tied to family conflict, pressure, or feeling unsafe, use the support seminar or facilitator follow-up to talk through what is happening.
+              </p>
+            </div>
+          </div>
+        </div>
       </section>
 
     </div>
@@ -231,6 +291,32 @@ const questions  = ref([]);
 const answers    = ref([]);
 const result     = ref(null);
 
+const studentRecommendation = computed(() =>
+  result.value?.studentRecommendation || result.value?.guidance?.latestAssessmentAnalysis?.studentRecommendation || null
+);
+
+const studentRiskBreakdown = computed(() => {
+  const breakdown = studentRecommendation.value?.riskBreakdown;
+  if (Array.isArray(breakdown) && breakdown.length) return breakdown;
+
+  const analysisResults = Array.isArray(result.value?.mlResult?.analysis_results)
+    ? result.value.mlResult.analysis_results
+    : [];
+
+  const counts = analysisResults.reduce((acc, item) => {
+    const key = String(item?.risk_level || 'Low');
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  return ['Low', 'Moderate', 'High', 'Severe'].map(level => ({
+    level,
+    count: counts[level] || 0
+  }));
+});
+
+const maxRiskCount = computed(() => Math.max(1, ...studentRiskBreakdown.value.map(item => item.count || 0)));
+
 /* ── Computed ───────────────────────────────────────────────────── */
 const isComplete = computed(() =>
   answers.value.length > 0 &&
@@ -248,6 +334,8 @@ const progressPct = computed(() =>
 );
 
 const selectedIndex = (index) => answers.value[index]?.selectedOptionIndex ?? null;
+
+const riskBarWidth = (count) => Math.round(((count || 0) / maxRiskCount.value) * 100);
 
 /* ── API ─────────────────────────────────────────────────────────── */
 const loadQuestionnaire = async () => {

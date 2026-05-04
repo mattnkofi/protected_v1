@@ -8,7 +8,9 @@
           <h2 class="font-madimione text-3xl md:text-5xl text-slate-900 dark:text-white tracking-tight">Your Advocacy Hub</h2>
 
           <div class="bg-calm-lavender-600 text-white border-2 border-calm-lavender-800 border-b-[6px] p-6 rounded-3xl relative">
-            <div class="absolute -top-3 -left-3 bg-neon-pink-500 border-2 border-white rounded-full p-2 text-xl">💡</div>
+            <div class="absolute -top-3 -left-3 bg-neon-pink-500 border-2 border-white rounded-full p-2 text-xl">
+              <i class="fa-solid fa-lightbulb"></i>
+            </div>
             <p class="font-averta text-lg font-semibold leading-relaxed ml-4">
               "Consent is a clear, voluntary, and enthusiastic agreement... It can be withdrawn at any time."
             </p>
@@ -53,7 +55,7 @@
         <div class="max-w-xl relative z-10">
           <h2 class="font-madimione text-3xl md:text-5xl mb-4 tracking-tight">Have a question? <br/> Ask Lumina!</h2>
           <p class="font-averta text-base md:text-lg font-medium opacity-95 leading-relaxed">
-            Your private AI companion for GAD, VAWC, and Sex Ed questions. Secure, encrypted, and always online to help you understand your rights.
+            Your private AI companion for WGAD, VAWC, and Sex Ed questions. Secure, encrypted, and always online to help you understand your rights.
           </p>
         </div>
 

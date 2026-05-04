@@ -26,12 +26,12 @@ async function verifyDatabase() {
 
     // Check gad_scores table
     const scores = await sequelize.query('SELECT * FROM gad_scores', { raw: true });
-    console.log('✅ GAD Scores table found (ready for scoring)\n');
+    console.log('GAD Scores table found (ready for scoring)\n');
 
-    console.log('🎉 All GAD module tables are set up correctly!');
+    console.log('All GAD module tables are set up correctly!');
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error verifying database:', error.message);
+    console.error('Error verifying database:', error.message);
     process.exit(1);
   }
 }

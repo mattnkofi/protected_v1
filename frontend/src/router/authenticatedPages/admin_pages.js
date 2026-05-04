@@ -57,4 +57,40 @@ export const adminPages = [
         component: () => import('@/views/facilitator/MLAnalytics.vue'),
         meta: { title: 'System-Wide Analytics' }
     },
+    {
+        path: 'resource-center',
+        name: 'admin.resource-center',
+        component: () => import('@/views/resources/ResourceCenter.vue'),
+        meta: { title: 'Resource Center' }
+    },
+    {
+        path: 'behavioral-reports',
+        name: 'admin.behavioral-reports',
+        component: () => import('@/views/admin/BehavioralAIReports.vue'),
+        meta: { title: 'Behavioral Reports' }
+    },
+    {
+        path: 'purple-desk',
+        name: 'admin.purple-desk',
+        component: () => import('@/views/admin/PurpleDeskReports.vue'),
+        meta: { title: 'Purple Desk' }
+    },
+    {
+        path: 'gad/dashboard',
+        name: 'admin.gad.dashboard',
+        component: () => import('@/views/admin/GADDashboard.vue'),
+        meta: { title: 'WGAD Dashboard' }
+    },
+    {
+        path: 'gad/proposals',
+        name: 'admin.gad.proposals',
+        component: () => import('@/views/admin/GADProposalsList.vue'),
+        meta: { title: 'WGAD Proposals' }
+    },
+    {
+        path: 'gad/language-analyzer',
+        name: 'admin.gad.language-analyzer',
+        component: () => import('@/views/GADLanguageAnalyzer.vue'),
+        meta: { title: 'WGAD Language Analyzer' }
+    },
 ];

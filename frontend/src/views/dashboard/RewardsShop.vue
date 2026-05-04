@@ -6,7 +6,7 @@
       <div class="space-y-1.5">
         <p class="section-eyebrow">Redemption Center</p>
         <h1 class="page-title">
-          GAD <span class="brand-gradient-text">Rewards</span>
+          WGAD <span class="brand-gradient-text">Rewards</span>
         </h1>
       </div>
 
@@ -140,7 +140,7 @@ const loadRewards = async () => {
 const claimReward = async (item) => {
   try {
     const { data } = await axios.post(`/api/rewards/claim/${item.id}`);
-    toast.success('Success! Visit the GAD Office to claim your item.');
+    toast.success('Success! Visit the WGAD Office to claim your item.');
     if (authStore.user?.gamification && data.remaining_xp !== undefined) {
       authStore.user.gamification.experience_points = data.remaining_xp;
     }

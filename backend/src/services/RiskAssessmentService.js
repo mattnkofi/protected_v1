@@ -68,6 +68,106 @@ class RiskAssessmentService {
             .map(([label, count]) => ({ label, count }));
     }
 
+    _buildRiskBreakdown(analysisResults = []) {
+        const riskLevels = ['Low', 'Moderate', 'High', 'Severe'];
+        const breakdown = riskLevels.map(level => ({ level, count: 0 }));
+
+        if (!Array.isArray(analysisResults)) return breakdown;
+
+        const counts = analysisResults.reduce((acc, item) => {
+            const key = String(item?.risk_level || 'Low');
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
+
+        return breakdown.map(item => ({
+            ...item,
+            count: counts[item.level] || 0
+        }));
+    }
+
+    _buildStudentRecommendation(latestAssessment = null) {
+        if (!latestAssessment) {
+            return null;
+        }
+
+        const overallRiskLevel = latestAssessment.overall_risk_level || 'Low';
+        const dominantCategory = latestAssessment.dominant_category || 'Neutral / Unclassified';
+        const analysisResults = Array.isArray(latestAssessment.analysis_results)
+            ? latestAssessment.analysis_results
+            : [];
+        const topBehaviors = this._extractTopBehaviors(analysisResults, 3);
+        const riskBreakdown = this._buildRiskBreakdown(analysisResults);
+
+        const stressLabelMap = {
+            Low: 'low',
+            Moderate: 'moderate',
+            High: 'high',
+            Severe: 'very high'
+        };
+
+        const seminarRecommended = ['High', 'Severe'].includes(overallRiskLevel) || !!latestAssessment.flags_detected;
+
+        const supportThemes = [];
+        const themeChecks = [
+            {
+                label: 'family, friends, or mentors',
+                matcher: /support systems|family|friends|mentors/i
+            },
+            {
+                label: 'feeling unsafe or pressured',
+                matcher: /unsafe|pressure|controlled|intimidation|threats/i
+            },
+            {
+                label: 'reporting harmful situations',
+                matcher: /reporting harmful|fear of consequences/i
+            },
+            {
+                label: 'emotional overload or withdrawal',
+                matcher: /anxious|overwhelmed|unable to focus|withdraw/i
+            }
+        ];
+
+        analysisResults.forEach((item) => {
+            const questionText = String(item?.question_text || '').trim();
+            if (!questionText) return;
+
+            themeChecks.forEach((theme) => {
+                if (theme.matcher.test(questionText) && !supportThemes.includes(theme.label)) {
+                    supportThemes.push(theme.label);
+                }
+            });
+        });
+
+        const reasonParts = [];
+        if (dominantCategory && dominantCategory !== 'Neutral / Unclassified') {
+            reasonParts.push(`main pattern: ${dominantCategory}`);
+        }
+        if (topBehaviors.length) {
+            reasonParts.push(`common signals: ${topBehaviors.map(item => item.label).join(', ')}`);
+        }
+        if (supportThemes.length) {
+            reasonParts.push(`likely stress areas: ${supportThemes.join(', ')}`);
+        }
+
+        const summary = `The system predicts ${stressLabelMap[overallRiskLevel] || 'low'} stress indicators based on your responses.`;
+        const recommendationText = seminarRecommended
+            ? 'A support seminar or facilitator check-in is recommended so the student can talk through the patterns identified by the analysis.'
+            : 'A seminar is not required right now, but the student should keep monitoring these patterns and reach out if the situation gets harder.';
+
+        const note = 'This is a screening result, not a diagnosis.';
+
+        return {
+            summary,
+            reasonParts,
+            seminarRecommended,
+            recommendationText,
+            note,
+            topBehaviors,
+            riskBreakdown
+        };
+    }
+
     async _resolveSystemOwner() {
         const owner = await User.findOne({
             where: {
@@ -187,11 +287,13 @@ class RiskAssessmentService {
         );
 
         const signalResult = await personalizationService.processPostQuizSignals(userId, quiz.id, mlResult);
+        const studentRecommendation = this._buildStudentRecommendation(mlResult);
 
         return {
             quiz: { id: quiz.id, title: quiz.title },
             answersSubmitted: answerEntries.length,
             mlResult,
+            studentRecommendation,
             guidance: signalResult?.guidance || null,
             alertCreated: !!signalResult?.alertCreated
         };
@@ -219,7 +321,9 @@ class RiskAssessmentService {
             concerningAnswersCount: latest.concerning_answers_count,
             totalAnswersAnalyzed: latest.total_answers_analyzed,
             flagsDetected: !!latest.flags_detected,
-            topBehaviors: this._extractTopBehaviors(latest.analysis_results)
+            topBehaviors: this._extractTopBehaviors(latest.analysis_results),
+            riskBreakdown: this._buildRiskBreakdown(latest.analysis_results),
+            studentRecommendation: this._buildStudentRecommendation(latest)
         };
     }
 }

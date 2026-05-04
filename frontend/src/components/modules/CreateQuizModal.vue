@@ -35,9 +35,9 @@
                         <label class="field-label">Quiz Mode</label>
                         <div class="ds-select-wrap">
                             <select v-model="form.quiz_type" class="ds-select">
-                                <option value="time_attack">⏱ Time Attack</option>
-                                <option value="streak">🔥 Streak Master</option>
-                                <option value="boss_battle">⚔️ Boss Battle</option>
+                                <option value="time_attack">Time Attack</option>
+                                <option value="streak">Streak Master</option>
+                                <option value="boss_battle">Boss Battle</option>
                             </select>
                             <ChevronDownIcon class="ds-select-icon" />
                         </div>

@@ -18,6 +18,12 @@ export const learnerPages = [
         meta: { title: 'Behavioral Assessment' }
     },
     {
+        path: 'purple-desk',
+        name: 'user.purple-desk',
+        component: () => import('@/views/safety/PurpleDesk.vue'),
+        meta: { title: 'Purple Desk' }
+    },
+    {
         path: 'classrooms',
         name: 'classrooms.index',
         component: () => import('@/views/classrooms/ClassroomDashboard.vue'),

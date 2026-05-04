@@ -2,7 +2,7 @@
     <div class="p-8 space-y-8 text-white">
         <div class="flex justify-between items-center">
             <div>
-                <h1 class="text-3xl font-black uppercase tracking-tighter italic">GAD Inventory</h1>
+                <h1 class="text-3xl font-black uppercase tracking-tighter italic">HGDG Inventory</h1>
                 <p class="text-[10px] text-gray-500 uppercase tracking-widest">Manage tangible rewards and stocks</p>
             </div>
             <button @click="openCreateModal" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-fuchsia-600 rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-lg hover:scale-105 transition-all">

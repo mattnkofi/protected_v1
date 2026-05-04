@@ -187,7 +187,8 @@ import ConfirmLogoutModal from '@/components/ui/ConfirmLogoutModal.vue'
 import {
     ChevronLeft, ChevronRight, BookOpen, Gift, LineChart,
     MoreVertical, User as UserIcon, Settings, LogOut,
-    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, Trophy
+    LayoutDashboard, School, ShieldCheck as ShieldCheckIcon, Trophy,
+    Languages, UploadCloud, BookMarked, ShieldAlert
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -210,6 +211,12 @@ const navItems = [
     { name: 'Rewards',      route: 'facilitator.rewards',    icon: Gift,            color: 'text-orange-500',        fill: 'fill-orange-500/20', badge: 'Manage' },
     { divider: true, label: 'Performance' },
     { name: 'Analytics',    route: 'facilitator.ml-analytics',  icon: LineChart,       color: 'text-neon-pink-500',     fill: 'fill-neon-pink-500/20' },
+    { divider: true, label: 'Safety & Support' },
+    { name: 'Resource Center', route: 'facilitator.resource-center', icon: BookMarked, color: 'text-teal-500', fill: 'fill-teal-500/20' },
+    { name: 'Purple Desk', route: 'facilitator.purple-desk', icon: ShieldAlert, color: 'text-amber-500', fill: 'fill-amber-500/20' },
+    { divider: true, label: 'HGDG Module' },
+    { name: 'Proposals',     route: 'facilitator.gad.manage',           icon: UploadCloud,   color: 'text-cyan-500',   fill: 'fill-cyan-500/20', badge: 'Upload' },
+    { name: 'Language Check',   route: 'facilitator.gad.language-analyzer', icon: Languages,     color: 'text-indigo-500', fill: 'fill-indigo-500/20' },
 ]
 
 const isItemActive = (item) => item.isActive ? item.isActive() : route.name === item.route

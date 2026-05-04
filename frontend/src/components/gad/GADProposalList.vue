@@ -1,378 +1,343 @@
 <template>
-    <div class="page-wrapper animate-in font-mplusrounded">
-            <header class="page-header">
-                <div class="space-y-2">
-                    <p class="section-eyebrow">HGDG Portfolio</p>
-                    <h1 class="page-title">HGDG <span class="brand-gradient-text">Proposals</span></h1>
-                    <p class="page-subtitle">Track, refine, and upload evidence for each submission.</p>
-                </div>
-                <button
-                    @click="$router.push('/gad/submit')"
-                    class="btn-primary"
-                >
-                    <Plus class="h-5 w-5" />
-                    New Proposal
-                </button>
-            </header>
-
-            <div v-if="statusUpdateMessage" class="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm font-semibold text-emerald-700 dark:text-emerald-200">
-                {{ statusUpdateMessage }}
+    <div class="page-wrapper animate-in">
+        <div class="page-header">
+            <div class="space-y-2">
+                <p class="section-eyebrow">WGAD Portfolio</p>
+                <h1 class="page-title">WGAD <span class="brand-gradient-text">Proposals</span></h1>
+                <p class="page-subtitle">Track, refine, and upload evidence for each submission.</p>
             </div>
-            <div v-if="statusUpdateError" class="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-4 text-sm font-semibold text-rose-700 dark:text-rose-200">
-                {{ statusUpdateError }}
-            </div>
+            <button
+                @click="$router.push('/gad/submit')"
+                class="btn-primary"
+            >
+                <Plus class="h-5 w-5" />
+                New Proposal
+            </button>
+        </div>
 
-            <div class="card">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xs uppercase tracking-[0.3em] text-slate-600 dark:text-platinum-300">Filters</h2>
-                    <span class="text-xs text-slate-500 dark:text-platinum-400">{{ pagination.total }} results</span>
-                </div>
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Campus</label>
-                        <select
-                            v-model="filters.campus_id"
-                            @change="loadProposals"
-                            class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500 focus:ring-2 focus:ring-calm-lavender-500/20"
-                        >
-                            <option value="">All Campuses</option>
-                            <option v-for="campus in campuses" :key="campus.id" :value="campus.id">
-                                {{ campus.name }}
-                            </option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Status</label>
-                        <select
-                            v-model="filters.status"
-                            @change="loadProposals"
-                            class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500 focus:ring-2 focus:ring-calm-lavender-500/20"
-                        >
-                            <option value="">All Statuses</option>
-                            <option value="submitted">Submitted</option>
-                            <option value="under_review">Under Review</option>
-                            <option value="rejected_with_feedback">Needs Revision</option>
-                            <option value="revised">Revised</option>
-                            <option value="approved">Approved</option>
-                            <option value="approved_final">Approved (Final)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Language</label>
-                        <select
-                            v-model="filters.gfl_status"
-                            @change="loadProposals"
-                            class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500 focus:ring-2 focus:ring-calm-lavender-500/20"
-                        >
-                            <option value="">All</option>
-                            <option value="clear">Clear</option>
-                            <option value="issues">Has Issues</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Search</label>
-                        <input
-                            v-model="filters.search"
-                            @input="loadProposals"
-                            type="text"
-                            placeholder="Search proposals..."
-                            class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 placeholder-slate-400 dark:placeholder-platinum-500 outline-none transition focus:border-calm-lavender-500 focus:ring-2 focus:ring-calm-lavender-500/20"
-                        />
-                    </div>
-                </div>
-            </div>
+        <div v-if="statusUpdateMessage" class="rounded-2xl border border-emerald-500/40 bg-emerald-500/10 p-4 text-sm font-semibold text-emerald-700 dark:text-emerald-200">
+            {{ statusUpdateMessage }}
+        </div>
+        <div v-if="statusUpdateError" class="rounded-2xl border border-rose-500/40 bg-rose-500/10 p-4 text-sm font-semibold text-rose-700 dark:text-rose-200">
+            {{ statusUpdateError }}
+        </div>
 
-            <div class="space-y-4">
-                <div v-if="proposals.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                    <button
-                        v-for="proposal in proposals"
-                        :key="proposal.id"
-                        @click="selectProposal(proposal)"
-                        class="item-card text-left p-6"
+        <div class="card space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xs uppercase tracking-[0.3em] text-slate-600 dark:text-platinum-200">Filters</h2>
+                <span class="text-xs text-slate-500 dark:text-platinum-400">{{ pagination.total }} results</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Campus</label>
+                    <select
+                        v-model="filters.campus_id"
+                        @change="loadProposals"
+                        class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500"
                     >
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-center gap-3 min-w-0">
-                                <div class="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700">
-                                    <FileText class="h-6 w-6 text-slate-500 dark:text-platinum-300" />
+                        <option value="">All Campuses</option>
+                        <option v-for="campus in campuses" :key="campus.id" :value="campus.id">
+                            {{ campus.name }}
+                        </option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Status</label>
+                    <select
+                        v-model="filters.status"
+                        @change="loadProposals"
+                        class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500"
+                    >
+                        <option value="">All Statuses</option>
+                        <option value="submitted">Submitted</option>
+                        <option value="under_review">Under Review</option>
+                        <option value="rejected_with_feedback">Needs Revision</option>
+                        <option value="revised">Revised</option>
+                        <option value="approved">Approved</option>
+                        <option value="approved_final">Approved (Final)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Language</label>
+                    <select
+                        v-model="filters.gfl_status"
+                        @change="loadProposals"
+                        class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500"
+                    >
+                        <option value="">All</option>
+                        <option value="clear">Clear</option>
+                        <option value="issues">Has Issues</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400 mb-2">Search</label>
+                    <input
+                        v-model="filters.search"
+                        @input="loadProposals"
+                        type="text"
+                        placeholder="Search proposals..."
+                        class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 placeholder-slate-400 outline-none transition focus:border-calm-lavender-500"
+                    />
+                </div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div v-if="proposals.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                <button
+                    v-for="proposal in proposals"
+                    :key="proposal.id"
+                    @click="selectProposal(proposal)"
+                    class="item-card !p-6 text-left hover:border-calm-lavender-200 dark:hover:border-calm-lavender-700/60 h-full"
+                >
+                    <div class="flex items-start justify-between gap-3">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">WGAD Proposal</p>
+                            <h3 class="mt-1 text-lg font-semibold text-slate-800 dark:text-platinum-100 line-clamp-1">{{ proposal.title }}</h3>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-platinum-400">{{ proposal.user?.name }} • {{ formatDate(proposal.submission_date) }}</p>
+                        </div>
+                        <span :class="['px-3 py-1.5 text-xs font-semibold rounded-full border', getStatusBadgeClass(proposal.status)]">
+                            {{ formatStatus(proposal.status) }}
+                        </span>
+                    </div>
+
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div class="rounded-xl border border-slate-200/80 dark:border-abyss-500/80 bg-slate-50 dark:bg-abyss-800/70 p-3">
+                            <div class="flex items-center gap-2">
+                                <div class="h-9 w-9 rounded-lg border border-indigo-200/80 bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 flex items-center justify-center text-xs font-semibold">
+                                    CP
                                 </div>
-                                <div class="min-w-0">
-                                    <h3 class="text-lg font-semibold text-slate-800 dark:text-platinum-100 truncate">{{ proposal.title }}</h3>
-                                    <p class="text-sm text-slate-500 dark:text-platinum-400 truncate">
-                                        {{ proposal.user?.name }} • {{ proposal.campus?.name || 'All Campus' }}
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Campus</p>
+                                    <p class="text-sm font-semibold text-slate-800 dark:text-platinum-100">{{ proposal.campus?.name || 'Unassigned' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rounded-xl border border-slate-200/80 dark:border-abyss-500/80 bg-slate-50 dark:bg-abyss-800/70 p-3">
+                            <div class="flex items-center gap-2">
+                                <div class="h-9 w-9 rounded-lg border border-emerald-200/80 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 flex items-center justify-center text-xs font-semibold">
+                                    RV
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Review</p>
+                                    <p class="text-sm font-semibold" :class="proposal.reviewed_by ? 'text-emerald-600 dark:text-emerald-300' : 'text-slate-500 dark:text-platinum-300'">
+                                        {{ proposal.reviewed_by ? 'Reviewed' : 'Pending' }}
                                     </p>
                                 </div>
                             </div>
-                            <span :class="['px-3 py-1.5 text-xs font-semibold rounded-full border', getStatusBadgeClass(proposal.status)]">
-                                {{ formatStatus(proposal.status) }}
-                            </span>
                         </div>
-
-                        <div class="mt-4 grid grid-cols-2 gap-3">
-                            <div class="rounded-xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-3">
-                                <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Submitted</p>
-                                <p class="mt-1 text-sm font-semibold text-slate-700 dark:text-platinum-100">{{ formatDate(proposal.submission_date) }}</p>
-                            </div>
-                            <div class="rounded-xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-3">
-                                <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Language</p>
-                                <div class="mt-1 flex items-center gap-2">
-                                    <span class="h-2 w-2 rounded-full" :class="proposal.gfl_issues ? 'bg-amber-400' : 'bg-emerald-400'"></span>
+                        <div class="rounded-xl border border-slate-200/80 dark:border-abyss-500/80 bg-slate-50 dark:bg-abyss-800/70 p-3">
+                            <div class="flex items-center gap-2">
+                                <div class="h-9 w-9 rounded-lg border border-amber-200/80 bg-amber-500/10 text-amber-600 dark:text-amber-300 flex items-center justify-center text-xs font-semibold">
+                                    LN
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Language</p>
                                     <p class="text-sm font-semibold" :class="proposal.gfl_issues ? 'text-amber-600 dark:text-amber-300' : 'text-emerald-600 dark:text-emerald-300'">
                                         {{ proposal.gfl_issues ? 'Review' : 'Clear' }}
                                     </p>
                                 </div>
                             </div>
-                            <div class="rounded-xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-3">
-                                <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Document</p>
-                                <p class="mt-1 text-sm font-semibold" :class="proposal.file_key ? 'text-cyan-600 dark:text-cyan-300' : 'text-slate-500 dark:text-platinum-400'">
-                                    {{ proposal.file_key ? 'Attached' : 'None' }}
-                                </p>
-                            </div>
-                            <div class="rounded-xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-3">
-                                <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Comments</p>
-                                <p class="mt-1 text-lg font-semibold text-amber-600 dark:text-amber-300">{{ getCommentCount(proposal.id) }}</p>
+                        </div>
+                        <div class="rounded-xl border border-slate-200/80 dark:border-abyss-500/80 bg-slate-50 dark:bg-abyss-800/70 p-3">
+                            <div class="flex items-center gap-2">
+                                <div class="h-9 w-9 rounded-lg border border-cyan-200/80 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 flex items-center justify-center text-xs font-semibold">
+                                    DC
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Document</p>
+                                    <p class="text-sm font-semibold" :class="proposal.file_key ? 'text-cyan-600 dark:text-cyan-300' : 'text-slate-500 dark:text-platinum-300'">
+                                        {{ proposal.file_key ? 'Attached' : 'None' }}
+                                    </p>
+                                </div>
                             </div>
                         </div>
-
-                        <p class="mt-4 text-sm text-slate-600 dark:text-platinum-300 line-clamp-2">{{ proposal.description }}</p>
-
-                        <div v-if="isAdmin" class="mt-4 space-y-2" @click.stop>
-                            <div class="flex flex-wrap items-center gap-2">
-                                <button
-                                    v-for="option in statusOptions"
-                                    :key="option.value"
-                                    class="btn-secondary text-[10px] px-3 py-1"
-                                    :disabled="ensureStatusEdit(proposal).saving"
-                                    @click.stop="requestStatusUpdate(proposal, option.value)"
-                                >
-                                    {{ option.label }}
-                                </button>
+                        <div class="rounded-xl border border-slate-200/80 dark:border-abyss-500/80 bg-slate-50 dark:bg-abyss-800/70 p-3">
+                            <div class="flex items-center gap-2">
+                                <div class="h-9 w-9 rounded-lg border border-rose-200/80 bg-rose-500/10 text-rose-600 dark:text-rose-300 flex items-center justify-center text-xs font-semibold">
+                                    CM
+                                </div>
+                                <div>
+                                    <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Comments</p>
+                                    <p class="text-sm font-semibold text-slate-800 dark:text-platinum-100">{{ getCommentCount(proposal.id) }}</p>
+                                </div>
                             </div>
-                            <textarea
-                                v-if="ensureStatusEdit(proposal).status === 'rejected_with_feedback'"
-                                v-model="ensureStatusEdit(proposal).feedback"
-                                @click.stop
-                                rows="2"
-                                placeholder="Feedback required for rejection"
-                                class="w-full rounded-lg border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-2 py-1 text-xs text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500"
-                            />
                         </div>
-                    </button>
-                </div>
-                <div v-else class="rounded-2xl border border-dashed border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-800 p-6 text-center">
-                    <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700">
-                        <FileText class="h-7 w-7 text-slate-400 dark:text-platinum-400" />
                     </div>
-                    <p class="text-slate-700 dark:text-platinum-200 font-semibold">No proposals yet</p>
-                    <p class="mt-2 text-sm text-slate-500 dark:text-platinum-400">Create your first gender-responsive proposal.</p>
-                    <button
-                        @click="$router.push('/gad/submit')"
-                        class="btn-secondary mt-4 text-xs"
-                    >
-                        Start Now
-                    </button>
-                </div>
-            </div>
 
-            <div v-if="pagination.pages > 1" class="flex flex-wrap justify-center gap-2 pt-4">
-                <button
-                    v-for="page in pagination.pages"
-                    :key="page"
-                    @click="filters.page = page; loadProposals()"
-                    :class="['px-4 py-2 rounded-full text-xs font-semibold transition-all', page === pagination.page ? 'bg-calm-lavender-500/80 text-white shadow-[0_6px_20px_rgba(168,85,247,0.25)]' : 'border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 text-slate-600 dark:text-platinum-300 hover:border-calm-lavender-400']"
-                >
-                    {{ page }}
+                    <div class="mt-4 rounded-xl border border-slate-200/80 dark:border-abyss-500/80 bg-white dark:bg-abyss-800 p-4">
+                        <p class="text-[10px] uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Proposal Summary</p>
+                        <p class="mt-2 text-sm text-slate-700 dark:text-platinum-200 line-clamp-2">
+                            {{ proposal.description }}
+                        </p>
+                    </div>
                 </button>
             </div>
+            <div v-else class="card text-center">
+                <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-slate-200 dark:border-abyss-600 bg-slate-50 dark:bg-abyss-700">
+                    <FileText class="h-7 w-7 text-slate-400 dark:text-platinum-400" />
+                </div>
+                <p class="text-slate-700 dark:text-platinum-200 font-semibold">No proposals yet</p>
+                <p class="mt-2 text-sm text-slate-500 dark:text-platinum-400">Create your first gender-responsive proposal.</p>
+                <button
+                    @click="$router.push('/gad/submit')"
+                    class="mt-4 btn-secondary"
+                >
+                    Start Now
+                </button>
+            </div>
+        </div>
 
-            <Transition
-                enter-active-class="transition duration-300 ease-out"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                leave-active-class="transition duration-200 ease-in"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
+        <div v-if="pagination.pages > 1" class="flex flex-wrap justify-center gap-2 pt-4">
+            <button
+                v-for="page in pagination.pages"
+                :key="page"
+                @click="filters.page = page; loadProposals()"
+                :class="['px-4 py-2 rounded-full text-xs font-semibold transition-all', page === pagination.page ? 'bg-cyan-500/80 text-slate-950 shadow-[0_6px_20px_rgba(34,211,238,0.35)]' : 'border border-slate-200 dark:border-abyss-600 bg-white dark:bg-abyss-700 text-slate-600 dark:text-platinum-200 hover:border-cyan-400/60']"
             >
-                <div v-if="selectedProposal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-md">
-                    <Transition
-                        enter-active-class="transition duration-300 ease-out"
-                        enter-from-class="opacity-0 translate-y-4 scale-95"
-                        enter-to-class="opacity-100 translate-y-0 scale-100"
-                        leave-active-class="transition duration-200 ease-in"
-                        leave-from-class="opacity-100 translate-y-0 scale-100"
-                        leave-to-class="opacity-0 translate-y-4 scale-95"
-                    >
-                        <div class="max-w-3xl w-full max-h-[85vh] overflow-y-auto card p-8">
-                    <div class="flex items-start justify-between gap-4">
-                        <div>
-                            <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-platinum-400">Proposal detail</p>
-                            <h2 class="mt-2 text-2xl font-semibold text-slate-800 dark:text-platinum-100">{{ selectedProposal.title }}</h2>
+                {{ page }}
+            </button>
+        </div>
+
+        <div v-if="selectedProposal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 dark:bg-black/60 p-4 backdrop-blur-sm">
+            <div class="card max-w-3xl w-full max-h-[85vh] overflow-y-auto">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <p class="section-eyebrow">Proposal detail</p>
+                        <h2 class="page-title text-2xl">{{ selectedProposal.title }}</h2>
+                    </div>
+                    <button @click="selectedProposal = null" class="text-slate-500 hover:text-slate-700 dark:text-platinum-400 dark:hover:text-platinum-100">
+                        <X class="h-5 w-5" />
+                    </button>
+                </div>
+
+                <div class="mt-6 space-y-6">
+                    <div>
+                        <h3 class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Description</h3>
+                        <p class="mt-3 rounded-2xl border border-slate-200 dark:border-abyss-600 bg-slate-50 dark:bg-abyss-700 p-4 text-sm text-slate-700 dark:text-platinum-100">
+                            {{ selectedProposal.description }}
+                        </p>
+                    </div>
+
+                    <div class="grid gap-4 sm:grid-cols-2">
+                        <div class="rounded-2xl border border-slate-200 dark:border-abyss-600 bg-slate-50 dark:bg-abyss-700 p-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Status</p>
+                            <span :class="['mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-semibold', getStatusBadgeClass(selectedProposal.status)]">
+                                {{ formatStatus(selectedProposal.status) }}
+                            </span>
                         </div>
-                        <button @click="selectedProposal = null" class="rounded-full border border-slate-200 dark:border-abyss-500 p-2 text-slate-500 dark:text-platinum-400 transition hover:border-slate-400 hover:text-slate-700 dark:hover:text-platinum-100">
-                            <X class="h-5 w-5" />
+                        <div class="rounded-2xl border border-slate-200 dark:border-abyss-600 bg-slate-50 dark:bg-abyss-700 p-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Campus</p>
+                            <p class="mt-2 text-sm font-semibold text-slate-700 dark:text-platinum-100">{{ selectedProposal.campus?.name }}</p>
+                        </div>
+                    </div>
+
+                    <div v-if="selectedProposal.file_key" class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
+                        <div class="flex items-center gap-3">
+                            <div class="rounded-xl bg-emerald-500/20 p-2 text-emerald-600 dark:text-emerald-200">
+                                <FileText class="h-5 w-5" />
+                            </div>
+                            <div>
+                                <p class="text-sm font-semibold text-emerald-700 dark:text-emerald-100">Proposal document</p>
+                                <p class="text-xs text-emerald-700/80 dark:text-emerald-200/80">{{ selectedProposal.file_key.split('/').pop() }}</p>
+                            </div>
+                        </div>
+                        <button
+                            @click="viewDocument(selectedProposal)"
+                            class="mt-4 w-full rounded-2xl bg-emerald-500/80 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:opacity-90"
+                        >
+                            View Document
                         </button>
                     </div>
 
-                    <div class="mt-6 space-y-6">
+                    <div v-if="selectedProposal.admin_feedback" class="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-4">
+                        <h3 class="text-xs uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-200">Admin feedback</h3>
+                        <p class="mt-2 text-sm text-slate-700 dark:text-platinum-100">{{ selectedProposal.admin_feedback }}</p>
+                    </div>
+
+                    <div v-if="selectedProposal.gfl_issues?.issues?.length > 0" class="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
+                        <h3 class="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-200">Gender-fair language</h3>
+                        <div class="mt-2 space-y-2 text-sm text-amber-700 dark:text-amber-100">
+                            <div v-for="(issue, idx) in selectedProposal.gfl_issues.issues.slice(0, 3)" :key="idx">
+                                "{{ issue.term }}" -> <em>"{{ issue.suggestion }}"</em>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-200 dark:border-abyss-600 bg-slate-50 dark:bg-abyss-700 p-4">
+                        <ProposalComments :proposal_id="selectedProposal.id" />
+                    </div>
+
+                    <div class="flex flex-wrap gap-3">
+                        <button
+                            @click="$router.push('/gad/upload')"
+                            class="btn-primary flex-1 justify-center"
+                        >
+                            Upload or Update Document
+                        </button>
+                        <button
+                            @click="selectedProposal = null"
+                            class="btn-secondary"
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <DocumentViewer
+            v-if="showDocumentViewer"
+            :isOpen="showDocumentViewer"
+            :documentUrl="documentUrl"
+            :documentName="documentName"
+            :proposalId="selectedProposalId"
+            @close="showDocumentViewer = false"
+        />
+
+        <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div v-if="statusConfirm" class="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 dark:bg-black/60 p-4">
+                <div class="card w-full max-w-md">
+                    <p class="section-eyebrow">Confirm update</p>
+                    <h3 class="text-lg font-semibold text-slate-800 dark:text-platinum-100">Update proposal status?</h3>
+                    <p class="mt-2 text-sm text-slate-500 dark:text-platinum-400">
+                        Status will be set to <span class="text-emerald-600 dark:text-emerald-300 font-semibold">{{ statusConfirm.label }}</span>.
+                    </p>
+                    <div class="mt-6 flex gap-3">
+                        <button class="btn-secondary flex-1" @click="statusConfirm = null">Cancel</button>
+                        <button class="btn-primary flex-1" @click="confirmStatusUpdate">Confirm</button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
+
+        <Transition
+            enter-active-class="transition duration-200 ease-out"
+            enter-from-class="opacity-0"
+            enter-to-class="opacity-100"
+            leave-active-class="transition duration-150 ease-in"
+            leave-from-class="opacity-100"
+            leave-to-class="opacity-0"
+        >
+            <div v-if="isBusy" class="fixed inset-0 z-[70] flex items-center justify-center bg-slate-900/30 backdrop-blur-sm">
+                <div class="card px-6 py-5">
+                    <div class="flex items-center gap-3">
+                        <div class="h-10 w-10 rounded-full border-2 border-calm-lavender-500/30 border-t-calm-lavender-500 animate-spin"></div>
                         <div>
-                            <h3 class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Description</h3>
-                            <p class="mt-3 rounded-2xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-4 text-sm text-slate-700 dark:text-platinum-200">
-                                {{ selectedProposal.description }}
-                            </p>
-                        </div>
-
-                        <div class="grid gap-4 sm:grid-cols-2">
-                            <div class="rounded-2xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-4">
-                                <p class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Status</p>
-                                <span :class="['mt-2 inline-flex rounded-full border px-3 py-1 text-xs font-semibold', getStatusBadgeClass(selectedProposal.status)]">
-                                    {{ formatStatus(selectedProposal.status) }}
-                                </span>
-                            </div>
-                            <div class="rounded-2xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-4">
-                                <p class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Campus</p>
-                                <p class="mt-2 text-sm font-semibold text-slate-700 dark:text-platinum-200">{{ selectedProposal.campus?.name }}</p>
-                            </div>
-                        </div>
-
-                        <div v-if="isAdmin && selectedStatusEdit" class="rounded-2xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 p-4 space-y-3">
-                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">Update Status</p>
-                            <div class="flex flex-wrap items-center gap-3">
-                                <button
-                                    v-for="option in statusOptions"
-                                    :key="option.value"
-                                    class="btn-primary text-xs"
-                                    :disabled="selectedStatusEdit.saving"
-                                    @click="requestStatusUpdate(selectedProposal, option.value)"
-                                >
-                                    {{ option.label }}
-                                </button>
-                            </div>
-                            <textarea
-                                v-model="selectedStatusEdit.feedback"
-                                rows="3"
-                                placeholder="Feedback required for rejection"
-                                class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 outline-none transition focus:border-calm-lavender-500"
-                            />
-                        </div>
-
-                        <div v-if="selectedProposal.file_key" class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5">
-                            <div class="flex items-center gap-3">
-                                <div class="rounded-xl bg-emerald-500/20 p-2 text-emerald-200">
-                                    <FileText class="h-5 w-5" />
-                                </div>
-                                <div>
-                                    <p class="text-sm font-semibold text-emerald-700 dark:text-emerald-100">Proposal document</p>
-                                    <p class="text-xs text-emerald-600/80 dark:text-emerald-200/80">{{ selectedProposal.file_key.split('/').pop() }}</p>
-                                </div>
-                            </div>
-                            <button
-                                @click="viewDocument(selectedProposal)"
-                                class="btn-primary mt-4 w-full justify-center"
-                            >
-                                View Document
-                            </button>
-                        </div>
-
-                        <div v-if="selectedProposal.admin_feedback" class="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-4">
-                            <h3 class="text-xs uppercase tracking-[0.2em] text-cyan-700 dark:text-cyan-200">WGAD Office Feedback</h3>
-                            <p class="mt-2 text-sm text-slate-700 dark:text-platinum-100">{{ selectedProposal.admin_feedback }}</p>
-                        </div>
-
-                        <div v-if="selectedProposal.gfl_issues?.issues?.length > 0" class="rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4">
-                            <h3 class="text-xs uppercase tracking-[0.2em] text-amber-700 dark:text-amber-200">Gender-fair language</h3>
-                            <div class="mt-2 space-y-2 text-sm text-amber-700 dark:text-amber-100">
-                                <div v-for="(issue, idx) in selectedProposal.gfl_issues.issues.slice(0, 3)" :key="idx">
-                                    "{{ issue.term }}" -> <em>"{{ issue.suggestion }}"</em>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="rounded-2xl border border-slate-200 dark:border-abyss-500 bg-slate-50 dark:bg-abyss-700 p-4">
-                            <ProposalComments :proposal_id="selectedProposal.id" />
-                        </div>
-
-                        <div class="flex flex-wrap gap-3">
-                            <button
-                                @click="$router.push('/gad/upload')"
-                                class="btn-primary flex-1 justify-center"
-                            >
-                                Upload or Update Document
-                            </button>
-                            <button
-                                @click="selectedProposal = null"
-                                class="btn-secondary"
-                            >
-                                Close
-                            </button>
-                        </div>
-                    </div>
-                        </div>
-                    </Transition>
-                </div>
-            </Transition>
-
-            <DocumentViewer
-                v-if="showDocumentViewer"
-                :isOpen="showDocumentViewer"
-                :documentUrl="documentUrl"
-                :documentName="documentName"
-                :proposalId="selectedProposalId"
-                @close="showDocumentViewer = false"
-            />
-
-            <Transition
-                enter-active-class="transition duration-200 ease-out"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                leave-active-class="transition duration-150 ease-in"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-            >
-                <div v-if="statusConfirm" class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-                    <Transition
-                        enter-active-class="transition duration-200 ease-out"
-                        enter-from-class="opacity-0 translate-y-3 scale-95"
-                        enter-to-class="opacity-100 translate-y-0 scale-100"
-                        leave-active-class="transition duration-150 ease-in"
-                        leave-from-class="opacity-100 translate-y-0 scale-100"
-                        leave-to-class="opacity-0 translate-y-3 scale-95"
-                    >
-                        <div class="w-full max-w-md rounded-2xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 p-6 shadow-2xl">
-                    <h3 class="text-lg font-semibold text-slate-800 dark:text-platinum-100">Confirm Status Change</h3>
-                    <p class="mt-2 text-sm text-slate-600 dark:text-platinum-300">
-                        Change status to <span class="font-semibold">{{ statusConfirm.label }}</span>?
-                    </p>
-                    <p v-if="statusConfirm.feedback" class="mt-3 text-xs text-slate-500 dark:text-platinum-400">
-                        Feedback: "{{ statusConfirm.feedback }}"
-                    </p>
-                    <div class="mt-5 flex justify-end gap-2">
-                        <button class="btn-secondary" @click="statusConfirm = null">Cancel</button>
-                        <button class="btn-primary" @click="confirmStatusUpdate">Confirm</button>
-                    </div>
-                        </div>
-                    </Transition>
-                </div>
-            </Transition>
-
-            <Transition
-                enter-active-class="transition duration-200 ease-out"
-                enter-from-class="opacity-0"
-                enter-to-class="opacity-100"
-                leave-active-class="transition duration-150 ease-in"
-                leave-from-class="opacity-100"
-                leave-to-class="opacity-0"
-            >
-                <div v-if="isBusy" class="fixed inset-0 z-[70] flex items-center justify-center bg-slate-900/50 backdrop-blur-sm">
-                    <div class="rounded-2xl border border-slate-200/70 dark:border-abyss-600 bg-white/90 dark:bg-abyss-800/90 px-6 py-5 shadow-2xl">
-                        <div class="flex items-center gap-3">
-                            <div class="h-10 w-10 rounded-full border-2 border-calm-lavender-500/30 border-t-calm-lavender-500 animate-spin"></div>
-                            <div>
-                                <p class="text-sm font-semibold text-slate-800 dark:text-platinum-100">Updating</p>
-                                <p class="text-xs text-slate-500 dark:text-platinum-400">Please wait while we save changes.</p>
-                            </div>
+                            <p class="text-sm font-semibold text-slate-800 dark:text-platinum-100">Updating</p>
+                            <p class="text-xs text-slate-500 dark:text-platinum-400">Please wait while we save changes.</p>
                         </div>
                     </div>
                 </div>
-            </Transition>
+            </div>
+        </Transition>
     </div>
 </template>
 

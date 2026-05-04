@@ -54,16 +54,16 @@ watchEffect(() => emit('expanded-change', isFull.value))
 
 /* ------- learning modules data (Contents preserved) ------- */
 const modules = ref([
-    { id: 1, name: 'Gender & Power', icon: '👥', progress: 65, status: 'in-progress' },
-    { id: 2, name: 'Recognizing VAWC', icon: '🚨', progress: 100, status: 'completed' },
-    { id: 3, name: 'Sexual Health 101', icon: '💚', progress: 40, status: 'in-progress' },
-    { id: 4, name: 'Support Resources', icon: '🤝', progress: 0, status: 'not-started' },
+    { id: 1, name: 'Gender & Power', icon: 'fa-users', progress: 65, status: 'in-progress' },
+    { id: 2, name: 'Recognizing VAWC', icon: 'fa-triangle-exclamation', progress: 100, status: 'completed' },
+    { id: 3, name: 'Sexual Health 101', icon: 'fa-heart', progress: 40, status: 'in-progress' },
+    { id: 4, name: 'Support Resources', icon: 'fa-handshake', progress: 0, status: 'not-started' },
 ])
 
 const myLearningPaths = ref([
     { id: 1, name: 'VAWC Prevention', progress: 65, modules: 4 },
     { id: 2, name: 'Sexual Health', progress: 40, modules: 5 },
-    { id: 3, name: 'GAD Management', progress: 25, modules: 6 },
+    { id: 3, name: 'HGDG Management', progress: 25, modules: 6 },
 ])
 
 /* ------- helpers (Functions preserved) ------- */
@@ -191,8 +191,8 @@ onMounted(() => {
                             class="sidebar-btn group"
                             :class="[isIcon ? 'justify-center' : '', route.params.id == module.id ? 'active-util' : '']">
                                 <div :class="['icon-container', route.params.id == module.id ? 'text-purple-600' : 'text-slate-400']">
-                                <span class="text-lg">{{ module.icon }}</span>
-                            </div>
+                                    <i :class="['fa-solid', module.icon, 'text-lg']"></i>
+                                </div>
                             <div v-if="!isIcon" class="flex-1 min-w-0 text-left">
                                 <p :class="['truncate text-xs tracking-wide uppercase', route.params.id == module.id ? 'font-black text-black dark:text-white' : 'font-bold text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300']">{{ module.name }}</p>
                                 <div v-if="module.progress > 0" class="flex items-center gap-2 mt-1">

@@ -143,7 +143,14 @@ exports.getClassroomDetails = async (req, res, next) => {
         const classroom = await Classroom.findByPk(id, {
             include: [
                 { model: User, as: 'facilitator', attributes: ['id', 'name', 'email'] },
-                { model: User, as: 'students', through: { attributes: [] }, attributes: ['id', 'name'] },
+                {
+                    model: User,
+                    as: 'students',
+                    through: { attributes: [] },
+                    attributes: ['id', 'name'],
+                    where: { role: 'player' },
+                    required: false
+                },
                 { 
                     model: Module, 
                     as: 'modules',
@@ -184,6 +191,7 @@ exports.getClassroomProgress = async (req, res, next) => {
 
         // 2. Kunin ang lahat ng students at ang kanilang quiz attempts sa classroom na ito
         const progressData = await User.findAll({
+            where: { role: 'player' },
             include: [
                 {
                     model: ClassroomMember,

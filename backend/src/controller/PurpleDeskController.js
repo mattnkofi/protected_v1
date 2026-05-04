@@ -1,153 +1,125 @@
 const crypto = require('crypto');
+const { Op } = require('sequelize');
 const { PurpleDeskReport, Campus } = require('../model');
 const EncryptionService = require('../services/EncryptionService');
 
-const STATUS_VALUES = ['submitted', 'in_review', 'resolved'];
-
-async function generateUniqueTrackingCode() {
-    for (let attempt = 0; attempt < 5; attempt += 1) {
-        const code = crypto.randomBytes(4).toString('hex').toUpperCase();
-        const exists = await PurpleDeskReport.findOne({ where: { tracking_code: code } });
-        if (!exists) return code;
-    }
-    throw new Error('Unable to generate a unique tracking code');
-}
+const generateTrackingCode = async () => {
+	let attempts = 0;
+	while (attempts < 5) {
+		const code = crypto.randomBytes(4).toString('hex').toUpperCase();
+		const existing = await PurpleDeskReport.findOne({ where: { tracking_code: code } });
+		if (!existing) return code;
+		attempts += 1;
+	}
+	throw new Error('Unable to generate tracking code. Please retry.');
+};
 
 exports.submitReport = async (req, res, next) => {
-    try {
-        const { message, campus_id, category } = req.body;
+	try {
+		const { message, campus_id, category } = req.body;
+		if (!message || !String(message).trim()) {
+			return res.status(400).json({ message: 'Report message is required.' });
+		}
 
-        if (!message || !message.trim()) {
-            return res.status(400).json({
-                success: false,
-                message: 'Report message is required.'
-            });
-        }
+		const trackingCode = await generateTrackingCode();
+		const encryptedPayload = EncryptionService.encrypt({ message: String(message).trim() });
 
-        if (campus_id) {
-            const campus = await Campus.findByPk(campus_id);
-            if (!campus) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'Campus not found.'
-                });
-            }
-        }
+		const report = await PurpleDeskReport.create({
+			tracking_code: trackingCode,
+			campus_id: campus_id || null,
+			category: category || null,
+			encrypted_payload: encryptedPayload,
+			status: 'submitted'
+		});
 
-        const trackingCode = await generateUniqueTrackingCode();
-        const encryptedPayload = EncryptionService.encrypt(JSON.stringify({
-            message: message.trim()
-        }));
-
-        await PurpleDeskReport.create({
-            tracking_code: trackingCode,
-            campus_id: campus_id || null,
-            category: category || null,
-            encrypted_payload: encryptedPayload,
-            status: 'submitted'
-        });
-
-        return res.status(201).json({
-            success: true,
-            tracking_code: trackingCode,
-            message: 'Report submitted. Keep your tracking code to check status.'
-        });
-    } catch (error) {
-        next(error);
-    }
+		res.status(201).json({
+			message: 'Report submitted successfully.',
+			tracking_code: report.tracking_code
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
 exports.getReportStatus = async (req, res, next) => {
-    try {
-        const { tracking_code } = req.params;
-        const normalizedCode = tracking_code.trim().toUpperCase();
-        const report = await PurpleDeskReport.findOne({ where: { tracking_code: normalizedCode } });
+	try {
+		const { tracking_code } = req.params;
+		const report = await PurpleDeskReport.findOne({ where: { tracking_code } });
+		if (!report) {
+			return res.status(404).json({ message: 'Tracking code not found.' });
+		}
 
-        if (!report) {
-            return res.status(404).json({
-                success: false,
-                message: 'Tracking code not found.'
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            tracking_code: report.tracking_code,
-            status: report.status,
-            submitted_at: report.created_at
-        });
-    } catch (error) {
-        next(error);
-    }
+		res.json({
+			tracking_code: report.tracking_code,
+			status: report.status,
+			submitted_at: report.created_at
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
 exports.getReports = async (req, res, next) => {
-    try {
-        const { status, campus_id } = req.query;
-        const where = {};
-        if (status) where.status = status;
-        if (campus_id) where.campus_id = campus_id;
+	try {
+		const { campus_id, status } = req.query;
+		const where = {};
+		if (campus_id) where.campus_id = campus_id;
+		if (status) where.status = status;
 
-        const reports = await PurpleDeskReport.findAll({
-            where,
-            include: [{ model: Campus, as: 'campus' }],
-            order: [['created_at', 'DESC']]
-        });
+		const reports = await PurpleDeskReport.findAll({
+			where,
+			include: [
+				{ model: Campus, as: 'campus', attributes: ['id', 'name'] }
+			],
+			order: [['created_at', 'DESC']]
+		});
 
-        const sanitizedReports = reports.map((report) => {
-            const plainReport = report.get({ plain: true });
-            let reportMessage = null;
+		const mapped = reports.map((report) => {
+			let message = null;
+			try {
+				const payload = EncryptionService.decrypt(report.encrypted_payload);
+				message = payload?.message || null;
+			} catch (error) {
+				message = null;
+			}
 
-            try {
-                const decryptedPayload = EncryptionService.decrypt(plainReport.encrypted_payload);
-                const parsedPayload = JSON.parse(decryptedPayload);
-                reportMessage = parsedPayload.message || null;
-            } catch (error) {
-                reportMessage = null;
-            }
+			return {
+				id: report.id,
+				tracking_code: report.tracking_code,
+				campus_id: report.campus_id,
+				campus: report.campus,
+				category: report.category,
+				status: report.status,
+				report_message: message,
+				created_at: report.created_at,
+				updated_at: report.updated_at
+			};
+		});
 
-            return {
-                ...plainReport,
-                report_message: reportMessage
-            };
-        });
-
-        return res.status(200).json({
-            success: true,
-            reports: sanitizedReports
-        });
-    } catch (error) {
-        next(error);
-    }
+		res.json({ reports: mapped });
+	} catch (error) {
+		next(error);
+	}
 };
 
 exports.updateReportStatus = async (req, res, next) => {
-    try {
-        const { report_id } = req.params;
-        const { status } = req.body;
+	try {
+		const { id } = req.params;
+		const { status } = req.body;
+		const allowedStatuses = ['submitted', 'in_review', 'resolved'];
 
-        if (!STATUS_VALUES.includes(status)) {
-            return res.status(400).json({
-                success: false,
-                message: `Invalid status. Use one of: ${STATUS_VALUES.join(', ')}`
-            });
-        }
+		if (!allowedStatuses.includes(status)) {
+			return res.status(400).json({ message: 'Invalid status value.' });
+		}
 
-        const report = await PurpleDeskReport.findByPk(report_id);
-        if (!report) {
-            return res.status(404).json({
-                success: false,
-                message: 'Report not found.'
-            });
-        }
+		const report = await PurpleDeskReport.findByPk(id);
+		if (!report) {
+			return res.status(404).json({ message: 'Report not found.' });
+		}
 
-        await report.update({ status });
-
-        return res.status(200).json({
-            success: true,
-            report
-        });
-    } catch (error) {
-        next(error);
-    }
+		await report.update({ status });
+		res.json({ message: 'Status updated.' });
+	} catch (error) {
+		next(error);
+	}
 };

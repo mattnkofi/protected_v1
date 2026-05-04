@@ -4,11 +4,11 @@
         <!-- HEADER -->
         <header class="page-header">
             <div class="space-y-1">
-                <p class="section-eyebrow">Facilitator Console</p>
-                <h1 class="page-title">
+                <p class="section-eyebrow font-dosis tracking-widest text-sm text-platinum-500 uppercase font-bold">Facilitator Console</p>
+                <h1 class="page-title font-madimione text-4xl md:text-5xl text-abyss-900 dark:text-platinum-50 leading-none">
                     Welcome, <span class="brand-gradient-text">{{ facilitatorName }}</span>
                 </h1>
-                <p class="page-subtitle">Manage your classrooms, modules, and student progress.</p>
+                <p class="page-subtitle font-mplusrounded text-[1.05rem] md:text-lg font-medium leading-relaxed text-platinum-600 dark:text-platinum-400 max-w-2xl pt-1">Manage your classrooms, modules, and student progress.</p>
             </div>
 
             <router-link :to="{ name: 'facilitator.modules' }" class="btn-primary">
@@ -26,8 +26,8 @@
                     <BellRingIcon class="w-4 h-4 text-vawc-orange-600 dark:text-vawc-orange-400" />
                 </div>
                 <div>
-                    <h3 class="font-bold text-base text-slate-800 dark:text-platinum-100">Announcements</h3>
-                    <p class="field-subtext">Recent priority notices from administrators.</p>
+                    <h3 class="font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">Announcements</h3>
+                    <p class="field-subtext font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Recent priority notices from administrators.</p>
                 </div>
             </div>
 
@@ -43,24 +43,26 @@
                         </span>
                     </div>
                     <h4
-                        class="font-bold text-sm text-slate-800 dark:text-platinum-100 leading-snug mb-1.5 group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+                        class="font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50 leading-snug mb-1.5 group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
                         {{ ann.title }}
                     </h4>
-                    <p class="body-subtext line-clamp-2 mb-3">{{ ann.content }}</p>
+                    <p class="body-subtext font-mplusrounded line-clamp-2 mb-3 text-[0.95rem] text-platinum-600 dark:text-platinum-300 font-medium">{{ ann.content }}</p>
 
                     <!-- Date meta footer -->
                     <div class="ann-meta-footer">
-                        <div class="flex items-center gap-1.5">
-                            <CalendarDaysIcon class="h-3 w-3 shrink-0" />
-                            <span>
-                                {{ ann.updatedAt && ann.updatedAt !== ann.createdAt
-                                    ? 'Updated: ' + formatFullDate(ann.updatedAt)
-                                    : 'Posted: ' + formatFullDate(ann.createdAt) }}
-                            </span>
-                        </div>
-                        <div v-if="ann.expires_at" class="flex items-center gap-1.5 ann-expiry">
-                            <ClockIcon class="h-3 w-3 shrink-0" />
-                            <span>Expires: {{ formatFullDate(ann.expires_at) }}</span>
+                        <div class="flex flex-col gap-2 font-dosis font-semibold tracking-wide text-[0.8rem] text-platinum-500 uppercase">
+                            <div class="flex items-center gap-1.5">
+                                <CalendarDaysIcon class="h-4 w-4 shrink-0" />
+                                <span>
+                                    {{ ann.updatedAt && ann.updatedAt !== ann.createdAt
+                                        ? 'Updated: ' + formatFullDate(ann.updatedAt)
+                                        : 'Posted: ' + formatFullDate(ann.createdAt) }}
+                                </span>
+                            </div>
+                            <div v-if="ann.expires_at" class="flex items-center gap-1.5 ann-expiry">
+                                <ClockIcon class="h-4 w-4 shrink-0 text-vawc-orange-500" />
+                                <span>Expires: {{ formatFullDate(ann.expires_at) }}</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,10 +78,10 @@
                     <div class="card-icon-wrap">
                         <SchoolIcon class="h-4 w-4 text-calm-lavender-600 dark:text-calm-lavender-400" />
                     </div>
-                    <span class="badge badge-lavender text-xs">Sections</span>
+                    <span class="badge badge-lavender text-xs font-dosis font-bold uppercase tracking-widest">Sections</span>
                 </div>
-                <p class="stat-pill-label">Total Classrooms</p>
-                <p class="stat-pill-value text-2xl text-slate-800 dark:text-platinum-100">
+                <p class="stat-pill-label font-dosis text-[0.7rem] md:text-sm font-bold uppercase tracking-widest text-platinum-500 dark:text-platinum-400 mb-0.5">Total Classrooms</p>
+                <p class="stat-pill-value font-madimione text-2xl md:text-3xl text-abyss-900 dark:text-platinum-100">
                     {{ classroomStore.classrooms.length }}
                 </p>
             </div>
@@ -90,10 +92,10 @@
                     <div class="card-icon-wrap">
                         <BookOpenIcon class="h-4 w-4 text-calm-lavender-600 dark:text-calm-lavender-400" />
                     </div>
-                    <span class="badge badge-lavender text-xs">Materials</span>
+                    <span class="badge badge-lavender text-xs font-dosis font-bold uppercase tracking-widest">Materials</span>
                 </div>
-                <p class="stat-pill-label">Total Modules</p>
-                <p class="stat-pill-value text-2xl text-slate-800 dark:text-platinum-100">
+                <p class="stat-pill-label font-dosis text-[0.7rem] md:text-sm font-bold uppercase tracking-widest text-platinum-500 dark:text-platinum-400 mb-0.5">Total Modules</p>
+                <p class="stat-pill-value font-madimione text-2xl md:text-3xl text-abyss-900 dark:text-platinum-100">
                     {{ dashboardStats.total_modules }}
                 </p>
             </div>
@@ -104,10 +106,10 @@
                     <div class="card-icon-wrap">
                         <UsersIcon class="h-4 w-4 text-calm-lavender-600 dark:text-calm-lavender-400" />
                     </div>
-                    <span class="badge badge-lavender text-xs">Learners</span>
+                    <span class="badge badge-lavender text-xs font-dosis font-bold uppercase tracking-widest">Learners</span>
                 </div>
-                <p class="stat-pill-label">Total Students</p>
-                <p class="stat-pill-value text-2xl text-slate-800 dark:text-platinum-100">{{ dashboardStats.total_students }}</p>
+                <p class="stat-pill-label font-dosis text-[0.7rem] md:text-sm font-bold uppercase tracking-widest text-platinum-500 dark:text-platinum-400 mb-0.5">Total Students</p>
+                <p class="stat-pill-value font-madimione text-2xl md:text-3xl text-abyss-900 dark:text-platinum-100">{{ dashboardStats.total_students }}</p>
             </div>
 
             <!-- Rewards Shop Link -->
@@ -121,9 +123,9 @@
                         class="h-4 w-4 text-platinum-400 group-hover:text-calm-lavender-500 transition-colors" />
                 </div>
                 <div>
-                    <p class="stat-pill-label">Gamification</p>
-                    <p class="font-bold text-base text-slate-800 dark:text-platinum-100 mt-0.5">Rewards Shop</p>
-                    <p class="field-subtext mt-1">Manage points and items for students.</p>
+                    <p class="stat-pill-label font-dosis text-[0.7rem] md:text-sm font-bold uppercase tracking-widest text-platinum-500 dark:text-platinum-400 mb-0.5">Gamification</p>
+                    <p class="font-madimione text-2xl md:text-3xl text-abyss-900 dark:text-platinum-100 mt-0.5">Rewards Shop</p>
+                    <p class="field-subtext font-mplusrounded line-clamp-2 mt-1">Manage points and items for students.</p>
                 </div>
             </div>
 
@@ -136,8 +138,8 @@
             <div class="card border-2 border-platinum-200 dark:border-abyss-500">
                 <div class="flex items-center justify-between mb-5">
                     <div>
-                        <h3 class="font-bold text-base text-slate-800 dark:text-platinum-100">My Classrooms</h3>
-                        <p class="field-subtext">Your currently assigned sections.</p>
+                        <h3 class="font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">My Classrooms</h3>
+                        <p class="field-subtext font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Your currently assigned sections.</p>
                     </div>
                     <router-link :to="{ name: 'facilitator.classrooms' }" class="btn-secondary !text-xs !px-3 !py-2">
                         View All
@@ -155,8 +157,8 @@
                     <div class="empty-state-icon">
                         <SchoolIcon class="w-7 h-7 text-platinum-400" />
                     </div>
-                    <p class="empty-state-title">No Classrooms Yet</p>
-                    <p class="empty-state-desc">You haven't created any classrooms. Start by adding one.</p>
+                    <p class="empty-state-title font-madimione text-lg text-abyss-900 dark:text-platinum-50">No Classrooms Yet</p>
+                    <p class="empty-state-desc font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">You haven't created any classrooms. Start by adding one.</p>
                     <button @click="showCreateModal = true" class="mt-4 btn-primary mx-auto">
                         Create a Classroom
                     </button>
@@ -176,12 +178,12 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <h4
-                                    class="font-semibold text-sm text-slate-800 dark:text-platinum-100 truncate group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+                                    class="font-madimione text-base md:text-lg text-abyss-900 dark:text-platinum-50 truncate group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
                                     {{ classroom.section_name }}
                                 </h4>
-                                <span class="badge badge-muted text-xs">{{ classroom.join_code }}</span>
+                                <span class="badge badge-muted text-xs font-dosis font-bold tracking-widest">{{ classroom.join_code }}</span>
                             </div>
-                            <p class="field-subtext line-clamp-1 mt-0.5">
+                            <p class="field-subtext font-mplusrounded text-sm line-clamp-1 mt-0.5 text-platinum-600 dark:text-platinum-400">
                                 {{ classroom.description || 'No description provided.' }}
                             </p>
                         </div>
@@ -196,8 +198,8 @@
             <div class="card border-2 border-platinum-200 dark:border-abyss-500">
                 <div class="flex items-center justify-between mb-5">
                     <div>
-                        <h3 class="font-bold text-base text-slate-800 dark:text-platinum-100">Recent Modules</h3>
-                        <p class="field-subtext">Your most recently added learning materials.</p>
+                        <h3 class="font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">Recent Modules</h3>
+                        <p class="field-subtext font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Your most recently added learning materials.</p>
                     </div>
                     <router-link :to="{ name: 'facilitator.modules' }" class="btn-secondary !text-xs !px-3 !py-2">
                         Manage All
@@ -215,8 +217,8 @@
                     <div class="empty-state-icon">
                         <BookOpenIcon class="w-7 h-7 text-platinum-400" />
                     </div>
-                    <p class="empty-state-title">No Modules Found</p>
-                    <p class="empty-state-desc">Create your first module to get started.</p>
+                    <p class="empty-state-title font-madimione text-lg text-abyss-900 dark:text-platinum-50">No Modules Found</p>
+                    <p class="empty-state-desc font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Create your first module to get started.</p>
                     <button @click="router.push({ name: 'facilitator.modules' })" class="mt-4 btn-primary mx-auto">
                         Create Content
                     </button>
@@ -236,7 +238,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2">
                                 <h4
-                                    class="font-semibold text-sm text-slate-800 dark:text-platinum-100 truncate group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+                                    class="font-madimione text-base md:text-lg text-abyss-900 dark:text-platinum-50 truncate group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
                                     {{ mod.title }}
                                 </h4>
                                 <span v-if="mod.is_published"
@@ -244,10 +246,10 @@
                                 <span v-else
                                     class="w-2 h-2 rounded-full bg-platinum-300 dark:bg-abyss-400 shrink-0"></span>
                             </div>
-                            <p class="field-subtext line-clamp-1 mt-0.5">{{ mod.description }}</p>
+                            <p class="field-subtext font-mplusrounded text-sm line-clamp-1 mt-0.5 text-platinum-600 dark:text-platinum-400">{{ mod.description }}</p>
                         </div>
 
-                        <span class="badge badge-muted text-xs shrink-0 hidden sm:inline-flex">
+                        <span class="badge badge-muted text-xs shrink-0 hidden sm:inline-flex font-dosis font-bold tracking-widest uppercase">
                             {{ mod.difficulty_level || 'General' }}
                         </span>
                     </div>

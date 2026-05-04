@@ -1,8 +1,8 @@
 <template>
-  <div class="h-full flex flex-col bg-gradient-to-b from-white via-white to-slate-50 dark:from-abyss-900 dark:via-abyss-850 dark:to-abyss-900 text-slate-700 dark:text-platinum-100">
-    <div class="border-b border-slate-200/80 dark:border-abyss-600/70 bg-white/90 dark:bg-abyss-850/90 px-4 py-3 flex items-center justify-between sticky top-0 z-10 backdrop-blur-sm shadow-[0_8px_24px_-18px_rgba(15,23,42,0.6)]">
+  <div class="h-full flex flex-col bg-slate-950 text-slate-100 font-['Dosis']">
+    <div class="border-b border-slate-800/70 bg-slate-950/90 px-4 py-3 flex items-center justify-between sticky top-0 z-10 backdrop-blur-sm">
       <div class="flex items-center gap-3">
-        <div class="flex h-10 w-10 items-center justify-center rounded-full border border-calm-lavender-400/40 bg-gradient-to-br from-calm-lavender-500/20 to-cyan-400/20 text-calm-lavender-600 dark:text-calm-lavender-300">
+        <div class="flex h-10 w-10 items-center justify-center rounded-full border border-cyan-400/40 bg-cyan-500/10 text-cyan-200">
           <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path d="M2 5a2 2 0 012-2h12a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V5z"></path>
             <path d="M6 11a1 1 0 11-2 0 1 1 0 012 0z"></path>
@@ -11,10 +11,10 @@
           </svg>
         </div>
         <div>
-          <p class="text-[11px] uppercase tracking-[0.35em] text-slate-500 dark:text-platinum-400">WGAD Office Feedback</p>
-          <h3 class="text-base font-semibold text-slate-900 dark:text-platinum-100">
+          <p class="text-[11px] uppercase tracking-[0.35em] text-slate-500">Admin Feedback</p>
+          <h3 class="text-base font-semibold text-slate-100">
             Comments
-            <span v-if="comments.length > 0" class="ml-2 inline-flex items-center rounded-full border border-amber-400/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-700 dark:text-amber-200">
+            <span v-if="comments.length > 0" class="ml-2 inline-flex items-center rounded-full border border-amber-400/40 bg-amber-500/10 px-2.5 py-0.5 text-xs font-semibold text-amber-200">
               {{ comments.length }} {{ comments.length === 1 ? 'comment' : 'comments' }}
             </span>
           </h3>
@@ -23,7 +23,7 @@
       <button
         @click="loadComments"
         :disabled="loading"
-        class="btn-secondary text-xs px-3 py-1.5 disabled:opacity-60 shadow-sm"
+        class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900/70 text-xs font-semibold text-slate-100 hover:border-slate-500 transition disabled:opacity-60"
       >
         <svg class="w-4 h-4" :class="{'animate-spin': loading}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -34,17 +34,17 @@
 
     <div class="flex-1 overflow-y-auto p-4">
       <transition name="slide-down">
-        <div v-if="notificationMessage" :class="['mb-4 rounded-2xl border px-4 py-3 text-sm font-semibold animate-pulse shadow-sm', notificationClass]">
+        <div v-if="notificationMessage" :class="['mb-4 rounded-2xl border px-4 py-3 text-sm font-semibold animate-pulse', notificationClass]">
           {{ notificationMessage }}
         </div>
       </transition>
 
       <div v-if="loading && comments.length === 0" class="flex items-center justify-center h-32">
         <div class="text-center">
-          <svg class="w-8 h-8 text-calm-lavender-500 animate-spin mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-8 h-8 text-cyan-400 animate-spin mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
           </svg>
-          <p class="text-slate-500 dark:text-platinum-400 text-sm font-semibold">Loading feedback...</p>
+          <p class="text-slate-500 text-sm font-semibold">Loading feedback...</p>
         </div>
       </div>
 
@@ -55,16 +55,16 @@
           :class="['rounded-2xl border overflow-hidden transition-all duration-300',
                    newCommentIds.includes(comment.id)
                      ? 'border-amber-400/70 bg-amber-500/10 shadow-[0_0_20px_rgba(251,191,36,0.35)] animate-pulse'
-                     : 'border-slate-200 dark:border-abyss-600 bg-white/90 dark:bg-abyss-700 hover:border-calm-lavender-300 dark:hover:border-calm-lavender-700/60 hover:shadow-[0_18px_40px_-30px_rgba(15,23,42,0.7)]']"
+                     : 'border-slate-800/70 bg-slate-900/60 hover:border-cyan-400/60']"
         >
-          <div class="flex items-start justify-between gap-3 border-b border-slate-200 dark:border-abyss-600 bg-white/70 dark:bg-abyss-800/70 px-4 py-3">
+          <div class="flex items-start justify-between gap-3 border-b border-slate-800/70 bg-slate-950/60 px-4 py-3">
             <div class="flex items-center gap-3">
-              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-xs font-semibold text-slate-950 shadow-sm">
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 text-xs font-semibold text-slate-950">
                 {{ (comment.admin?.name || 'Admin').charAt(0).toUpperCase() }}
               </div>
               <div class="min-w-0">
-                <p class="text-sm font-semibold text-slate-800 dark:text-platinum-100 truncate">{{ comment.admin?.name || 'Admin' }}</p>
-                <p class="text-xs text-slate-500 dark:text-platinum-400">{{ formatDate(comment.created_at) }}</p>
+                <p class="text-sm font-semibold text-slate-100 truncate">{{ comment.admin?.name || 'Admin' }}</p>
+                <p class="text-xs text-slate-500">{{ formatDate(comment.created_at) }}</p>
               </div>
             </div>
             <div class="flex items-center gap-2">
@@ -77,7 +77,7 @@
               <button
                 v-if="canDeleteComment(comment.admin?.id)"
                 @click="openDeleteModal(comment)"
-                class="rounded-full border border-rose-500/40 px-2.5 py-1 text-xs text-rose-600 dark:text-rose-300 transition hover:border-rose-400/70 hover:bg-rose-500/10"
+                class="rounded-full border border-rose-500/40 px-2.5 py-1 text-xs text-rose-300 transition hover:border-rose-400/70 hover:bg-rose-500/10"
                 title="Delete comment"
               >
                 Delete
@@ -86,97 +86,97 @@
           </div>
 
           <div class="px-4 py-4">
-            <p class="text-sm text-slate-700 dark:text-platinum-100 whitespace-pre-wrap leading-relaxed">{{ comment.comment_text }}</p>
+            <p class="text-sm text-slate-100 whitespace-pre-wrap leading-relaxed">{{ comment.comment_text }}</p>
           </div>
         </div>
       </div>
 
       <div v-else class="h-full flex flex-col items-center justify-center text-center py-12">
-        <svg class="w-16 h-16 text-slate-400 dark:text-platinum-500 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-16 h-16 text-slate-500 mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v12a2 2 0 01-2 2h-3l-4 4z"></path>
         </svg>
-        <p class="text-slate-700 dark:text-platinum-200 font-semibold text-base mb-2">No feedback yet</p>
-        <p class="text-slate-500 dark:text-platinum-400 text-sm max-w-xs">
+        <p class="text-slate-200 font-semibold text-base mb-2">No feedback yet</p>
+        <p class="text-slate-500 text-sm max-w-xs">
           {{ isAdmin ? 'No comments on this proposal yet. You can add feedback below.' : 'Administrators will review and leave feedback on your proposal here.' }}
         </p>
       </div>
     </div>
 
-    <div v-if="isAdmin" class="border-t border-slate-200 dark:border-abyss-600 bg-white/90 dark:bg-abyss-850 p-4 mt-auto">
-      <label class="block text-xs uppercase tracking-[0.25em] text-slate-500 dark:text-platinum-400 mb-3">Add feedback</label>
+    <div v-if="isAdmin" class="border-t border-slate-800/70 bg-slate-950/90 p-4 mt-auto">
+      <label class="block text-xs uppercase tracking-[0.25em] text-slate-500 mb-3">Add feedback</label>
 
       <select
         v-model="newCommentType"
-        class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 mb-3 outline-none transition focus:border-calm-lavender-500 shadow-sm"
+        class="w-full rounded-xl border border-slate-800/70 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 mb-3 outline-none transition focus:border-cyan-400"
       >
-        <option value="feedback" class="bg-white dark:bg-abyss-700">Feedback - General comments</option>
-        <option value="question" class="bg-white dark:bg-abyss-700">Question - Need clarification</option>
-        <option value="suggestion" class="bg-white dark:bg-abyss-700">Suggestion - Improvement ideas</option>
-        <option value="issue" class="bg-white dark:bg-abyss-700">Issue - Problem found</option>
+        <option value="feedback" class="bg-slate-950">Feedback - General comments</option>
+        <option value="question" class="bg-slate-950">Question - Need clarification</option>
+        <option value="suggestion" class="bg-slate-950">Suggestion - Improvement ideas</option>
+        <option value="issue" class="bg-slate-950">Issue - Problem found</option>
       </select>
 
       <textarea
         v-model="newCommentText"
         placeholder="Write your feedback here..."
-        class="w-full rounded-xl border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 px-3 py-2 text-sm text-slate-700 dark:text-platinum-100 mb-3 min-h-24 resize-none placeholder-slate-400 dark:placeholder-platinum-500 outline-none transition focus:border-calm-lavender-500 shadow-sm"
+        class="w-full rounded-xl border border-slate-800/70 bg-slate-950/70 px-3 py-2 text-sm text-slate-100 mb-3 min-h-24 resize-none placeholder-slate-500 outline-none transition focus:border-cyan-400"
       ></textarea>
 
       <div class="flex gap-2">
         <button
           @click="addComment"
           :disabled="!newCommentText.trim() || posting"
-          class="btn-primary flex-1 justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_18px_40px_-24px_rgba(76,29,149,0.6)]"
+          class="flex-1 px-4 py-2 rounded-xl bg-cyan-600 text-slate-950 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <span v-if="!posting">Post Feedback</span>
           <span v-else>Posting...</span>
         </button>
       </div>
 
-      <p v-if="errorMessage" class="text-rose-600 dark:text-rose-300 text-sm mt-2 font-semibold">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="text-rose-300 text-sm mt-2 font-semibold">{{ errorMessage }}</p>
     </div>
 
-    <div v-else class="border-t border-slate-200 dark:border-abyss-600 bg-white/90 dark:bg-abyss-850 p-4 mt-auto text-center">
-      <div class="flex items-center justify-center gap-2 text-slate-600 dark:text-platinum-300 mb-2">
+    <div v-else class="border-t border-slate-800/70 bg-slate-950/90 p-4 mt-auto text-center">
+      <div class="flex items-center justify-center gap-2 text-slate-400 mb-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
         </svg>
         <span class="text-sm font-semibold">You are viewing feedback</span>
       </div>
-      <p class="text-slate-500 dark:text-platinum-400 text-xs">Only admins can add feedback. Check back regularly for updates.</p>
+      <p class="text-slate-500 text-xs">Only admins can add feedback. Check back regularly for updates.</p>
     </div>
 
     <transition name="fade-modal">
       <div v-if="showDeleteModal" class="fixed inset-0 z-50 flex items-center justify-center px-4">
-        <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" @click="closeDeleteModal"></div>
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="closeDeleteModal"></div>
         <transition name="scale-modal">
-          <div class="relative w-full max-w-md rounded-3xl border border-slate-200/70 dark:border-abyss-600 bg-white/95 dark:bg-abyss-800/95 p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.8)]">
+          <div class="relative w-full max-w-md rounded-3xl border border-slate-800/70 bg-slate-950/95 p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.8)]">
             <div class="flex items-center gap-3">
-              <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-300">
+              <div class="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-300">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 7h12M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2m1 0v12a2 2 0 01-2 2H8a2 2 0 01-2-2V7h12z"></path>
                 </svg>
               </div>
               <div>
-                <p class="text-xs uppercase tracking-[0.3em] text-slate-500 dark:text-platinum-400">Delete Comment</p>
-                <h4 class="text-lg font-semibold text-slate-900 dark:text-platinum-100">Confirm deletion</h4>
+                <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Delete Comment</p>
+                <h4 class="text-lg font-semibold text-slate-100">Confirm deletion</h4>
               </div>
             </div>
 
-            <div class="mt-4 rounded-2xl border border-slate-200/70 dark:border-abyss-600 bg-slate-50/80 dark:bg-abyss-700/80 p-4">
-              <p class="text-sm text-slate-600 dark:text-platinum-200">This action cannot be undone. The comment will be permanently removed.</p>
-              <p v-if="pendingDeleteComment" class="mt-3 text-sm text-slate-700 dark:text-platinum-100 line-clamp-3">“{{ pendingDeleteComment.comment_text }}”</p>
+            <div class="mt-4 rounded-2xl border border-slate-800/70 bg-slate-950/70 p-4">
+              <p class="text-sm text-slate-300">This action cannot be undone. The comment will be permanently removed.</p>
+              <p v-if="pendingDeleteComment" class="mt-3 text-sm text-slate-100 line-clamp-3">"{{ pendingDeleteComment.comment_text }}"</p>
             </div>
 
             <div class="mt-6 flex flex-col gap-2 sm:flex-row sm:justify-end">
               <button
                 @click="closeDeleteModal"
-                class="btn-secondary px-4 py-2"
+                class="px-4 py-2 rounded-xl border border-slate-700 bg-slate-900/70 text-sm font-semibold text-slate-100 hover:border-slate-500 transition"
               >
                 Cancel
               </button>
               <button
                 @click="confirmDelete"
-                class="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_18px_40px_-24px_rgba(244,63,94,0.8)] transition hover:bg-rose-600"
+                class="rounded-xl bg-rose-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-600"
               >
                 Delete comment
               </button>

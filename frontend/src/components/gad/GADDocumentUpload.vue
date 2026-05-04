@@ -1,194 +1,250 @@
 <template>
-    <div class="page-wrapper animate-in font-mplusrounded">
-            <header class="page-header">
-                <div class="space-y-2">
-                    <p class="section-eyebrow">HGDG Upload</p>
-                    <h1 class="page-title">Document <span class="brand-gradient-text">Upload</span></h1>
-                    <p class="page-subtitle">Attach supporting documents to your HGDG proposals securely.</p>
-                </div>
-            </header>
+    <div class="min-h-screen bg-slate-950 text-slate-100 font-['Dosis'] relative overflow-hidden">
+        <div class="pointer-events-none absolute inset-0">
+            <div class="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-amber-500/10 blur-3xl"></div>
+            <div class="absolute top-1/4 -right-36 h-[32rem] w-[32rem] rounded-full bg-cyan-500/10 blur-3xl"></div>
+            <div class="absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-rose-500/10 blur-3xl"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(14,116,144,0.15),transparent_45%)]"></div>
+        </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Main Upload Section -->
-            <div class="lg:col-span-2 space-y-6">
-                <!-- Step 1: Proposal Selection -->
-                <div class="card">
-                    <div class="flex items-center gap-3 mb-5">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-calm-lavender-500/10 text-calm-lavender-600 dark:text-calm-lavender-400 text-xs font-semibold border border-calm-lavender-400/30">1</span>
-                        <h2 class="text-base font-semibold text-slate-700 dark:text-platinum-200">Select Proposal</h2>
+        <div class="relative px-3 py-6 lg:px-8">
+            <div class="grid gap-6 lg:grid-cols-[1.25fr,0.75fr] lg:items-end">
+                <div class="space-y-4">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-slate-700/70 bg-slate-900/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-amber-200">
+                        Secure WGAD Vault
                     </div>
-                    <select v-model="selectedProposalId" class="w-full px-4 py-3 bg-white dark:bg-abyss-700 text-slate-700 dark:text-platinum-100 border border-slate-200 dark:border-abyss-500 rounded-lg focus:border-calm-lavender-500 focus:outline-none focus:ring-1 focus:ring-calm-lavender-500/50 transition-colors text-sm appearance-none">
-                        <option value="" disabled class="text-slate-400 dark:text-platinum-500">Choose a proposal to upload documents for...</option>
-                        <option v-for="proposal in proposals" :key="proposal.id" :value="proposal.id">
-                            {{ proposal.title }} — {{ proposal.campus?.name }}
-                        </option>
-                    </select>
+                    <div class="flex items-start gap-4">
+                        <div class="rounded-2xl border border-slate-700/70 bg-slate-900/80 p-3 shadow-[0_0_40px_rgba(56,189,248,0.12)]">
+                            <FileIcon class="h-7 w-7 text-cyan-300" />
+                        </div>
+                        <div>
+                            <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-50">Document Upload Studio</h1>
+                            <p class="mt-2 max-w-xl text-sm text-slate-300">
+                                Redesign your submission flow: select a proposal, review its status, and upload evidence with a single secure drop.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Step 2: Proposal Details -->
-                <div v-if="currentProposal" class="card">
-                    <div class="flex items-center gap-3 mb-5">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-calm-lavender-500/10 text-calm-lavender-600 dark:text-calm-lavender-400 text-xs font-semibold border border-calm-lavender-400/30">2</span>
-                        <h2 class="text-base font-semibold text-slate-700 dark:text-platinum-200">Proposal Details</h2>
+                <div class="rounded-2xl border border-slate-800/70 bg-gradient-to-br from-slate-900/80 via-slate-900/50 to-slate-950/80 p-4 shadow-lg">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs uppercase tracking-widest text-slate-400">Active Selection</p>
+                            <p class="mt-1 text-sm font-semibold text-slate-100">
+                                {{ currentProposal ? currentProposal.title : 'No proposal selected' }}
+                            </p>
+                        </div>
+                        <div class="rounded-full border border-slate-700/70 bg-slate-900/80 px-3 py-1 text-xs text-slate-300">
+                            {{ selectedFile ? 'Ready to upload' : 'Awaiting file' }}
+                        </div>
                     </div>
-                    <div class="space-y-5">
-                        <div class="p-5 bg-slate-50 dark:bg-abyss-700 rounded-lg border border-slate-200 dark:border-abyss-500">
-                            <h3 class="text-sm font-semibold text-calm-lavender-600 dark:text-calm-lavender-300 mb-4">{{ currentProposal.title }}</h3>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                    <div class="mt-3 flex flex-wrap gap-2 text-xs text-slate-400">
+                        <span class="rounded-full border border-slate-800/70 bg-slate-900/70 px-2.5 py-1">PDF or DOCX</span>
+                        <span class="rounded-full border border-slate-800/70 bg-slate-900/70 px-2.5 py-1">Max 50MB</span>
+                        <span class="rounded-full border border-slate-800/70 bg-slate-900/70 px-2.5 py-1">Tracked revisions</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-10 grid gap-8 lg:grid-cols-[1.2fr,0.8fr]">
+                <div class="space-y-6">
+                    <div class="rounded-2xl border border-slate-800/70 bg-slate-900/70 p-6 shadow-[0_0_60px_rgba(15,23,42,0.6)]">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-8 w-8 items-center justify-center rounded-full border border-amber-400/30 bg-amber-500/10 text-xs font-semibold text-amber-200">01</div>
+                                <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-200">Choose Proposal</h2>
+                            </div>
+                            <div class="text-xs text-slate-400">Step 1 of 3</div>
+                        </div>
+                        <div class="mt-4">
+                            <select v-model="selectedProposalId" class="w-full rounded-xl border border-slate-700/70 bg-slate-950/70 px-4 py-3 text-sm text-slate-100 shadow-inner outline-none transition focus:border-cyan-400/70 focus:ring-2 focus:ring-cyan-500/20">
+                                <option value="" disabled class="text-slate-500">Select a proposal to continue...</option>
+                                <option v-for="proposal in proposals" :key="proposal.id" :value="proposal.id">
+                                    {{ proposal.title }} - {{ proposal.campus?.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div v-if="currentProposal" class="rounded-2xl border border-slate-800/70 bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-slate-950/80 p-6 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-8 w-8 items-center justify-center rounded-full border border-cyan-400/30 bg-cyan-500/10 text-xs font-semibold text-cyan-200">02</div>
+                                <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-200">Proposal Snapshot</h2>
+                            </div>
+                            <span :class="getStatusColor(currentProposal.status)" class="rounded-full border px-3 py-1 text-xs font-semibold">
+                                {{ formatStatus(currentProposal.status) }}
+                            </span>
+                        </div>
+                        <div class="mt-5 grid gap-4 rounded-2xl border border-slate-800/70 bg-slate-950/60 p-5">
+                            <div class="flex items-start justify-between gap-3">
                                 <div>
-                                    <p class="text-slate-500 dark:text-platinum-400 text-xs uppercase tracking-wider mb-1">Campus</p>
-                                    <p class="font-medium text-slate-700 dark:text-platinum-200">{{ currentProposal.campus?.name }}</p>
+                                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Proposal</p>
+                                    <p class="mt-1 text-base font-semibold text-slate-100">{{ currentProposal.title }}</p>
                                 </div>
-                                <div>
-                                    <p class="text-slate-500 dark:text-platinum-400 text-xs uppercase tracking-wider mb-1">Status</p>
-                                    <span :class="getStatusColor(currentProposal.status)" class="px-2.5 py-1 rounded text-xs font-medium border">
-                                        {{ formatStatus(currentProposal.status) }}
-                                    </span>
+                                <div class="text-right">
+                                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Submitted</p>
+                                    <p class="mt-1 text-sm text-slate-200">{{ formatDate(currentProposal.submission_date) }}</p>
                                 </div>
-                                <div>
-                                    <p class="text-slate-500 dark:text-platinum-400 text-xs uppercase tracking-wider mb-1">Submitted</p>
-                                    <p class="font-medium text-slate-700 dark:text-platinum-200">{{ formatDate(currentProposal.submission_date) }}</p>
+                            </div>
+                            <div class="grid gap-4 sm:grid-cols-3 text-sm">
+                                <div class="rounded-xl border border-slate-800/70 bg-slate-900/60 p-3">
+                                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Campus</p>
+                                    <p class="mt-1 text-sm font-semibold text-slate-200">{{ currentProposal.campus?.name }}</p>
                                 </div>
-                                <div>
-                                    <p class="text-slate-500 dark:text-platinum-400 text-xs uppercase tracking-wider mb-1">Review Status</p>
-                                    <p class="font-medium flex items-center gap-1.5" :class="currentProposal.reviewed_by ? 'text-emerald-500 dark:text-emerald-400' : 'text-amber-500 dark:text-amber-400'">
-                                        <CheckCircle2 v-if="currentProposal.reviewed_by" class="w-3.5 h-3.5" />
-                                        <span v-else class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                <div class="rounded-xl border border-slate-800/70 bg-slate-900/60 p-3">
+                                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Review</p>
+                                    <p class="mt-1 flex items-center gap-2 text-sm font-semibold" :class="currentProposal.reviewed_by ? 'text-emerald-300' : 'text-amber-300'">
+                                        <CheckCircle2 v-if="currentProposal.reviewed_by" class="h-4 w-4" />
+                                        <span v-else class="h-2 w-2 rounded-full bg-amber-300"></span>
                                         {{ currentProposal.reviewed_by ? 'Reviewed' : 'Pending' }}
+                                    </p>
+                                </div>
+                                <div class="rounded-xl border border-slate-800/70 bg-slate-900/60 p-3">
+                                    <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Document</p>
+                                    <p class="mt-1 text-sm font-semibold text-slate-200">
+                                        {{ currentProposal.file_key ? 'Uploaded' : 'Missing' }}
                                     </p>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Current Document -->
-                        <div v-if="currentProposal.file_key" class="p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-start gap-4">
-                            <div class="p-2 rounded-md bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 mt-0.5">
-                                <CheckCircle2 class="w-5 h-5" />
+                        <div v-if="currentProposal.file_key" class="mt-4 flex items-start gap-3 rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
+                            <div class="rounded-full bg-emerald-500/20 p-2 text-emerald-300">
+                                <CheckCircle2 class="h-5 w-5" />
                             </div>
                             <div>
-                                <p class="text-sm font-semibold text-slate-700 dark:text-platinum-100">Document Uploaded</p>
-                                <p class="text-xs text-slate-500 dark:text-platinum-400 mt-1 flex items-center gap-2">
-                                    <FileIcon class="w-3.5 h-3.5" />
+                                <p class="text-sm font-semibold text-emerald-100">Document Uploaded</p>
+                                <p class="mt-1 flex items-center gap-2 text-xs text-emerald-200/80">
+                                    <FileIcon class="h-3.5 w-3.5" />
                                     {{ currentProposal.file_key.split('/').pop() }}
                                 </p>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Step 3: File Upload -->
-                <div v-if="selectedProposalId" class="card">
-                    <div class="flex items-center gap-3 mb-5">
-                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-calm-lavender-500/10 text-calm-lavender-600 dark:text-calm-lavender-400 text-xs font-semibold border border-calm-lavender-400/30">3</span>
-                        <h2 class="text-base font-semibold text-slate-700 dark:text-platinum-200">Upload Document</h2>
-                    </div>
-                    
-                    <!-- Drag & Drop Area -->
-                    <div 
-                        @dragover.prevent="isDragging = true"
-                        @dragleave.prevent="isDragging = false"
-                        @drop.prevent="handleDrop"
-                        class="relative border-2 border-dashed rounded-xl p-10 transition-colors duration-200 ease-in-out cursor-pointer"
-                        :class="isDragging 
-                            ? 'border-calm-lavender-400 bg-calm-lavender-500/5' 
-                            : 'border-slate-200 dark:border-abyss-500 bg-white/70 dark:bg-abyss-700/70 hover:border-slate-400 dark:hover:border-abyss-400'"
-                    >
-                        <input 
-                            type="file"
-                            @change="handleFileSelect"
-                            accept=".pdf,.doc,.docx"
-                            class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            ref="fileInput"
-                            title="Choose a file to upload"
-                        />
-                        <div class="text-center flex flex-col items-center">
-                            <div class="p-4 mb-4 rounded-full bg-slate-50 dark:bg-abyss-700 border border-slate-200 dark:border-abyss-500" :class="isDragging ? 'text-calm-lavender-500 border-calm-lavender-500/30 bg-calm-lavender-500/10' : 'text-slate-500 dark:text-platinum-400'">
-                                <Upload class="w-6 h-6" />
+                    <div v-if="selectedProposalId" class="rounded-2xl border border-slate-800/70 bg-slate-900/70 p-6 shadow-lg">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="flex h-8 w-8 items-center justify-center rounded-full border border-rose-400/30 bg-rose-500/10 text-xs font-semibold text-rose-200">03</div>
+                                <h2 class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-200">Upload Evidence</h2>
                             </div>
-                            <p class="text-sm font-medium text-slate-700 dark:text-platinum-200 mb-1">
-                                {{ isDragging ? 'Release to drop file' : 'Click to browse or drag file here' }}
-                            </p>
-                            <p class="text-xs text-slate-500 dark:text-platinum-400">Supports PDF and DOCX (Max 50MB)</p>
+                            <div class="text-xs text-slate-400">Step 3 of 3</div>
                         </div>
-                    </div>
 
-                    <!-- File Preview -->
-                    <div v-if="selectedFile" class="mt-5 p-4 bg-slate-50 dark:bg-abyss-700 border border-slate-200 dark:border-abyss-500 rounded-lg flex items-center justify-between">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2 border border-slate-200 dark:border-abyss-500 bg-white dark:bg-abyss-700 rounded text-calm-lavender-600 dark:text-calm-lavender-400">
-                                <FileIcon class="w-5 h-5" />
-                            </div>
-                            <div class="flex flex-col">
-                                <span class="text-sm font-medium text-slate-700 dark:text-platinum-100 truncate max-w-[200px] sm:max-w-xs">{{ selectedFile.name }}</span>
-                                <span class="text-xs text-slate-500 dark:text-platinum-400 mt-0.5">{{ formatFileSize(selectedFile.size) }}</span>
-                            </div>
-                        </div>
-                        <button 
-                            @click="selectedFile = null"
-                            class="p-1.5 text-slate-500 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 rounded transition-colors"
-                            title="Remove file"
+                        <div
+                            @dragover.prevent="isDragging = true"
+                            @dragleave.prevent="isDragging = false"
+                            @drop.prevent="handleDrop"
+                            class="mt-5 relative rounded-2xl border border-dashed p-10 transition-all duration-200"
+                            :class="isDragging
+                                ? 'border-cyan-400/80 bg-cyan-500/10 shadow-[0_0_40px_rgba(34,211,238,0.2)]'
+                                : 'border-slate-700/80 bg-slate-950/60 hover:border-slate-500/80 hover:bg-slate-950/80'"
                         >
-                            <X class="w-4 h-4" />
+                            <input
+                                type="file"
+                                @change="handleFileSelect"
+                                accept=".pdf,.doc,.docx"
+                                class="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                                ref="fileInput"
+                                title="Choose a file to upload"
+                            />
+                            <div class="flex flex-col items-center text-center">
+                                <div class="rounded-full border border-slate-700/70 bg-slate-900/70 p-4" :class="isDragging ? 'text-cyan-300 border-cyan-400/40 bg-cyan-500/10' : 'text-slate-400'">
+                                    <Upload class="h-6 w-6" />
+                                </div>
+                                <p class="mt-4 text-sm font-semibold text-slate-100">
+                                    {{ isDragging ? 'Release to drop file' : 'Drop file here or click to browse' }}
+                                </p>
+                                <p class="mt-1 text-xs text-slate-400">PDF or DOCX. Max 50MB.</p>
+                            </div>
+                        </div>
+
+                        <div v-if="selectedFile" class="mt-5 flex items-center justify-between rounded-2xl border border-slate-800/70 bg-slate-950/70 p-4">
+                            <div class="flex items-center gap-3">
+                                <div class="rounded-xl border border-slate-700/70 bg-slate-900/70 p-2 text-cyan-300">
+                                    <FileIcon class="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <p class="max-w-[200px] truncate text-sm font-semibold text-slate-100 sm:max-w-xs">{{ selectedFile.name }}</p>
+                                    <p class="text-xs text-slate-400">{{ formatFileSize(selectedFile.size) }}</p>
+                                </div>
+                            </div>
+                            <button
+                                @click="selectedFile = null"
+                                class="rounded-full border border-slate-700/70 p-2 text-slate-400 transition hover:border-rose-400/50 hover:bg-rose-500/10 hover:text-rose-300"
+                                title="Remove file"
+                            >
+                                <X class="h-4 w-4" />
+                            </button>
+                        </div>
+
+                        <button
+                            @click="uploadDocument"
+                            :disabled="!selectedFile || isUploading"
+                            class="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-cyan-500 via-sky-500 to-blue-600 px-4 py-3 text-sm font-semibold text-slate-950 shadow-[0_10px_30px_rgba(14,116,144,0.35)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                            <span v-if="isUploading" class="h-4 w-4 animate-spin rounded-full border-2 border-slate-950/40 border-t-slate-950"></span>
+                            <Upload v-else class="h-4 w-4" />
+                            {{ isUploading ? 'Uploading Document...' : 'Upload Document' }}
                         </button>
                     </div>
+                </div>
 
-                    <!-- Upload Button -->
-                    <button 
-                        @click="uploadDocument"
-                        :disabled="!selectedFile || isUploading"
-                        class="btn-primary w-full mt-6 justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                        <span v-if="isUploading" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                        <Upload v-else class="w-4 h-4" />
-                        {{ isUploading ? 'Uploading Document...' : 'Upload Document' }}
-                    </button>
+                <div class="space-y-6">
+                    <div class="rounded-2xl border border-slate-800/70 bg-slate-900/70 p-5 shadow-lg">
+                        <div class="flex items-center justify-between border-b border-slate-800/70 pb-3">
+                            <div class="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-300">
+                                <FileIcon class="h-4 w-4 text-cyan-300" />
+                                Proposals Ledger
+                            </div>
+                            <span class="text-xs text-slate-500">{{ proposals.length }} total</span>
+                        </div>
+                        <div class="mt-4 space-y-3 max-h-[520px] overflow-y-auto pr-1">
+                            <div v-if="proposals.length === 0" class="rounded-2xl border border-dashed border-slate-800/70 bg-slate-950/60 p-6 text-center text-sm text-slate-400">
+                                <FileIcon class="mx-auto mb-2 h-7 w-7 opacity-60" />
+                                No proposals available.
+                            </div>
+                            <button
+                                v-for="proposal in proposals"
+                                :key="proposal.id"
+                                @click="selectedProposalId = proposal.id"
+                                class="w-full rounded-2xl border border-slate-800/70 bg-slate-950/50 p-4 text-left transition"
+                                :class="selectedProposalId == proposal.id ? 'border-cyan-400/60 bg-cyan-500/10 shadow-[0_0_30px_rgba(34,211,238,0.18)]' : 'hover:border-slate-600/80 hover:bg-slate-900/70'"
+                            >
+                                <div class="flex items-start justify-between gap-3">
+                                    <p class="line-clamp-2 text-sm font-semibold" :class="selectedProposalId == proposal.id ? 'text-cyan-200' : 'text-slate-100'">{{ proposal.title }}</p>
+                                    <span class="mt-1 flex h-2.5 w-2.5 items-center justify-center rounded-full" :class="proposal.file_key ? 'bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.6)]' : 'bg-slate-600'" title="Document status"></span>
+                                </div>
+                                <div class="mt-3 flex items-center justify-between text-xs text-slate-400">
+                                    <span>{{ proposal.campus?.name }}</span>
+                                    <span>{{ proposal.file_key ? 'Document uploaded' : 'Needs document' }}</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="rounded-2xl border border-slate-800/70 bg-gradient-to-br from-slate-900/80 to-slate-950/80 p-5 text-sm text-slate-300">
+                        <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Upload Tips</p>
+                        <ul class="mt-3 space-y-2 text-sm">
+                            <li>Keep filenames short and descriptive.</li>
+                            <li>Make sure the document matches the proposal status.</li>
+                            <li>Re-uploading replaces the previous file.</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
 
-            <!-- Sidebar: Your Proposals -->
-            <div class="card h-fit lg:sticky lg:top-8">
-                <h2 class="text-sm font-semibold text-slate-700 dark:text-platinum-200 uppercase tracking-wide mb-4 flex items-center gap-2 border-b border-slate-200 dark:border-abyss-500 pb-3">
-                    <FileIcon class="w-4 h-4 text-slate-400 dark:text-platinum-400" />
-                    Available Proposals
-                </h2>
-                <div class="space-y-2 max-h-[500px] overflow-y-auto pr-1">
-                    <div v-if="proposals.length === 0" class="text-center py-10 px-4 text-slate-500 dark:text-platinum-400 bg-slate-50 dark:bg-abyss-700 rounded-lg border border-dashed border-slate-200 dark:border-abyss-500">
-                        <FileIcon class="w-8 h-8 mx-auto mb-2 opacity-50" />
-                        <p class="text-sm">No proposals found</p>
-                    </div>
-                    <div 
-                        v-for="proposal in proposals"
-                        :key="proposal.id"
-                        @click="selectedProposalId = proposal.id"
-                        class="p-3 bg-white dark:bg-abyss-700 border rounded-lg cursor-pointer transition-colors duration-150 flex flex-col gap-2"
-                        :class="selectedProposalId == proposal.id ? 'border-calm-lavender-500/50 ring-1 ring-calm-lavender-500/20 bg-calm-lavender-500/10' : 'border-slate-200 dark:border-abyss-500 hover:border-slate-400 dark:hover:border-abyss-400'"
-                    >
-                        <div class="flex justify-between items-start gap-2">
-                            <p class="text-sm font-medium text-slate-700 dark:text-platinum-200 leading-snug line-clamp-2" :class="selectedProposalId == proposal.id && 'text-calm-lavender-600 dark:text-calm-lavender-300'">{{ proposal.title }}</p>
-                            <div class="mt-1">
-                                <div v-if="proposal.file_key" class="w-2 h-2 rounded-full bg-emerald-500" title="Document uploaded"></div>
-                                <div v-else class="w-2 h-2 rounded-full bg-slate-400 dark:bg-slate-600" title="Missing document"></div>
-                            </div>
-                        </div>
-                        <p class="text-xs text-slate-500 dark:text-platinum-400 font-medium">{{ proposal.campus?.name }}</p>
-                    </div>
+            <div class="fixed bottom-6 right-6 z-50 flex max-w-sm flex-col gap-3 pointer-events-none">
+                <div v-if="successMessage" class="pointer-events-auto flex items-start gap-3 rounded-2xl border border-emerald-500/40 bg-emerald-950/80 p-4 shadow-lg">
+                    <CheckCircle2 class="mt-0.5 h-5 w-5 text-emerald-300" />
+                    <p class="text-sm font-semibold text-emerald-100">{{ successMessage }}</p>
+                </div>
+                <div v-if="errorMessage" class="pointer-events-auto flex items-start gap-3 rounded-2xl border border-rose-500/40 bg-rose-950/80 p-4 shadow-lg">
+                    <AlertCircle class="mt-0.5 h-5 w-5 text-rose-300" />
+                    <p class="text-sm font-semibold text-rose-100">{{ errorMessage }}</p>
                 </div>
             </div>
         </div>
-
-        <!-- Notification Toasts -->
-        <div class="fixed bottom-6 right-6 flex flex-col gap-3 z-50 max-w-sm pointer-events-none">
-            <!-- Success Message -->
-            <div v-if="successMessage" class="pointer-events-auto p-4 bg-emerald-500/10 border border-emerald-500/40 rounded-lg flex items-start gap-3 transform transition-all duration-300">
-                <CheckCircle2 class="w-5 h-5 text-emerald-500 dark:text-emerald-400 shrink-0 mt-0.5" />
-                <p class="text-sm font-medium text-emerald-700 dark:text-emerald-200">{{ successMessage }}</p>
-            </div>
-
-            <!-- Error Message -->
-            <div v-if="errorMessage" class="pointer-events-auto p-4 bg-rose-500/10 border border-rose-500/40 rounded-lg flex items-start gap-3 transform transition-all duration-300">
-                <AlertCircle class="w-5 h-5 text-rose-500 dark:text-rose-400 shrink-0 mt-0.5" />
-                <p class="text-sm font-medium text-rose-700 dark:text-rose-200">{{ errorMessage }}</p>
-            </div>
     </div>
 </template>
 

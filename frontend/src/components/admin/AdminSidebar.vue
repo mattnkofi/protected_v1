@@ -57,7 +57,15 @@
                     <div class="scroll-content space-y-1.5 pb-4 mt-2">
 
                         <div v-for="(item, index) in navItems" :key="index">
-                            <button @click="router.push({ name: item.route })" :class="[
+                            <!-- Section divider -->
+                            <template v-if="item.divider">
+                                <div v-if="isFull" class="px-8 pt-4 pb-1">
+                                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-abyss-700 dark:text-platinum-400">{{ item.label }}</p>
+                                </div>
+                                <div v-else class="my-2 mx-4 border-t border-platinum-200 dark:border-abyss-500"></div>
+                            </template>
+
+                            <button v-else @click="router.push({ name: item.route })" :class="[
                                     'group relative flex items-center transition-all duration-300 py-1.5 ml-4 w-[calc(100%-1rem+1px)] rounded-l-2xl z-10 outline-none',
                                     route.name === item.route
                                         ? 'nav-active cursor-default'
@@ -153,16 +161,10 @@
             </Transition>
         </Teleport>
 
-        <ConfirmModal
+        <ConfirmLogoutModal
             :is-open="isLogoutModalOpen"
-            variant="warning"
-            title="Sign out?"
-            message="Your admin session will be ended. You'll need to sign back in to continue."
-            confirm-label="Sign Out"
-            cancel-label="Cancel"
-            :loading="isLoggingOut"
+            @close="isLogoutModalOpen = false"
             @confirm="handleLogout"
-            @cancel="isLogoutModalOpen = false"
         />
     </div>
 </template>
@@ -173,14 +175,15 @@ import { useRoute, useRouter } from 'vue-router'
 import { computePosition, flip, shift, offset } from '@floating-ui/dom'
 import { useAuthStore } from '@/stores/auth'
 import { useSidebarStore } from '@/stores/stores'
-import ConfirmModal from '@/components/ui/ConfirmModal.vue'
+import ConfirmLogoutModal from '@/components/ui/ConfirmLogoutModal.vue'
 import {
     ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon,
     Users as UsersIcon, BookOpen as BookOpenIcon, GraduationCap as GraduationCapIcon,
     ClipboardList as ClipboardListIcon, MoreVertical as MoreVerticalIcon,
     User as UserIcon, Settings as SettingsIcon, LogOut as LogOutIcon,
     LayoutDashboard as LayoutDashboardIcon, ShieldCheck as ShieldCheckIcon,
-    Megaphone as MegaphoneIcon
+    Megaphone as MegaphoneIcon, FileText as FileTextIcon, Shield as ShieldIcon,
+    Languages as LanguagesIcon, BookMarked, ShieldAlert
 } from 'lucide-vue-next'
 
 const route = useRoute()
@@ -202,6 +205,14 @@ const navItems = [
     // { name: 'Reports',        route: 'admin.reports',       icon: ClipboardListIcon,   color: 'text-yellow-500',        fill: 'fill-yellow-500/20' },
     { name: 'Modules',        route: 'admin.modules',       icon: BookOpenIcon,        color: 'text-orange-500',        fill: 'fill-orange-500/20' },
     { name: 'Announcements',  route: 'admin.announcements', icon: MegaphoneIcon,       color: 'text-neon-pink-500',     fill: 'fill-neon-pink-500/20' },
+    { divider: true, label: 'Safety & Support' },
+    { name: 'Resource Center', route: 'admin.resource-center', icon: BookMarked, color: 'text-teal-500', fill: 'fill-teal-500/20' },
+    { name: 'Behavioral Reports', route: 'admin.behavioral-reports', icon: ClipboardListIcon, color: 'text-rose-500', fill: 'fill-rose-500/20' },
+    { name: 'Purple Desk',     route: 'admin.purple-desk',     icon: ShieldAlert, color: 'text-amber-500', fill: 'fill-amber-500/20' },
+    { divider: true, label: 'HGDG Compliance' },
+    { name: 'HGDG Dashboard',  route: 'admin.gad.dashboard',    icon: ShieldIcon,       color: 'text-violet-500',        fill: 'fill-violet-500/20' },
+    { name: 'HGDG Proposals',  route: 'admin.gad.proposals',    icon: FileTextIcon,     color: 'text-purple-500',        fill: 'fill-purple-500/20' },
+    { name: 'Language Check', route: 'admin.gad.language-analyzer', icon: LanguagesIcon, color: 'text-indigo-500', fill: 'fill-indigo-500/20' },
 ]
 
 const userName = computed(() => authStore.user?.name || authStore.user?.first_name || 'Admin')

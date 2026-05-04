@@ -4,11 +4,11 @@
     <!-- Header -->
     <header class="page-header">
       <div class="space-y-1.5">
-        <p class="section-eyebrow">Admin Console</p>
-        <h1 class="page-title tracking-wide">
+        <p class="section-eyebrow font-dosis tracking-widest text-sm text-platinum-500 uppercase font-bold">Admin Console</p>
+        <h1 class="page-title tracking-wide font-madimione text-4xl md:text-5xl text-abyss-900 dark:text-platinum-50 leading-none">
           Admin <span class="brand-gradient-text">Dashboard</span>
         </h1>
-        <p class="page-subtitle">A quick look at how your community is doing.</p>
+        <p class="page-subtitle font-mplusrounded text-[1.05rem] md:text-lg font-medium leading-relaxed text-platinum-600 dark:text-platinum-400 max-w-2xl pt-1">A quick look at how your community is doing.</p>
       </div>
 
       <div class="flex items-center gap-3 shrink-0">
@@ -30,7 +30,7 @@
     <div v-if="isLoading && !stats.totalUsers" class="flex items-center justify-center py-24">
       <div class="flex flex-col items-center gap-4">
         <div class="spinner"></div>
-        <p class="loading-text">Loading analytics…</p>
+        <p class="loading-text font-mplusrounded text-[1.05rem] font-medium text-platinum-600 dark:text-platinum-400">Loading analytics…</p>
       </div>
     </div>
 
@@ -66,34 +66,34 @@
         <div class="chart-panel">
           <div class="chart-panel__header">
             <div class="ds-icon-badge ds-icon-badge--lavender"><UsersIcon class="w-4 h-4" /></div>
-            <h3 class="chart-panel__title">User Registrations</h3>
+            <h3 class="chart-panel__title font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">User Registrations</h3>
           </div>
           <div class="h-64">
             <Line v-if="chartData.monthlyUsers.length" :data="userChartData" :options="lineChartOptions" />
-            <div v-else class="chart-empty">Loading chart data…</div>
+            <div v-else class="chart-empty font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Loading chart data…</div>
           </div>
         </div>
 
         <div class="chart-panel">
           <div class="chart-panel__header">
             <div class="ds-icon-badge ds-icon-badge--pink"><ActivityIcon class="w-4 h-4" /></div>
-            <h3 class="chart-panel__title">Quiz Activity</h3>
+            <h3 class="chart-panel__title font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">Quiz Activity</h3>
           </div>
           <div class="h-64">
             <Bar v-if="chartData.monthlyQuizAttempts.length" :data="quizChartData" :options="barChartOptions" />
-            <div v-else class="chart-empty">Loading chart data…</div>
+            <div v-else class="chart-empty font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Loading chart data…</div>
           </div>
         </div>
 
         <div class="chart-panel">
           <div class="chart-panel__header">
             <div class="ds-icon-badge ds-icon-badge--lavender"><UserCogIcon class="w-4 h-4" /></div>
-            <h3 class="chart-panel__title">User Distribution</h3>
+            <h3 class="chart-panel__title font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">User Distribution</h3>
           </div>
           <div class="h-64 flex items-center justify-center">
             <div class="w-56 h-56">
               <Doughnut v-if="chartData.roleDistribution.length" :data="roleChartData" :options="doughnutChartOptions" />
-              <div v-else class="chart-empty">Loading chart data…</div>
+              <div v-else class="chart-empty font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Loading chart data…</div>
             </div>
           </div>
         </div>
@@ -101,11 +101,11 @@
         <div class="chart-panel">
           <div class="chart-panel__header">
             <div class="ds-icon-badge ds-icon-badge--lavender"><BookOpenIcon class="w-4 h-4" /></div>
-            <h3 class="chart-panel__title">Module Creation</h3>
+            <h3 class="chart-panel__title font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">Module Creation</h3>
           </div>
           <div class="h-64">
             <Line v-if="chartData.monthlyModules.length" :data="moduleChartData" :options="lineChartOptions" />
-            <div v-else class="chart-empty">Loading chart data…</div>
+            <div v-else class="chart-empty font-mplusrounded text-sm text-platinum-600 dark:text-platinum-400">Loading chart data…</div>
           </div>
         </div>
       </div>
@@ -116,7 +116,7 @@
         <div class="lg:col-span-7 ds-panel">
           <div class="flex items-center gap-3 mb-6">
             <div class="ds-icon-badge ds-icon-badge--lavender"><ActivityIcon class="w-4 h-4" /></div>
-            <h3 class="font-madimione text-base text-abyss-800 dark:text-platinum-100">Recent Activity</h3>
+            <h3 class="font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50">Recent Activity</h3>
           </div>
           <div class="space-y-2">
             <div v-for="activity in recentActivity" :key="activity.id" class="activity-row group">
@@ -124,25 +124,25 @@
                 <component :is="activity.icon" class="h-4 w-4" />
               </div>
               <div class="flex-1 min-w-0">
-                <p class="font-dosis text-sm font-medium text-abyss-800 dark:text-platinum-200 truncate">{{ activity.title }}</p>
-                <p class="field-subtext mt-0.5">{{ activity.time }}</p>
+                <p class="font-mplusrounded text-sm font-medium text-abyss-800 dark:text-platinum-300 truncate">{{ activity.title }}</p>
+                <p class="field-subtext mt-0.5 font-dosis font-semibold tracking-wide text-[0.8rem] text-platinum-500 uppercase">{{ activity.time }}</p>
               </div>
             </div>
             <div v-if="recentActivity.length === 0" class="empty-state !py-12">
               <div class="empty-state-icon"><ActivityIcon class="w-7 h-7 text-platinum-400" /></div>
-              <p class="empty-state-title">No recent activity</p>
+              <p class="empty-state-title font-mplusrounded text-sm text-abyss-800 dark:text-platinum-300">No recent activity</p>
             </div>
           </div>
         </div>
 
         <div class="lg:col-span-5 ds-panel">
-          <h3 class="font-madimione text-base text-abyss-800 dark:text-platinum-100 mb-5">Quick Tasks</h3>
+          <h3 class="font-madimione text-lg md:text-xl text-abyss-900 dark:text-platinum-50 mb-5">Quick Tasks</h3>
           <div class="grid grid-cols-1 gap-3">
             <router-link v-for="action in quickActions" :key="action.label" :to="{ name: action.name }" class="quick-action-row group">
               <div :class="['ds-icon-badge border-2 shrink-0 transition-colors', action.iconClass]">
                 <component :is="action.icon" class="h-5 w-5" />
               </div>
-              <span class="font-dosis text-sm font-medium text-abyss-800 dark:text-platinum-200 group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
+              <span class="font-dosis text-sm font-bold tracking-widest uppercase text-abyss-900 dark:text-platinum-200 group-hover:text-calm-lavender-600 dark:group-hover:text-calm-lavender-400 transition-colors">
                 {{ action.label }}
               </span>
               <ArrowRightIcon class="w-4 h-4 text-platinum-400 ml-auto shrink-0 group-hover:text-calm-lavender-500 group-hover:translate-x-0.5 transition-all" />

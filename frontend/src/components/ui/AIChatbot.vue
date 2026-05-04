@@ -103,7 +103,7 @@
                         <p class="font-mplusrounded text-sm
                                   text-platinum-600 dark:text-platinum-300
                                   px-6 leading-relaxed max-w-[85%] mx-auto">
-                            I'm your intelligent assistant. Ask me anything about GAD, VAWC, Sex Ed, or any other topic!
+                            I'm your intelligent assistant. Ask me anything about WGAD, VAWC, Sex Ed, or any other topic!
                         </p>
                     </div>
 
@@ -340,7 +340,7 @@ const selectedTopic = ref('gad');
 
 // Topics
 const topics = [
-    { id: 'gad',  name: 'GAD',    icon: Users         },
+    { id: 'gad',  name: 'WGAD',   icon: Users         },
     { id: 'vawc', name: 'VAWC',   icon: HeartHandshake },
     { id: 'sex',  name: 'Sex Ed', icon: Heart          }
 ];
@@ -348,7 +348,7 @@ const topics = [
 // Messages with localStorage persistence
 const STORAGE_KEY = 'lumina_chatbot_messages';
 const messages = ref([]);
-const suggestions = ref(['Tell me about GAD', 'Explain quantum physics', 'Help me with coding', 'What is VAWC?']);
+const suggestions = ref(['Tell me about WGAD', 'Explain quantum physics', 'Help me with coding', 'What is VAWC?']);
 
 // Initialize messages from localStorage
 onMounted(() => {
@@ -356,7 +356,7 @@ onMounted(() => {
     if (messages.value.length === 0) {
         messages.value = [{
             role: 'ai',
-            text: 'Mabuhay! 👋 I\'m **Lumina**, your friendly assistant!\n\nI can help you with **any topic** - from GAD, VAWC, and Sex Education to science, math, coding, history, and more!\n\nWhat would you like to know?',
+            text: 'Mabuhay! <i class="fa-solid fa-hand"></i> I\'m **Lumina**, your friendly assistant!\n\nI can help you with **any topic** - from WGAD, VAWC, and Sex Education to science, math, coding, history, and more!\n\nWhat would you like to know?',
             timestamp: new Date().toISOString()
         }];
         saveMessages();
@@ -462,10 +462,10 @@ function sendSuggestion(text) {
 function clearChat() {
     messages.value = [{
         role: 'ai',
-        text: 'Chat cleared! 🔄 Ask me anything - I\'m ready to help!',
+        text: 'Chat cleared! <i class="fa-solid fa-arrow-rotate-right"></i> Ask me anything - I\'m ready to help!',
         timestamp: new Date().toISOString()
     }];
-    suggestions.value = ['Tell me about GAD', 'Explain quantum physics', 'Help me with coding', 'What is VAWC?'];
+    suggestions.value = ['Tell me about WGAD', 'Explain quantum physics', 'Help me with coding', 'What is VAWC?'];
     selectedTopic.value = 'gad';
     saveMessages();
 }
@@ -516,7 +516,7 @@ async function sendMessage() {
         console.error('Chat error:', err);
         messages.value.push({
             role: 'ai',
-            text: '⚠️ Sorry, I\'m having trouble connecting right now. Please try again in a moment.\n\n**Need immediate help?**\n• PNP Women\'s Desk: 117\n• DSWD Hotline: (02) 931-8101',
+            text: '<i class="fa-solid fa-triangle-exclamation"></i> Sorry, I\'m having trouble connecting right now. Please try again in a moment.\n\n**Need immediate help?**\n• PNP Women\'s Desk: 117\n• DSWD Hotline: (02) 931-8101',
             timestamp: new Date().toISOString()
         });
         saveMessages();

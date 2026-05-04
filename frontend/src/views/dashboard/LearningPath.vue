@@ -46,7 +46,7 @@
                         :class="module.status === 'completed'
                             ? 'bg-calm-lavender-50 dark:bg-calm-lavender-900/20 border-calm-lavender-200 dark:border-calm-lavender-800/40'
                             : 'bg-slate-50 dark:bg-abyss-700 border-slate-200 dark:border-abyss-500'">
-                        {{ module.icon || '📚' }}
+                        <i class="fa-solid fa-book-open text-calm-lavender-600 dark:text-calm-lavender-400"></i>
                     </div>
 
                     <!-- Info -->

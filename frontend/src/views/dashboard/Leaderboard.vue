@@ -127,7 +127,7 @@
                                 </div>
                                 <div v-if="getRankIndex(selectedStudent) === 0"
                                     class="absolute -bottom-1.5 -right-1.5 w-7 h-7 bg-white dark:bg-abyss-600 rounded-xl flex items-center justify-center border border-slate-100 dark:border-abyss-500">
-                                    🔥
+                                    <i class="fa-solid fa-fire text-amber-500"></i>
                                 </div>
                             </div>
                             <h3 class="font-semibold text-base text-slate-800 dark:text-platinum-100">{{
@@ -198,7 +198,7 @@
 
         <!-- Footer -->
         <p class="text-center text-xs text-platinum-500 dark:text-platinum-600 mt-4">
-            Keep learning and stay kind to your classmates 💜
+            Keep learning and stay kind to your classmates <i class="fa-solid fa-heart text-neon-pink-500"></i>
         </p>
     </div>
 </template>

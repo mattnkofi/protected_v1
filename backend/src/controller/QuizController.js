@@ -105,6 +105,13 @@ class QuizController {
             const quizId = req.params.id;
             const userId = req.user.id;
             const { pointsEarned, correctCount } = req.body;
+
+            if (req.user.role !== 'player') {
+                return res.status(403).json({
+                    success: false,
+                    message: 'Only players can submit quiz results.'
+                });
+            }
             
             // 1. I-save ang attempt sa database (QuizAttempt)
             const result = await QuizService.submitAttempt(userId, quizId, req.body);

@@ -17,25 +17,33 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
         <div class="bg-white dark:bg-abyss-700 border-2 border-slate-200 dark:border-abyss-500 border-b-[6px] p-6 rounded-2xl hover:border-calm-lavender-400 transition-colors cursor-pointer group">
-          <div class="w-10 h-10 rounded-xl bg-calm-lavender-100 dark:bg-calm-lavender-900/30 flex items-center justify-center mb-4">📘</div>
-          <h4 class="font-madimione text-xl text-calm-lavender-600 dark:text-calm-lavender-400 mb-2 group-hover:text-calm-lavender-500">GAD Awareness</h4>
-          <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">Understanding Gender and Development (GAD) basics.</p>
+          <div class="w-10 h-10 rounded-xl bg-calm-lavender-100 dark:bg-calm-lavender-900/30 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-book-open text-calm-lavender-600 dark:text-calm-lavender-400"></i>
+          </div>
+          <h4 class="font-madimione text-xl text-calm-lavender-600 dark:text-calm-lavender-400 mb-2 group-hover:text-calm-lavender-500">WGAD Awareness</h4>
+          <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">Understanding Gender and Development (WGAD) basics.</p>
         </div>
 
         <div class="bg-white dark:bg-abyss-700 border-2 border-slate-200 dark:border-abyss-500 border-b-[6px] p-6 rounded-2xl hover:border-vawc-orange-400 transition-colors cursor-pointer group">
-          <div class="w-10 h-10 rounded-xl bg-vawc-orange-100 dark:bg-vawc-orange-900/30 flex items-center justify-center mb-4">⚖️</div>
+          <div class="w-10 h-10 rounded-xl bg-vawc-orange-100 dark:bg-vawc-orange-900/30 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-scale-balanced text-vawc-orange-600 dark:text-vawc-orange-400"></i>
+          </div>
           <h4 class="font-madimione text-xl text-vawc-orange-600 dark:text-vawc-orange-400 mb-2 group-hover:text-vawc-orange-500">Legal Rights</h4>
           <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">VAWC: Know Your Rights and legal protections.</p>
         </div>
 
         <div class="bg-white dark:bg-abyss-700 border-2 border-slate-200 dark:border-abyss-500 border-b-[6px] p-6 rounded-2xl hover:border-neon-pink-400 transition-colors cursor-pointer group">
-          <div class="w-10 h-10 rounded-xl bg-neon-pink-100 dark:bg-neon-pink-900/30 flex items-center justify-center mb-4">❤️</div>
+          <div class="w-10 h-10 rounded-xl bg-neon-pink-100 dark:bg-neon-pink-900/30 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-heart text-neon-pink-600 dark:text-neon-pink-400"></i>
+          </div>
           <h4 class="font-madimione text-xl text-neon-pink-600 dark:text-neon-pink-400 mb-2 group-hover:text-neon-pink-500">Sex Ed</h4>
           <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">Safe Relationships and understanding consent.</p>
         </div>
 
         <div class="bg-white dark:bg-abyss-700 border-2 border-slate-200 dark:border-abyss-500 border-b-[6px] p-6 rounded-2xl hover:border-safety-teal-400 transition-colors cursor-pointer group">
-          <div class="w-10 h-10 rounded-xl bg-safety-teal-100 dark:bg-safety-teal-900/30 flex items-center justify-center mb-4">🤝</div>
+          <div class="w-10 h-10 rounded-xl bg-safety-teal-100 dark:bg-safety-teal-900/30 flex items-center justify-center mb-4">
+            <i class="fa-solid fa-handshake text-safety-teal-600 dark:text-safety-teal-400"></i>
+          </div>
           <h4 class="font-madimione text-xl text-safety-teal-600 dark:text-safety-teal-400 mb-2 group-hover:text-safety-teal-500">Support Systems</h4>
           <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">How to access community services for help.</p>
         </div>

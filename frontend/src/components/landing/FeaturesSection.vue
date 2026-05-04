@@ -10,7 +10,7 @@
           Choose Your Challenge
         </h2>
         <p class="font-averta text-base text-slate-500 dark:text-platinum-400 mt-4 max-w-lg mx-auto leading-relaxed">
-          Three ways to test your GAD and VAWC knowledge — pick your fight and level up your advocacy.
+          Three ways to test your WGAD and VAWC knowledge — pick your fight and level up your advocacy.
         </p>
       </div>
 
@@ -74,7 +74,10 @@
                 <div
                   class="w-5 h-5 rounded-md bg-white/40 flex items-center justify-center font-madimione text-safety-teal-800 text-[10px] shrink-0">
                   C</div>
-                <span class="font-averta text-white text-[10px] font-bold leading-tight">RA 9262 ✓</span>
+                <span class="font-averta text-white text-[10px] font-bold leading-tight inline-flex items-center gap-1">
+                  RA 9262
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
               <div class="bg-white/10 rounded-xl p-2 flex items-center gap-1.5 border border-white/15 opacity-50">
                 <div
@@ -87,7 +90,8 @@
 
           <div class="p-5 flex flex-col gap-2 flex-1">
             <span
-              class="bg-neon-pink-500 text-white font-mplusrounded text-xs font-bold uppercase px-3 py-1 rounded-lg w-fit border-b-2 border-neon-pink-700">⏱
+              class="bg-neon-pink-500 text-white font-mplusrounded text-xs font-bold uppercase px-3 py-1 rounded-lg w-fit border-b-2 border-neon-pink-700 inline-flex items-center gap-2">
+              <i class="fa-solid fa-stopwatch"></i>
               Race the Clock</span>
             <h3 class="font-madimione text-2xl text-neon-pink-600 dark:text-neon-pink-400">Time Attack</h3>
             <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">
@@ -137,7 +141,7 @@
             <!-- Question card -->
             <div class="relative z-10 bg-white/15 border border-white/20 rounded-xl p-3 mb-2.5">
               <p class="font-averta text-white text-[11px] font-semibold leading-snug">
-                Under GAD, what concept ensures women and men start from the same ground?
+                Under WGAD, what concept ensures women and men start from the same ground?
               </p>
             </div>
 
@@ -153,7 +157,10 @@
                 <div
                   class="w-5 h-5 rounded-md bg-white/40 flex items-center justify-center font-madimione text-safety-teal-800 text-[10px] shrink-0">
                   B</div>
-                <span class="font-averta text-white text-[10px] font-bold">Equality ✓</span>
+                <span class="font-averta text-white text-[10px] font-bold inline-flex items-center gap-1">
+                  Equality
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
               <div class="bg-white/15 rounded-xl p-2 flex items-center gap-1.5 border border-white/15 opacity-40">
                 <div
@@ -172,7 +179,8 @@
 
           <div class="p-5 flex flex-col gap-2 flex-1">
             <span
-              class="bg-vawc-orange-500 text-white font-mplusrounded text-xs font-bold uppercase px-3 py-1 rounded-lg w-fit border-b-2 border-vawc-orange-700">💀
+              class="bg-vawc-orange-500 text-white font-mplusrounded text-xs font-bold uppercase px-3 py-1 rounded-lg w-fit border-b-2 border-vawc-orange-700 inline-flex items-center gap-2">
+              <i class="fa-solid fa-skull"></i>
               High Stakes</span>
             <h3 class="font-madimione text-2xl text-vawc-orange-600 dark:text-vawc-orange-400">Boss Battle</h3>
             <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">
@@ -219,7 +227,7 @@
             <!-- Question card -->
             <div class="relative z-10 bg-white/15 border border-white/20 rounded-xl p-3 mb-2.5">
               <p class="font-averta text-white text-[11px] font-semibold leading-snug">
-                Under RA 9710 (Magna Carta of Women), who must establish a GAD Focal Point System?
+                Under RA 9710 (Magna Carta of Women), who must establish a WGAD Focal Point System?
               </p>
             </div>
 
@@ -241,7 +249,10 @@
                 <div
                   class="w-5 h-5 rounded-md bg-white/40 flex items-center justify-center font-madimione text-safety-teal-800 text-[10px] shrink-0">
                   C</div>
-                <span class="font-averta text-white text-[10px] font-bold">All agencies ✓</span>
+                <span class="font-averta text-white text-[10px] font-bold inline-flex items-center gap-1">
+                  All agencies
+                  <i class="fa-solid fa-check"></i>
+                </span>
               </div>
               <div class="bg-white/10 rounded-xl p-2 flex items-center gap-1.5 border border-white/15 opacity-40">
                 <div
@@ -254,7 +265,8 @@
 
           <div class="p-5 flex flex-col gap-2 flex-1">
             <span
-              class="bg-safety-teal-500 text-white font-mplusrounded text-xs font-bold uppercase px-3 py-1 rounded-lg w-fit border-b-2 border-safety-teal-700">🔥
+              class="bg-safety-teal-500 text-white font-mplusrounded text-xs font-bold uppercase px-3 py-1 rounded-lg w-fit border-b-2 border-safety-teal-700 inline-flex items-center gap-2">
+              <i class="fa-solid fa-fire"></i>
               Streak Multiplier</span>
             <h3 class="font-madimione text-2xl text-safety-teal-600 dark:text-safety-teal-400">Streak</h3>
             <p class="font-averta text-sm text-slate-500 dark:text-platinum-400 leading-relaxed">

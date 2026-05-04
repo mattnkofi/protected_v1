@@ -57,4 +57,28 @@ export const facilitatorPages = [
         component: () => import('@/views/facilitator/MLAnalytics.vue'),
         meta: { title: 'ML Analytics Dashboard' }
     },
+    {
+        path: 'resource-center',
+        name: 'facilitator.resource-center',
+        component: () => import('@/views/resources/ResourceCenter.vue'),
+        meta: { title: 'Resource Center' }
+    },
+    {
+        path: 'purple-desk',
+        name: 'facilitator.purple-desk',
+        component: () => import('@/views/safety/PurpleDesk.vue'),
+        meta: { title: 'Purple Desk' }
+    },
+    {
+        path: 'gad/manage',
+        name: 'facilitator.gad.manage',
+        component: () => import('@/views/gad/GADProposalManager.vue'),
+        meta: { title: 'WGAD Proposals' }
+    },
+    {
+        path: 'gad/language-analyzer',
+        name: 'facilitator.gad.language-analyzer',
+        component: () => import('@/views/GADLanguageAnalyzer.vue'),
+        meta: { title: 'WGAD Language Analyzer' }
+    },
 ];

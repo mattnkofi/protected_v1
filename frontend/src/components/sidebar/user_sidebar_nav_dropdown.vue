@@ -4,7 +4,7 @@ import { computed, watch, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 const props = defineProps({
-    // 🛑 The 'open' prop is no longer needed if the parent doesn't use v-model.
+    // NOTE: The 'open' prop is no longer needed if the parent doesn't use v-model.
     // We keep it only if you might occasionally want to override internal control.
     // Since we want internal control, we rely on matchPaths.
 
