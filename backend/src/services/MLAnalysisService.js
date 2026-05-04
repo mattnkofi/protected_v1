@@ -1,11 +1,90 @@
 // backend/src/services/MLAnalysisService.js
-const { MLAnalysisResult, User, Quiz, QuizAttempt, Module, Classroom, ClassroomMember } = require('../model');
+const { MLAnalysisResult, User, UserProfile, Quiz, QuizAttempt, Module, Classroom, ClassroomMember } = require('../model');
 const { Op } = require('sequelize');
 
 // ML Service URL (Python Flask API)
 const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:5001';
 
 class MLAnalysisService {
+    _getAgeBand(age) {
+        if (age === null || age === undefined || Number.isNaN(Number(age))) return 'Unknown';
+
+        const numericAge = Number(age);
+        if (numericAge < 13) return 'Below 13';
+        if (numericAge <= 15) return '13-15';
+        if (numericAge <= 18) return '16-18';
+        if (numericAge <= 24) return '19-24';
+        if (numericAge <= 34) return '25-34';
+        if (numericAge <= 44) return '35-44';
+        return '45+';
+    }
+
+    _calculateAge(dateOfBirth) {
+        if (!dateOfBirth) return null;
+
+        const birthDate = new Date(dateOfBirth);
+        if (Number.isNaN(birthDate.getTime())) return null;
+
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    _extractReasonThemes(analysisResults = []) {
+        const themeMatchers = [
+            {
+                key: 'family_support',
+                label: 'Family / support concerns',
+                example: 'family conflict or support-system strain',
+                matcher: /support systems|family|friends|mentors/i
+            },
+            {
+                key: 'pressure_control',
+                label: 'Pressure / control concerns',
+                example: 'being pressured, controlled, or intimidated',
+                matcher: /unsafe|pressure|controlled|intimidation|threats/i
+            },
+            {
+                key: 'reporting_fear',
+                label: 'Fear of reporting',
+                example: 'avoiding help because of consequences',
+                matcher: /reporting harmful|fear of consequences/i
+            },
+            {
+                key: 'overwhelm_withdrawal',
+                label: 'Emotional overload / withdrawal',
+                example: 'feeling overwhelmed or pulling away from support',
+                matcher: /anxious|overwhelmed|unable to focus|withdraw/i
+            }
+        ];
+
+        const counts = {};
+        themeMatchers.forEach((theme) => { counts[theme.key] = 0; });
+
+        if (!Array.isArray(analysisResults)) {
+            return themeMatchers.map(theme => ({ ...theme, count: 0 })).sort((a, b) => b.count - a.count);
+        }
+
+        analysisResults.forEach((item) => {
+            const questionText = String(item?.question_text || '').trim();
+            if (!questionText) return;
+
+            themeMatchers.forEach((theme) => {
+                if (theme.matcher.test(questionText)) {
+                    counts[theme.key] = (counts[theme.key] || 0) + 1;
+                }
+            });
+        });
+
+        return themeMatchers
+            .map(theme => ({ ...theme, count: counts[theme.key] || 0 }))
+            .sort((a, b) => b.count - a.count);
+    }
+
     /**
      * Build access scope for facilitator analytics.
      * A facilitator can see:
@@ -162,7 +241,12 @@ class MLAnalysisService {
                 {
                     model: User,
                     as: 'student',
-                    attributes: ['id', 'name', 'email']
+                    attributes: ['id', 'name', 'email'],
+                    include: [{
+                        model: UserProfile,
+                        as: 'profile',
+                        attributes: ['date_of_birth']
+                    }]
                 },
                 {
                     model: Quiz,
@@ -275,15 +359,51 @@ class MLAnalysisService {
         const flaggedCount = await MLAnalysisResult.count({ where: { ...where, flags_detected: true } });
         const unreviewedCount = await MLAnalysisResult.count({ where: { ...where, flags_detected: true, reviewed: false } });
 
-        // Risk distribution
+        // Risk and profile distribution
         const allResults = await MLAnalysisResult.findAll({
             where,
-            attributes: ['overall_risk_level'],
-            raw: true
+            attributes: ['overall_risk_level', 'analysis_results', 'flags_detected'],
+            include: [{
+                model: User,
+                as: 'student',
+                attributes: ['id', 'name', 'email'],
+                include: [{
+                    model: UserProfile,
+                    as: 'profile',
+                    attributes: ['date_of_birth']
+                }]
+            }]
         });
+
         const riskDistribution = {};
-        allResults.forEach(r => {
-            riskDistribution[r.overall_risk_level] = (riskDistribution[r.overall_risk_level] || 0) + 1;
+        const ageBandDistribution = {};
+        const ageBandRiskDistribution = {};
+
+        allResults.forEach((row) => {
+            riskDistribution[row.overall_risk_level] = (riskDistribution[row.overall_risk_level] || 0) + 1;
+
+            const dateOfBirth = row.student?.profile?.date_of_birth || null;
+            const age = this._calculateAge(dateOfBirth);
+            const ageBand = this._getAgeBand(age);
+
+            if (!ageBandDistribution[ageBand]) {
+                ageBandDistribution[ageBand] = { total: 0, flagged: 0, severeOrHigh: 0 };
+            }
+
+            ageBandDistribution[ageBand].total += 1;
+            if (row.flags_detected) ageBandDistribution[ageBand].flagged += 1;
+            if (['High', 'Severe'].includes(row.overall_risk_level)) {
+                ageBandDistribution[ageBand].severeOrHigh += 1;
+            }
+
+            if (!ageBandRiskDistribution[ageBand]) {
+                ageBandRiskDistribution[ageBand] = { total: 0, low: 0, moderate: 0, high: 0, severe: 0 };
+            }
+            ageBandRiskDistribution[ageBand].total += 1;
+            const normalizedRisk = String(row.overall_risk_level || 'low').toLowerCase();
+            if (normalizedRisk in ageBandRiskDistribution[ageBand]) {
+                ageBandRiskDistribution[ageBand][normalizedRisk] += 1;
+            }
         });
 
         // Category distribution
@@ -296,6 +416,35 @@ class MLAnalysisService {
         categoryResults.forEach(r => {
             categoryDistribution[r.dominant_category] = (categoryDistribution[r.dominant_category] || 0) + 1;
         });
+
+        const reasonDistribution = {};
+        allResults.forEach((row) => {
+            const themes = this._extractReasonThemes(row.analysis_results || []);
+            themes.forEach((theme) => {
+                if (!theme.count) return;
+                reasonDistribution[theme.key] = reasonDistribution[theme.key] || {
+                    key: theme.key,
+                    label: theme.label,
+                    example: theme.example,
+                    count: 0
+                };
+                reasonDistribution[theme.key].count += 1;
+            });
+        });
+
+        const ageRangeDistribution = Object.entries(ageBandDistribution)
+            .map(([label, summary]) => ({
+                label,
+                ...summary,
+                severeRate: summary.total > 0 ? Number(((summary.severeOrHigh / summary.total) * 100).toFixed(1)) : 0
+            }))
+            .sort((a, b) => {
+                const order = ['Below 13', '13-15', '16-18', '19-24', '25-34', '35-44', '45+', 'Unknown'];
+                return order.indexOf(a.label) - order.indexOf(b.label);
+            });
+
+        const reasonBreakdown = Object.values(reasonDistribution)
+            .sort((a, b) => b.count - a.count);
 
         // Recent flagged results
         const recentFlags = await MLAnalysisResult.findAll({
@@ -316,6 +465,9 @@ class MLAnalysisService {
             flaggedCount,
             unreviewedCount,
             riskDistribution,
+            ageRangeDistribution,
+            ageBandRiskDistribution,
+            reasonBreakdown,
             categoryDistribution,
             recentFlags
         };

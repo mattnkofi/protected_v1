@@ -178,7 +178,7 @@ import {
   MessageSquareIcon
 } from 'lucide-vue-next';
 import * as pdfjsLib from 'pdfjs-dist';
-import workerSrc from 'pdfjs-dist/build/pdf.worker.min?url';
+import workerSrc from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
 import ProposalComments from '@/components/gad/ProposalComments.vue';
 
 // Set up PDF.js worker using local package

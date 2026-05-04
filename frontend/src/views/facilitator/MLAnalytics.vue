@@ -41,6 +41,60 @@
         </div>
       </div>
 
+      <div class="grid gap-4 lg:grid-cols-2">
+        <div class="p-4 rounded-2xl border border-slate-200 dark:border-abyss-600 bg-white dark:bg-abyss-800/60">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-[10px] uppercase tracking-wider text-slate-500">Age Range Stress</p>
+              <p class="text-sm text-slate-600 dark:text-platinum-300 mt-1">High and severe cases grouped by age band.</p>
+            </div>
+            <span class="px-2 py-1 rounded-full text-[10px] uppercase tracking-wider bg-slate-100 dark:bg-abyss-700 text-slate-600 dark:text-platinum-300">
+              {{ ageRangeGraph.length }} bands
+            </span>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <div v-for="band in ageRangeGraph" :key="band.label" class="space-y-1">
+              <div class="flex items-center justify-between text-xs text-slate-600 dark:text-platinum-300">
+                <span>{{ band.label }}</span>
+                <span>{{ band.stressCount }} stressed of {{ band.total }}</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-200 dark:bg-abyss-700 overflow-hidden">
+                <div class="h-full rounded-full bg-calm-lavender-500 transition-all duration-300" :style="{ width: `${barWidth(band.stressCount, band.maxStress)}%` }" />
+              </div>
+              <p class="text-[11px] text-slate-500 dark:text-platinum-400">{{ band.severeRate }}% high/severe among this band</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-2xl border border-slate-200 dark:border-abyss-600 bg-white dark:bg-abyss-800/60">
+          <div class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-[10px] uppercase tracking-wider text-slate-500">Usual Reasons</p>
+              <p class="text-sm text-slate-600 dark:text-platinum-300 mt-1">Most common stress themes found in the assessments.</p>
+            </div>
+            <span v-if="topReason" class="px-2 py-1 rounded-full text-[10px] uppercase tracking-wider bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-200">
+              Top: {{ topReason.label }}
+            </span>
+          </div>
+
+          <div class="mt-4 space-y-3">
+            <div v-for="reason in reasonGraph" :key="reason.key" class="space-y-1 rounded-xl border border-slate-200/80 dark:border-abyss-700/80 bg-slate-50 dark:bg-abyss-900/30 p-3">
+              <div class="flex items-center justify-between gap-3 text-xs text-slate-600 dark:text-platinum-300">
+                <div>
+                  <p class="font-semibold text-slate-700 dark:text-platinum-200">{{ reason.label }}</p>
+                  <p class="text-[11px] text-slate-500 dark:text-platinum-400">Example: {{ reason.example }}</p>
+                </div>
+                <span class="font-bold">{{ reason.count }}</span>
+              </div>
+              <div class="h-2 rounded-full bg-slate-200 dark:bg-abyss-700 overflow-hidden">
+                <div class="h-full rounded-full bg-amber-500 transition-all duration-300" :style="{ width: `${barWidth(reason.count, maxReasonCount)}%` }" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="p-4 rounded-2xl border border-slate-200 dark:border-abyss-600 bg-white dark:bg-abyss-800/60">
         <div class="flex flex-wrap gap-3 items-center">
           <select v-model="filters.riskLevel" @change="fetchResults(1)" class="px-3 py-2 rounded-lg border border-slate-200 dark:border-abyss-600 text-sm bg-transparent">
@@ -67,6 +121,7 @@
           <thead>
             <tr class="text-left text-xs uppercase tracking-wider text-slate-500 border-b border-slate-200 dark:border-abyss-600">
               <th class="p-3">Student</th>
+              <th class="p-3">Age Range</th>
               <th class="p-3">Quiz</th>
               <th class="p-3">Risk</th>
               <th class="p-3">Category</th>
@@ -83,6 +138,7 @@
               class="border-b border-slate-100 dark:border-abyss-700 text-sm"
             >
               <td class="p-3">{{ item.student?.name || 'Unknown' }}</td>
+              <td class="p-3 text-xs text-slate-600 dark:text-platinum-300">{{ ageBandLabel(item.student?.profile?.date_of_birth) }}</td>
               <td class="p-3">{{ item.quiz?.title || '-' }}</td>
               <td class="p-3">
                 <span :class="riskClass(item.overall_risk_level)" class="px-2 py-1 rounded-full text-xs font-bold">
@@ -103,7 +159,7 @@
               </td>
             </tr>
             <tr v-if="!results.length">
-              <td colspan="8" class="p-6 text-center text-sm text-slate-500">No ML analysis results yet.</td>
+              <td colspan="9" class="p-6 text-center text-sm text-slate-500">No ML analysis results yet.</td>
             </tr>
           </tbody>
         </table>
@@ -117,6 +173,7 @@
 
         <div class="text-sm">
           <p><strong>Student:</strong> {{ detail.student?.name || 'Unknown' }}</p>
+          <p><strong>Age Range:</strong> {{ ageBandLabel(detail.student?.profile?.date_of_birth) }}</p>
           <p><strong>Quiz:</strong> {{ detail.quiz?.title || '-' }}</p>
           <p><strong>Risk:</strong> {{ detail.overall_risk_level }}</p>
           <p><strong>Category:</strong> {{ detail.dominant_category }}</p>
@@ -170,6 +227,46 @@ const riskClass = (risk) => {
   if (risk === 'Moderate') return 'bg-amber-100 text-amber-700';
   return 'bg-emerald-100 text-emerald-700';
 };
+
+const ageBandLabel = (dateOfBirth) => {
+  if (!dateOfBirth) return 'Unknown';
+  const birthDate = new Date(dateOfBirth);
+  if (Number.isNaN(birthDate.getTime())) return 'Unknown';
+
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age -= 1;
+  }
+
+  if (age < 13) return 'Below 13';
+  if (age <= 15) return '13-15';
+  if (age <= 18) return '16-18';
+  if (age <= 24) return '19-24';
+  if (age <= 34) return '25-34';
+  if (age <= 44) return '35-44';
+  return '45+';
+};
+
+const ageRangeGraph = computed(() => {
+  const rows = Array.isArray(stats.value.ageRangeDistribution) ? stats.value.ageRangeDistribution : [];
+  const maxStress = Math.max(1, ...rows.map(row => row.severeOrHigh || row.flagged || 0));
+
+  return rows.map((row) => ({
+    label: row.label,
+    total: row.total || 0,
+    stressCount: row.severeOrHigh || row.flagged || 0,
+    severeRate: row.severeRate || 0,
+    maxStress
+  }));
+});
+
+const reasonGraph = computed(() => Array.isArray(stats.value.reasonBreakdown) ? stats.value.reasonBreakdown : []);
+const topReason = computed(() => reasonGraph.value[0] || null);
+const maxReasonCount = computed(() => Math.max(1, ...reasonGraph.value.map(row => row.count || 0)));
+
+const barWidth = (count, maxCount) => Math.round(((count || 0) / Math.max(1, maxCount || 0)) * 100);
 
 const fetchStats = async () => {
   const { data } = await api.get('/api/v1/ml-analysis/facilitator/stats');
