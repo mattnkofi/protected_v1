@@ -256,7 +256,7 @@ export const useNotificationStore = defineStore('notification', () => {
   const connectSSE = () => {
     if (eventSource && eventSource.readyState !== EventSource.CLOSED) return;
 
-    const token = localStorage.getItem('jwt');
+    const token = sessionStorage.getItem('jwt');
     if (!token) return;
 
     const baseURL = api.defaults?.baseURL ?? '';

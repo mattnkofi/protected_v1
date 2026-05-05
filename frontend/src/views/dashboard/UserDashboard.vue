@@ -157,6 +157,111 @@
             </div>
 
             <!-- ════════════════════════════════════════
+                 PERSONALIZED GUIDANCE
+            ════════════════════════════════════════ -->
+            <section class="guidance-panel rounded-2xl p-6 md:p-7 border border-emerald-200/70 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50 via-white to-calm-lavender-50 dark:from-emerald-950/20 dark:via-abyss-800 dark:to-calm-lavender-950/10">
+                <div class="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                        <p class="font-dosis text-[0.75rem] font-bold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">
+                            Personalized Guidance
+                        </p>
+                        <h3 class="mt-1 font-madimione text-2xl md:text-3xl text-abyss-900 dark:text-platinum-50">
+                            Support based on your latest assessment
+                        </h3>
+                        <p class="mt-2 font-mplusrounded text-sm md:text-base leading-relaxed text-platinum-600 dark:text-platinum-300 max-w-3xl">
+                            These suggestions are tailored from your assessment responses so you can see what the system noticed, what to do next, and where to get help.
+                        </p>
+                    </div>
+
+                    <span
+                        v-if="latestAssessmentGuidance?.overallRiskLevel"
+                        class="px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest"
+                        :class="riskBadgeClass(latestAssessmentGuidance.overallRiskLevel)"
+                    >
+                        {{ latestAssessmentGuidance.overallRiskLevel }} Risk
+                    </span>
+                </div>
+
+                <div v-if="guidanceLoading" class="mt-6 rounded-2xl border border-dashed border-emerald-200 dark:border-emerald-800/40 bg-white/70 dark:bg-abyss-900/30 p-5 text-sm text-platinum-500 dark:text-platinum-400">
+                    Loading your guidance...
+                </div>
+
+                <div v-else-if="guidanceError" class="mt-6 rounded-2xl border border-red-200 bg-red-50 dark:bg-red-950/20 p-5 text-sm text-red-700 dark:text-red-300">
+                    {{ guidanceError }}
+                </div>
+
+                <div v-else-if="latestAssessmentGuidance" class="mt-6 grid gap-4 lg:grid-cols-3">
+                    <article class="rounded-2xl border border-emerald-200/70 dark:border-emerald-700/40 bg-white/80 dark:bg-abyss-900/40 p-5 shadow-sm">
+                        <p class="font-dosis text-[0.7rem] font-bold uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">Recommendation</p>
+                        <p class="mt-2 font-mplusrounded text-sm md:text-[0.95rem] leading-relaxed text-abyss-800 dark:text-platinum-200">
+                            {{ latestAssessmentGuidance.studentRecommendation?.recommendationText || latestAssessmentGuidance.studentRecommendation?.summary || 'Keep checking in with your support network and facilitator.' }}
+                        </p>
+                        <div v-if="latestAssessmentGuidance.studentRecommendation?.reasonParts?.length" class="mt-3 flex flex-wrap gap-2">
+                            <span v-for="(part, index) in latestAssessmentGuidance.studentRecommendation.reasonParts" :key="index" class="inline-flex items-center rounded-full border border-emerald-200 dark:border-emerald-800/40 bg-emerald-50 dark:bg-emerald-900/25 px-3 py-1 text-[11px] text-emerald-700 dark:text-emerald-200">
+                                {{ part }}
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="rounded-2xl border border-calm-lavender-200 dark:border-calm-lavender-700/40 bg-white/80 dark:bg-abyss-900/40 p-5 shadow-sm">
+                        <p class="font-dosis text-[0.7rem] font-bold uppercase tracking-[0.2em] text-calm-lavender-600 dark:text-calm-lavender-400">Quote</p>
+                        <p class="mt-2 font-mplusrounded text-sm md:text-[0.95rem] leading-relaxed italic text-abyss-800 dark:text-platinum-200">
+                            “{{ guidanceQuote }}”
+                        </p>
+                        <p class="mt-3 text-xs uppercase tracking-[0.2em] text-platinum-500 dark:text-platinum-400">
+                            {{ guidanceQuoteSource }}
+                        </p>
+                    </article>
+
+                    <article class="rounded-2xl border border-amber-200 dark:border-amber-700/40 bg-white/80 dark:bg-abyss-900/40 p-5 shadow-sm">
+                        <p class="font-dosis text-[0.7rem] font-bold uppercase tracking-[0.2em] text-amber-600 dark:text-amber-400">Help</p>
+                        <ul class="mt-3 space-y-2 font-mplusrounded text-sm leading-relaxed text-abyss-800 dark:text-platinum-200">
+                            <li v-for="(helpItem, index) in guidanceHelpItems" :key="index" class="flex items-start gap-2">
+                                <span class="mt-1 h-2 w-2 rounded-full bg-amber-500 shrink-0"></span>
+                                <span>{{ helpItem }}</span>
+                            </li>
+                        </ul>
+                    </article>
+                </div>
+
+                <div v-if="latestAssessmentGuidance" class="mt-4 rounded-2xl border border-slate-200/80 dark:border-abyss-700/40 bg-white/75 dark:bg-abyss-900/30 p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <p class="font-dosis text-[0.7rem] font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-platinum-400">From Your Assessment</p>
+                            <p class="mt-1 font-mplusrounded text-sm text-slate-600 dark:text-platinum-300">These details are taken from your last answered assessment so you can see what the system focused on.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.16em]">
+                            <span class="rounded-full bg-calm-lavender-100 text-calm-lavender-700 dark:bg-calm-lavender-500/20 dark:text-calm-lavender-200 px-3 py-1">Age band: {{ studentAgeBand }}</span>
+                            <span class="rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200 px-3 py-1">Answers: {{ latestAssessmentGuidance.totalAnswersAnalyzed || 0 }}</span>
+                            <span class="rounded-full bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-200 px-3 py-1">Concerning: {{ latestAssessmentGuidance.concerningAnswersCount || 0 }}</span>
+                            <span class="rounded-full bg-calm-lavender-100 text-calm-lavender-700 dark:bg-calm-lavender-500/20 dark:text-calm-lavender-200 px-3 py-1">Category: {{ latestAssessmentGuidance.dominantCategory || 'N/A' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex flex-wrap gap-2">
+                        <span
+                            v-for="(behavior, index) in assessmentSnapshot.behaviors"
+                            :key="index"
+                            class="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-abyss-700 bg-slate-50 dark:bg-abyss-800 px-3 py-1 text-xs text-slate-600 dark:text-platinum-300"
+                        >
+                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                            {{ behavior.label }} <span class="text-slate-400 dark:text-platinum-500">({{ behavior.count }})</span>
+                        </span>
+                        <span v-if="!assessmentSnapshot.behaviors.length" class="text-sm text-slate-500 dark:text-platinum-400">No specific signal stood out strongly from your answers.</span>
+                    </div>
+                </div>
+
+                <div v-else class="mt-6 rounded-2xl border border-dashed border-emerald-200 dark:border-emerald-800/40 bg-white/70 dark:bg-abyss-900/30 p-5">
+                    <p class="font-mplusrounded text-sm text-platinum-600 dark:text-platinum-300">
+                        Take the Behavioral Pattern &amp; Risk Check to unlock personalized guidance, supportive quotes, and next-step help.
+                    </p>
+                    <router-link :to="{ name: 'user.behavioral-assessment' }" class="inline-flex mt-4 items-center rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white shadow-sm hover:bg-emerald-700 transition-colors">
+                        Start assessment
+                    </router-link>
+                </div>
+            </section>
+
+            <!-- ════════════════════════════════════════
                  QUICK ACTIONS
             ════════════════════════════════════════ -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
@@ -455,6 +560,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useProfileStore } from '@/stores/profile'
 import { useModuleStore } from '@/stores/module'
 import api from '@/utils/api'
 import LeaderboardModal from '@/components/ui/LeaderboardModal.vue'
@@ -469,6 +575,7 @@ import {
 
 const router = useRouter()
 const auth = useAuthStore()
+const profileStore = useProfileStore()
 const moduleStore = useModuleStore()
 
 // State
@@ -494,6 +601,28 @@ const resourceContent = ref('all')
 const resourcePage = ref(1)
 const resourceHasMore = ref(false)
 const openResourceMenuId = ref(null)
+const latestAssessmentGuidance = ref(null)
+const guidanceLoading = ref(false)
+const guidanceError = ref('')
+
+const guidanceCopyByRisk = {
+    Low: {
+        quote: 'You are building awareness early, and that is a strong first step.',
+        source: 'Keep reflecting on what helps you stay steady.'
+    },
+    Moderate: {
+        quote: 'Small changes and honest check-ins can prevent stress from building up.',
+        source: 'Use short breaks and reach out early.'
+    },
+    High: {
+        quote: 'When the load feels heavy, asking for support is a strength, not a failure.',
+        source: 'Talk to a trusted facilitator or support contact.'
+    },
+    Severe: {
+        quote: 'Your safety and well-being come first, and you deserve immediate support.',
+        source: 'Connect with a trusted adult or facilitator now.'
+    }
+}
 
 const safeUrlHost = (url) => {
     try {
@@ -525,6 +654,109 @@ const resourceContentKind = (item) => {
 const resourceContentLabel = (item) => (resourceContentKind(item) === 'video' ? 'Video' : 'Article')
 const resourceActionLabel = (item) => (resourceContentKind(item) === 'video' ? 'Watch' : 'Read')
 const resourceActionIcon = (item) => (resourceContentKind(item) === 'video' ? PlayIcon : BookOpenIcon)
+
+const riskBadgeClass = (risk) => {
+    if (risk === 'Severe') return 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-200'
+    if (risk === 'High') return 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-200'
+    if (risk === 'Moderate') return 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-200'
+    return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-200'
+}
+
+const guidanceQuote = computed(() => {
+    const risk = latestAssessmentGuidance.value?.overallRiskLevel || 'Low'
+    return guidanceCopyByRisk[risk]?.quote || guidanceCopyByRisk.Low.quote
+})
+
+const guidanceQuoteSource = computed(() => {
+    const risk = latestAssessmentGuidance.value?.overallRiskLevel || 'Low'
+    return guidanceCopyByRisk[risk]?.source || guidanceCopyByRisk.Low.source
+})
+
+const guidanceHelpItems = computed(() => {
+    const recommendation = latestAssessmentGuidance.value?.studentRecommendation
+    const risk = latestAssessmentGuidance.value?.overallRiskLevel || 'Low'
+    const items = []
+
+    if (recommendation?.seminarRecommended) {
+        items.push('Join the recommended seminar or facilitator check-in to talk through the patterns in your answers.')
+    } else {
+        items.push('Keep monitoring the patterns that showed up in your responses and note what makes stress easier or harder.')
+    }
+
+    if (recommendation?.reasonParts?.some(part => /family|support/i.test(part))) {
+        items.push('If family or support-system stress is involved, reach out to one trusted person who can listen without judgment.')
+    }
+
+    if (recommendation?.reasonParts?.some(part => /unsafe|pressure|controlled/i.test(part))) {
+        items.push('If you feel unsafe or pressured, prioritize immediate support and report it to a trusted facilitator or guardian.')
+    }
+
+    if (recommendation?.reasonParts?.some(part => /overload|withdrawal|anxious/i.test(part))) {
+        items.push('Take short breaks, breathe slowly, and give yourself space before answering or deciding anything important.')
+    }
+
+    if (!items.length) {
+        items.push('Use the Purple Desk or your facilitator if you want help understanding the result.')
+    }
+
+    if (risk === 'Severe') {
+        items.unshift('If you feel at immediate risk, contact a trusted adult or facilitator right away.')
+    }
+
+    return items.slice(0, 4)
+})
+
+const assessmentSnapshot = computed(() => ({
+    answers: latestAssessmentGuidance.value?.totalAnswersAnalyzed || 0,
+    concerning: latestAssessmentGuidance.value?.concerningAnswersCount || 0,
+    category: latestAssessmentGuidance.value?.dominantCategory || 'N/A',
+    behaviors: Array.isArray(latestAssessmentGuidance.value?.topBehaviors) ? latestAssessmentGuidance.value.topBehaviors : []
+}))
+
+const studentBirthdate = computed(() => (
+    profileStore.profile?.date_of_birth
+    || auth.user?.profile?.date_of_birth
+    || auth.user?.date_of_birth
+    || null
+))
+
+const studentAgeBand = computed(() => {
+    const dateOfBirth = studentBirthdate.value
+    if (!dateOfBirth) return 'Unknown'
+
+    const birthDate = new Date(dateOfBirth)
+    if (Number.isNaN(birthDate.getTime())) return 'Unknown'
+
+    const today = new Date()
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff = today.getMonth() - birthDate.getMonth()
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age -= 1
+    }
+
+    if (age < 13) return 'Below 13'
+    if (age <= 15) return '13-15'
+    if (age <= 18) return '16-18'
+    if (age <= 24) return '19-24'
+    if (age <= 34) return '25-34'
+    if (age <= 44) return '35-44'
+    return '45+'
+})
+
+const fetchLatestAssessmentGuidance = async () => {
+    guidanceLoading.value = true
+    guidanceError.value = ''
+    try {
+        const { data } = await api.get('/api/v1/ml-analysis/assessment/latest')
+        latestAssessmentGuidance.value = data?.analysis || null
+    } catch (error) {
+        latestAssessmentGuidance.value = null
+        guidanceError.value = error?.response?.data?.message || 'Failed to load personalized guidance.'
+    } finally {
+        guidanceLoading.value = false
+    }
+}
 
 const sortedRecommendedResources = computed(() => {
     // Sorting is performed by the backend so pagination remains consistent.
@@ -697,6 +929,8 @@ const fetchAnalytics = async () => {
 onMounted(() => {
     moduleStore.fetchModules()
     fetchAnalytics()
+    profileStore.fetchProfile('me').catch(() => {})
+    fetchLatestAssessmentGuidance()
     fetchRecommendedResources()
     // Tick `now` every 60s so visibleAnnouncements re-evaluates without a page reload
     refreshTimer = setInterval(() => { now.value = new Date() }, 60_000)

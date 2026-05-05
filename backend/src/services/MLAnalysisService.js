@@ -34,6 +34,19 @@ class MLAnalysisService {
         return age;
     }
 
+    async _loadStudentBirthdates(userIds = []) {
+        const uniqueIds = [...new Set((Array.isArray(userIds) ? userIds : []).filter(Boolean))];
+        if (!uniqueIds.length) return new Map();
+
+        const profiles = await UserProfile.findAll({
+            where: { user_id: { [Op.in]: uniqueIds } },
+            attributes: ['user_id', 'date_of_birth'],
+            raw: true
+        });
+
+        return new Map(profiles.map(profile => [profile.user_id, profile.date_of_birth]));
+    }
+
     _extractReasonThemes(analysisResults = []) {
         const themeMatchers = [
             {
@@ -274,8 +287,15 @@ class MLAnalysisService {
             offset
         });
 
+        const birthdateByUserId = await this._loadStudentBirthdates(rows.map(row => row.user_id));
+        const results = rows.map((row) => {
+            const plain = row.get({ plain: true });
+            plain.student_birthdate = birthdateByUserId.get(row.user_id) || plain.student?.profile?.date_of_birth || null;
+            return plain;
+        });
+
         return {
-            results: rows,
+            results,
             total: count,
             page: parsedPage,
             totalPages: Math.ceil(count / parsedLimit)
@@ -318,6 +338,8 @@ class MLAnalysisService {
         });
 
         if (!result) throw new Error('Analysis result not found');
+        const birthdateByUserId = await this._loadStudentBirthdates([result.user_id]);
+        result.setDataValue('student_birthdate', birthdateByUserId.get(result.user_id) || result.student?.profile?.date_of_birth || null);
         return result;
     }
 
@@ -362,7 +384,7 @@ class MLAnalysisService {
         // Risk and profile distribution
         const allResults = await MLAnalysisResult.findAll({
             where,
-            attributes: ['overall_risk_level', 'analysis_results', 'flags_detected'],
+            attributes: ['user_id', 'overall_risk_level', 'analysis_results', 'flags_detected'],
             include: [{
                 model: User,
                 as: 'student',
@@ -375,6 +397,16 @@ class MLAnalysisService {
             }]
         });
 
+        const studentIds = [...new Set(allResults.map(row => row.user_id).filter(Boolean))];
+        const userProfiles = studentIds.length
+            ? await UserProfile.findAll({
+                where: { user_id: { [Op.in]: studentIds } },
+                attributes: ['user_id', 'date_of_birth'],
+                raw: true
+            })
+            : [];
+        const birthdateByUserId = new Map(userProfiles.map(profile => [profile.user_id, profile.date_of_birth]));
+
         const riskDistribution = {};
         const ageBandDistribution = {};
         const ageBandRiskDistribution = {};
@@ -382,7 +414,7 @@ class MLAnalysisService {
         allResults.forEach((row) => {
             riskDistribution[row.overall_risk_level] = (riskDistribution[row.overall_risk_level] || 0) + 1;
 
-            const dateOfBirth = row.student?.profile?.date_of_birth || null;
+            const dateOfBirth = birthdateByUserId.get(row.user_id) || row.student?.profile?.date_of_birth || null;
             const age = this._calculateAge(dateOfBirth);
             const ageBand = this._getAgeBand(age);
 

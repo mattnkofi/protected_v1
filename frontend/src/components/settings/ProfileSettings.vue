@@ -156,10 +156,12 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { Camera as CameraIcon } from 'lucide-vue-next'; // Fixed import name
+import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from '@/utils/useToast';
 
+const router = useRouter();
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
 const toast = useToast();
@@ -238,8 +240,12 @@ const saveProfile = async () => {
         return;
     }
     isSaving.value = true;
-    await profileStore.updateProfile(profileData.value);
+    const success = await profileStore.updateProfile(profileData.value);
     isSaving.value = false;
+
+    if (success) {
+        await router.push({ name: 'profile' });
+    }
 };
 
 const resetForm = () => { if (profileStore.profile) fillProfileData(profileStore.profile); avatarPreview.value = null; };

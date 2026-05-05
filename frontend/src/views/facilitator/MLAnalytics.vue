@@ -124,6 +124,7 @@
               <th class="p-3">Age Range</th>
               <th class="p-3">Quiz</th>
               <th class="p-3">Risk</th>
+              <th class="p-3">Prediction</th>
               <th class="p-3">Category</th>
               <th class="p-3">Flags</th>
               <th class="p-3">Status</th>
@@ -138,11 +139,16 @@
               class="border-b border-slate-100 dark:border-abyss-700 text-sm"
             >
               <td class="p-3">{{ item.student?.name || 'Unknown' }}</td>
-              <td class="p-3 text-xs text-slate-600 dark:text-platinum-300">{{ ageBandLabel(item.student?.profile?.date_of_birth) }}</td>
+              <td class="p-3 text-xs text-slate-600 dark:text-platinum-300">{{ ageBandLabel(item.student_birthdate || item.student?.profile?.date_of_birth) }}</td>
               <td class="p-3">{{ item.quiz?.title || '-' }}</td>
               <td class="p-3">
                 <span :class="riskClass(item.overall_risk_level)" class="px-2 py-1 rounded-full text-xs font-bold">
                   {{ item.overall_risk_level }}
+                </span>
+              </td>
+              <td class="p-3">
+                <span :class="predictionClass(item)" class="px-2 py-1 rounded-full text-xs font-bold">
+                  {{ predictionLabel(item) }}
                 </span>
               </td>
               <td class="p-3">{{ item.dominant_category }}</td>
@@ -159,7 +165,7 @@
               </td>
             </tr>
             <tr v-if="!results.length">
-              <td colspan="9" class="p-6 text-center text-sm text-slate-500">No ML analysis results yet.</td>
+              <td colspan="10" class="p-6 text-center text-sm text-slate-500">No ML analysis results yet.</td>
             </tr>
           </tbody>
         </table>
@@ -173,10 +179,13 @@
 
         <div class="text-sm">
           <p><strong>Student:</strong> {{ detail.student?.name || 'Unknown' }}</p>
-          <p><strong>Age Range:</strong> {{ ageBandLabel(detail.student?.profile?.date_of_birth) }}</p>
+          <p><strong>Age Range:</strong> {{ ageBandLabel(detail.student_birthdate || detail.student?.profile?.date_of_birth) }}</p>
           <p><strong>Quiz:</strong> {{ detail.quiz?.title || '-' }}</p>
           <p><strong>Risk:</strong> {{ detail.overall_risk_level }}</p>
+          <p><strong>Prediction:</strong> {{ predictionLabel(detail) }}</p>
           <p><strong>Category:</strong> {{ detail.dominant_category }}</p>
+          <p class="mt-2 text-xs uppercase tracking-wider text-slate-500">Prediction Summary</p>
+          <p class="text-sm text-slate-700 dark:text-platinum-200">{{ predictionSummary(detail) }}</p>
         </div>
 
         <div class="space-y-2">
@@ -226,6 +235,32 @@ const riskClass = (risk) => {
   if (risk === 'High') return 'bg-orange-100 text-orange-700';
   if (risk === 'Moderate') return 'bg-amber-100 text-amber-700';
   return 'bg-emerald-100 text-emerald-700';
+};
+
+const predictionLabel = (item) => {
+  const risk = String(item?.overall_risk_level || 'Low');
+  if (['High', 'Severe'].includes(risk) || item?.flags_detected) return 'Seminar recommended';
+  if (risk === 'Moderate') return 'Monitor closely';
+  return 'Low intervention';
+};
+
+const predictionClass = (item) => {
+  const label = predictionLabel(item);
+  if (label === 'Seminar recommended') return 'bg-red-100 text-red-700';
+  if (label === 'Monitor closely') return 'bg-amber-100 text-amber-700';
+  return 'bg-emerald-100 text-emerald-700';
+};
+
+const predictionSummary = (item) => {
+  const risk = String(item?.overall_risk_level || 'Low');
+  const category = item?.dominant_category || 'neutral pattern';
+  if (['High', 'Severe'].includes(risk) || item?.flags_detected) {
+    return `The model predicts elevated stress indicators. The main pattern is ${category}, so a support seminar or facilitator follow-up is recommended.`;
+  }
+  if (risk === 'Moderate') {
+    return `The model predicts moderate stress indicators. The main pattern is ${category}, so closer monitoring and a check-in are advised.`;
+  }
+  return `The model predicts low stress indicators. The main pattern is ${category}, so regular monitoring and self-checks are enough for now.`;
 };
 
 const ageBandLabel = (dateOfBirth) => {

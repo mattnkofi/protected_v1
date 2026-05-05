@@ -16,23 +16,24 @@ const api = axios.create({
     },
 });
 
-// ====== Access Token Helpers (LocalStorage is okay for short-lived tokens) ======
+// ====== Access Token Helpers (SessionStorage for tab isolation) ======
+// Use sessionStorage instead of localStorage to isolate sessions per tab
 export function getAuthToken() {
     try {
-        return localStorage.getItem(TOKEN_KEY) || null;
+        return sessionStorage.getItem(TOKEN_KEY) || null;
     } catch { return null; }
 }
 
 export function setAuthToken(token) {
     try {
-        localStorage.setItem(TOKEN_KEY, token);
+        sessionStorage.setItem(TOKEN_KEY, token);
     } catch { }
     api.defaults.headers.common.Authorization = `Bearer ${token}`;
 }
 
 export function clearAuthToken() {
     try {
-        localStorage.removeItem(TOKEN_KEY);
+        sessionStorage.removeItem(TOKEN_KEY);
     } catch { }
     delete api.defaults.headers.common.Authorization;
 }
